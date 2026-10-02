@@ -49,7 +49,7 @@ export function DeletionsView({
     const cleanPhone = phone?.replace(/[^0-9]/g, '') || '';
     if (cleanPhone) {
       const msg = encodeURIComponent(
-        `Hello ${name || 'there'}, we noticed you recently deleted your CounterPro account for ${shop || 'your shop'}. We'd love to learn how we can improve or help resolve any issues.`
+        `Hello ${name || 'there'}, we noticed you recently deleted your Counter365 account for ${shop || 'your shop'}. We'd love to learn how we can improve or help resolve any issues.`
       );
       window.open(`https://wa.me/91${cleanPhone}?text=${msg}`, '_blank');
       onShowToast(`Opened WhatsApp chat for ${name || shop}`);
@@ -68,8 +68,55 @@ export function DeletionsView({
     }
   };
 
+  const handleCopyDeleteUrl = () => {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/delete-account` : '/delete-account';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      onShowToast('Public Delete Account URL copied to clipboard!');
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[18px]">
+      {/* Public URL Action Banner */}
+      <div className="bg-white rounded-[8px] shadow-sm p-[14px_18px] border border-[var(--color-divider)] flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[14px] font-bold text-[#101318]">Public Account Deletion URL:</span>
+              <code className="text-[12px] bg-red-50 text-red-700 font-mono px-2 py-0.5 rounded border border-red-200">
+                /delete-account
+              </code>
+              <span className="tag bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px]">
+                Accessible without login
+              </span>
+            </div>
+            <p className="text-[12px] text-[#64748B] m-0 mt-0.5">
+              Self-service account deletion URL for Play Store / App Store compliance & user data rights.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleCopyDeleteUrl}
+            className="btn btn-secondary text-[12px] min-h-[34px] px-3 gap-1.5"
+          >
+            <span>Copy Public URL</span>
+          </button>
+          <a
+            href="/delete-account"
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-primary text-[12px] min-h-[34px] px-3 gap-1.5 bg-[#DC2626] hover:bg-[#B91C1C]"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-white" />
+            <span>Open Public Page</span>
+          </a>
+        </div>
+      </div>
+
       {/* 4 Top KPI Cards */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-[14px]">
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">

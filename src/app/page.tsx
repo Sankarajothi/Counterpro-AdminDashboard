@@ -98,6 +98,7 @@ export default function AdminConsolePage() {
     } catch (e) {
       console.error(e);
     }
+    localStorage.removeItem('counter365_admin_logged_in');
     localStorage.removeItem('counterpro_admin_logged_in');
     setAdminUser(null);
     showToast('Logged out of Admin Console');
@@ -147,7 +148,7 @@ export default function AdminConsolePage() {
     ],
   };
 
-  const currentMeta = viewMeta[currentView] || ['Admin Console', 'CounterPro System'];
+  const currentMeta = viewMeta[currentView] || ['Admin Console', 'Counter365 System'];
 
   if (isAuthChecking) {
     return (

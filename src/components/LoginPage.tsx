@@ -36,7 +36,7 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        localStorage.setItem('counterpro_admin_logged_in', 'true');
+        localStorage.setItem('counter365_admin_logged_in', 'true');
         onLoginSuccess(data.user);
       } else {
         setError(data.message || 'Invalid username or password.');
@@ -57,13 +57,13 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
           <div className="w-14 h-14 rounded-lg bg-white p-1 border border-[#E2E8F0] shadow-xs flex items-center justify-center mb-3">
             <img
               src="/assets/counterpro-logo.png"
-              alt="CounterPro"
+              alt="Counter365"
               className="w-full h-full object-contain"
             />
           </div>
           
           <h1 className="font-heading font-black text-[22px] tracking-wide text-[#101318] flex items-center justify-center leading-tight m-0">
-            COUNTER<span className="text-[#FD5E03]">PRO</span>
+            COUNTER<span className="text-[#FD5E03]">365</span>
           </h1>
           
           <div className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#101318]/70 mt-1">
@@ -158,16 +158,23 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
               <span>India Region (ap-south-1)</span>
             </div>
-            <div className="flex items-center justify-center gap-3 text-[11px] text-[#94A3B8] mt-1.5">
-              <span>Secure Production Console</span>
-              <span>&bull;</span>
+            <div className="flex items-center justify-center gap-3 text-[11px] text-[#94A3B8] mt-2">
               <a
                 href="/privacy-policy"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#FD5E03] hover:underline font-semibold"
+                className="text-[#64748B] hover:text-[#FD5E03] hover:underline font-semibold"
               >
                 Privacy Policy
+              </a>
+              <span>&bull;</span>
+              <a
+                href="/delete-account"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#FD5E03] hover:underline font-semibold"
+              >
+                Delete Account
               </a>
             </div>
           </div>

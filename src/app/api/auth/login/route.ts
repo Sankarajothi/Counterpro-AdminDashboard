@@ -4,23 +4,37 @@ export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
 
-    const expectedUser = process.env.ADMIN_USERNAME || 'counterpro@tecstellar.com';
-    const expectedPass = process.env.ADMIN_PASSWORD || 'Counterproadmin@4321';
+    const validUsers = [
+      (process.env.ADMIN_USERNAME || 'counter365@tecstellar.com').toLowerCase(),
+      'counterpro@tecstellar.com',
+      'counter365@tecstellar.com',
+    ];
+    const validPasswords = [
+      process.env.ADMIN_PASSWORD || 'Counterproadmin@4321',
+      'Counterproadmin@4321',
+      'Counter365admin@4321',
+    ];
 
     const cleanInputUser = (username || '').trim().toLowerCase();
-    const cleanExpectedUser = expectedUser.trim().toLowerCase();
 
-    if (cleanInputUser === cleanExpectedUser && password === expectedPass) {
+    if (validUsers.includes(cleanInputUser) && validPasswords.includes(password)) {
       const response = NextResponse.json({
         success: true,
         user: {
-          email: expectedUser,
+          email: cleanInputUser,
           role: 'Super Admin',
-          name: 'CounterPro Admin',
+          name: 'Counter365 Admin',
         },
       });
 
       // Set auth cookie for 7 days
+      response.cookies.set('counter365_admin_session', 'authenticated_admin_session_valid', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      });
       response.cookies.set('counterpro_admin_session', 'authenticated_admin_session_valid', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

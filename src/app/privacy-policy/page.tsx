@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { Shield, ArrowLeft, Lock, FileText, Smartphone, Database, UserCheck, Trash2, Mail } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — CounterPro',
-  description: 'Privacy Policy and Data Protection Information for CounterPro Billing & Retail System',
+  title: 'Privacy Policy — Counter365',
+  description: 'Privacy Policy and Data Protection Information for Counter365 Billing & Retail System',
 };
 
 export default function PrivacyPolicyPage() {
@@ -20,13 +20,13 @@ export default function PrivacyPolicyPage() {
             <div className="w-9 h-9 rounded-lg bg-white p-1 border border-[#E2E8F0] shadow-xs flex items-center justify-center">
               <img
                 src="/assets/counterpro-logo.png"
-                alt="CounterPro"
+                alt="Counter365"
                 className="w-full h-full object-contain"
               />
             </div>
             <div>
               <div className="font-heading font-black text-[17px] tracking-wide text-[#101318] flex items-center leading-none">
-                COUNTER<span className="text-[#FD5E03]">PRO</span>
+                COUNTER<span className="text-[#FD5E03]">365</span>
               </div>
               <div className="text-[9.5px] font-bold tracking-[0.18em] uppercase text-[#64748B] mt-0.5">
                 LEGAL & PRIVACY
@@ -34,13 +34,22 @@ export default function PrivacyPolicyPage() {
             </div>
           </div>
 
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#101318] hover:text-[#FD5E03] transition-colors py-1.5 px-3 rounded-md border border-[#E2E8F0] hover:border-[#FD5E03] bg-white shadow-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Admin Portal</span>
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/delete-account"
+              className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#DC2626] hover:text-[#B91C1C] transition-colors py-1.5 px-3 rounded-md border border-red-200 hover:border-red-300 bg-red-50/50 shadow-xs"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Delete Account</span>
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#101318] hover:text-[#FD5E03] transition-colors py-1.5 px-3 rounded-md border border-[#E2E8F0] hover:border-[#FD5E03] bg-white shadow-xs"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Admin Portal</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -52,10 +61,10 @@ export default function PrivacyPolicyPage() {
             <span>Official Legal Documentation</span>
           </div>
           <h1 className="font-heading text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
-            CounterPro Privacy Policy
+            Counter365 Privacy Policy
           </h1>
           <p className="text-white/70 text-[14px] sm:text-[15px] max-w-2xl mx-auto leading-relaxed">
-            Your privacy and operational data sovereignty are fundamental to us. This policy outlines how CounterPro collects, processes, protects, and handles your business and customer information.
+            Your privacy and operational data sovereignty are fundamental to us. This policy outlines how Counter365 collects, processes, protects, and handles your business and customer information.
           </p>
           <div className="text-[12px] text-white/50 mt-4">
             Last Updated: <span className="text-[#FD5E03] font-semibold">{lastUpdated}</span> &bull; Region: India
@@ -74,10 +83,10 @@ export default function PrivacyPolicyPage() {
               1. Introduction & Overview
             </h2>
             <p>
-              Welcome to <strong>CounterPro</strong>, a point-of-sale (POS) billing and counter management application provided by <strong>Tecstellar</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). This Privacy Policy applies to the CounterPro mobile applications (available on Android and iOS), the web-based Admin Console, and any associated services (collectively referred to as the &quot;Service&quot;).
+              Welcome to <strong>Counter365</strong>, a point-of-sale (POS) billing and counter management application provided by <strong>Tecstellar</strong> (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). This Privacy Policy applies to the Counter365 mobile applications (available on Android and iOS), the web-based Admin Console, and any associated services (collectively referred to as the &quot;Service&quot;).
             </p>
             <p>
-              By installing, accessing, or using CounterPro, you consent to the collection and use of information in accordance with this Privacy Policy. If you do not agree with any terms of this policy, please discontinue use of the application.
+              By installing, accessing, or using Counter365, you consent to the collection and use of information in accordance with this Privacy Policy. If you do not agree with any terms of this policy, please discontinue use of the application.
             </p>
           </section>
 
@@ -122,14 +131,14 @@ export default function PrivacyPolicyPage() {
               3. Device Permissions & Usage
             </h2>
             <p>
-              CounterPro requests only essential device permissions required for counter operation:
+              Counter365 requests only essential device permissions required for counter operation:
             </p>
             <div className="space-y-2.5 text-[13.5px]">
               <div className="p-3 bg-white border border-[#E2E8F0] rounded-md">
                 <strong className="text-[#101318]">Bluetooth & Nearby Devices (BLUETOOTH_CONNECT, BLUETOOTH_SCAN):</strong> Required solely to discover and connect with 58mm/80mm wireless thermal ESC/POS receipt printers for printing bills.
               </div>
               <div className="p-3 bg-white border border-[#E2E8F0] rounded-md">
-                <strong className="text-[#101318]">Internet & Network State:</strong> Used to synchronize billing transactions, backup menu items, and process cloud operations with our secure cloud servers. CounterPro supports offline billing; transactions are queued locally and synchronized automatically when an active connection is restored.
+                <strong className="text-[#101318]">Internet & Network State:</strong> Used to synchronize billing transactions, backup menu items, and process cloud operations with our secure cloud servers. Counter365 supports offline billing; transactions are queued locally and synchronized automatically when an active connection is restored.
               </div>
               <div className="p-3 bg-white border border-[#E2E8F0] rounded-md">
                 <strong className="text-[#101318]">Storage / Documents:</strong> Used when exporting PDF reports, daily total summaries, or sharing digital bills via messaging applications upon customer request.
@@ -166,7 +175,7 @@ export default function PrivacyPolicyPage() {
                 User-Initiated Account Deletion
               </h3>
               <p className="text-[13.5px] leading-relaxed text-red-900/90">
-                You have the full right to delete your CounterPro account at any time. When an account deletion is initiated:
+                You have the full right to delete your Counter365 account at any time. When an account deletion is initiated:
               </p>
               <ul className="list-disc list-inside text-[13px] text-red-900/85 mt-2 space-y-1 pl-1">
                 <li>Your profile and active session credentials will be permanently deactivated.</li>
@@ -175,7 +184,7 @@ export default function PrivacyPolicyPage() {
               </ul>
             </div>
             <p className="text-[13.5px]">
-              <strong>How to request deletion:</strong> You can delete your account directly inside the CounterPro Mobile Application by navigating to <em>Account Settings &rarr; Delete Account</em>, or by submitting an email request to <a href="mailto:counterpro@tecstellar.com" className="text-[#FD5E03] font-semibold underline">counterpro@tecstellar.com</a> with your registered phone number. Requests are processed within 48 business hours.
+              <strong>How to request deletion:</strong> You can delete your account directly inside the Counter365 Mobile Application by navigating to <em>Account Settings &rarr; Delete Account</em>, visit our dedicated public <Link href="/delete-account" className="text-[#FD5E03] font-semibold underline">Account Deletion Page</Link>, or submit an email request to <a href="mailto:counter365@tecstellar.com" className="text-[#FD5E03] font-semibold underline">counter365@tecstellar.com</a> with your registered phone number.
             </p>
           </section>
 
@@ -186,7 +195,7 @@ export default function PrivacyPolicyPage() {
               6. Third-Party Services & Providers
             </h2>
             <p>
-              We do not sell, rent, or trade your personal or business data to any third-party advertisers. We work solely with trusted service providers strictly necessary to deliver CounterPro features:
+              We do not sell, rent, or trade your personal or business data to any third-party advertisers. We work solely with trusted service providers strictly necessary to deliver Counter365 features:
             </p>
             <ul className="list-disc list-inside space-y-1 text-[13.5px] text-[#475569] pl-2">
               <li><strong>Supabase:</strong> For relational PostgreSQL database hosting, authentication, and secure data synchronization.</li>
@@ -200,7 +209,7 @@ export default function PrivacyPolicyPage() {
               7. Children&apos;s Privacy
             </h2>
             <p className="text-[13.5px]">
-              CounterPro is intended for commercial business use by shop owners, supervisors, and billers. We do not knowingly collect personal information from individuals under the age of 18.
+              Counter365 is intended for commercial business use by shop owners, supervisors, and billers. We do not knowingly collect personal information from individuals under the age of 18.
             </p>
           </section>
 
@@ -224,9 +233,9 @@ export default function PrivacyPolicyPage() {
               For any questions, concerns, or requests regarding this Privacy Policy or your data, please contact our Data Governance & Support team:
             </p>
             <div className="p-4 rounded-lg bg-[#F8F9FA] border border-[#E2E8F0] space-y-1.5 text-[13.5px]">
-              <div><strong>Application:</strong> CounterPro Counter App & Admin Console</div>
+              <div><strong>Application:</strong> Counter365 Counter App & Admin Console</div>
               <div><strong>Entity:</strong> Tecstellar</div>
-              <div><strong>Email:</strong> <a href="mailto:counterpro@tecstellar.com" className="text-[#FD5E03] font-semibold underline">counterpro@tecstellar.com</a></div>
+              <div><strong>Email:</strong> <a href="mailto:counter365@tecstellar.com" className="text-[#FD5E03] font-semibold underline">counter365@tecstellar.com</a></div>
               <div><strong>Alternative Support:</strong> <a href="mailto:support@tecstellar.com" className="text-[#FD5E03] font-semibold underline">support@tecstellar.com</a></div>
               <div><strong>Operational Region:</strong> India</div>
             </div>
@@ -239,7 +248,7 @@ export default function PrivacyPolicyPage() {
       <footer className="bg-white border-t border-[#E2E8F0] py-6 px-4 text-center text-[12px] text-[#64748B]">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            &copy; {new Date().getFullYear()} CounterPro &bull; Tecstellar. All rights reserved.
+            &copy; {new Date().getFullYear()} Counter365 &bull; Tecstellar. All rights reserved.
           </div>
           <div className="flex items-center gap-4">
             <Link href="/" className="hover:text-[#FD5E03] transition-colors">
@@ -247,6 +256,9 @@ export default function PrivacyPolicyPage() {
             </Link>
             <Link href="/privacy-policy" className="text-[#FD5E03] font-semibold">
               Privacy Policy
+            </Link>
+            <Link href="/delete-account" className="text-[#DC2626] hover:underline font-semibold">
+              Delete Account
             </Link>
           </div>
         </div>

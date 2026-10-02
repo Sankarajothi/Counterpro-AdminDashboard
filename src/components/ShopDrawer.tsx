@@ -84,7 +84,7 @@ export function ShopDrawer({
 
   const handleMessageOwner = () => {
     if (cleanPhone) {
-      window.open(`https://wa.me/91${cleanPhone}?text=Hello%20${encodeURIComponent(shop.name)},%20regarding%20your%20CounterPro%20account:`, '_blank');
+      window.open(`https://wa.me/91${cleanPhone}?text=Hello%20${encodeURIComponent(shop.name)},%20regarding%20your%20Counter365%20account:`, '_blank');
       onShowToast(`Opened WhatsApp chat for ${shop.name}`);
     } else {
       onShowToast(`No phone number available for ${shop.name}`);

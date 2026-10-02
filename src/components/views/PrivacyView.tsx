@@ -24,6 +24,10 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
     window.open('/privacy-policy', '_blank');
   };
 
+  const handleOpenDelete = () => {
+    window.open('/delete-account', '_blank');
+  };
+
   return (
     <div className="flex flex-col gap-[18px]">
       {/* Top Banner with Public Link Information */}
@@ -57,7 +61,15 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
             className="btn btn-primary text-[12.5px] min-h-[38px] px-3.5 gap-2 bg-[#FD5E03] hover:bg-[#EA580C]"
           >
             <ExternalLink className="w-4 h-4 text-white" />
-            <span>Open Public Page</span>
+            <span>Open Public Policy</span>
+          </button>
+
+          <button
+            onClick={handleOpenDelete}
+            className="btn btn-secondary text-[12.5px] min-h-[38px] px-3.5 gap-2 border-red-200 text-red-600 hover:bg-red-50"
+          >
+            <Trash2 className="w-4 h-4 text-red-600" />
+            <span>Open Delete Page</span>
           </button>
         </div>
       </div>
@@ -72,7 +84,7 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
               Official Compliance Document
             </div>
             <h2 className="text-2xl font-bold text-[#101318] m-0">
-              CounterPro Privacy Policy
+              Counter365 Privacy Policy
             </h2>
             <div className="text-[12px] text-black/50 mt-1">
               Published by <strong>Tecstellar</strong> &bull; Point of Sale & Retail Billing System
@@ -92,7 +104,7 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
             1. Introduction & Overview
           </h3>
           <p>
-            This Privacy Policy governs the manner in which <strong>CounterPro</strong>, operated by <strong>Tecstellar</strong>, collects, utilizes, stores, and protects information gathered from users of the CounterPro mobile application (Android/iOS) and web administration portal.
+            This Privacy Policy governs the manner in which <strong>Counter365</strong>, operated by <strong>Tecstellar</strong>, collects, utilizes, stores, and protects information gathered from users of the Counter365 mobile application (Android/iOS) and web administration portal.
           </p>
         </section>
 
@@ -129,7 +141,7 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
             3. Device Permissions & Bluetooth Printing
           </h3>
           <p className="text-[13px]">
-            CounterPro requests Bluetooth permissions (<code>BLUETOOTH_CONNECT</code> / <code>BLUETOOTH_SCAN</code>) strictly to connect with 58mm/80mm ESC/POS thermal receipt printers. Location or Bluetooth data is never used for advertising, location tracking, or third-party behavioral profiling.
+            Counter365 requests Bluetooth permissions (<code>BLUETOOTH_CONNECT</code> / <code>BLUETOOTH_SCAN</code>) strictly to connect with 58mm/80mm ESC/POS thermal receipt printers. Location or Bluetooth data is never used for advertising, location tracking, or third-party behavioral profiling.
           </p>
         </section>
 
@@ -151,7 +163,7 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
             5. User Account Deletions & Retention Policy
           </h3>
           <div className="p-3.5 rounded-[6px] bg-red-50/60 border border-red-200 text-red-950 text-[13px]">
-            Users can permanently delete their accounts from the CounterPro mobile app via <em>Account &rarr; Delete Account</em> or by contacting support. Once deleted, authentication credentials are removed and an audit entry is archived in the <code>account_deletions</code> table for regulatory accounting compliance.
+            Users can permanently delete their accounts from the Counter365 mobile app via <em>Account &rarr; Delete Account</em> or through our public web form at <a href="/delete-account" target="_blank" className="text-[#FD5E03] font-semibold underline">/delete-account</a>. Once submitted, authentication credentials are removed and an audit entry is archived in the <code>account_deletions</code> table for regulatory accounting compliance.
           </div>
         </section>
 
@@ -162,7 +174,7 @@ export function PrivacyView({ onShowToast }: PrivacyViewProps) {
             6. Support & Contact
           </h3>
           <div className="text-[13px] text-[#475569]">
-            Inquiries regarding this policy may be directed to <a href="mailto:counterpro@tecstellar.com" className="text-[#FD5E03] font-semibold underline">counterpro@tecstellar.com</a> or <a href="mailto:support@tecstellar.com" className="text-[#FD5E03] font-semibold underline">support@tecstellar.com</a>.
+            Inquiries regarding this policy may be directed to <a href="mailto:counter365@tecstellar.com" className="text-[#FD5E03] font-semibold underline">counter365@tecstellar.com</a> or <a href="mailto:support@tecstellar.com" className="text-[#FD5E03] font-semibold underline">support@tecstellar.com</a>.
           </div>
         </section>
       </div>

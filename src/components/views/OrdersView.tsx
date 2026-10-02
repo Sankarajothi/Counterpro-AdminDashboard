@@ -110,7 +110,7 @@ export function OrdersView({
       id: b.id,
       billNumber: b.bill_number || `#${b.id.substring(0, 4)}`,
       shop,
-      shopName: shop?.name || 'CounterPro Shop',
+      shopName: shop?.name || 'Counter365 Shop',
       items: itemSummary,
       mode,
       amount: Number(b.total_amount || 0),

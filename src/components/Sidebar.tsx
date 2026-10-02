@@ -64,13 +64,13 @@ export function Sidebar({
           <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white flex items-center justify-center p-0.5">
             <img
               src="/assets/counterpro-logo.png"
-              alt="CounterPro"
+              alt="Counter365"
               className="w-full h-full object-contain"
             />
           </div>
           <div>
             <div className="font-heading font-black tracking-wider text-[17px] leading-tight text-white flex items-center">
-              COUNTER<span className="text-[#FD5E03]">PRO</span>
+              COUNTER<span className="text-[#FD5E03]">365</span>
             </div>
             <div className="text-[9px] tracking-[0.18em] uppercase text-white/60 font-semibold">
               ADMIN CONSOLE
@@ -147,6 +147,8 @@ export function Sidebar({
         </div>
         <div className="text-white/50 text-[10px] mt-0.5 flex items-center justify-between">
           <span>Region: India (ap-south-1)</span>
+        </div>
+        <div className="mt-2 pt-2 border-t border-white/[0.08] flex items-center justify-between text-[10px]">
           <a
             href="/privacy-policy"
             target="_blank"
@@ -154,6 +156,14 @@ export function Sidebar({
             className="text-[#FD5E03] hover:underline"
           >
             Privacy Policy
+          </a>
+          <a
+            href="/delete-account"
+            target="_blank"
+            rel="noreferrer"
+            className="text-white/70 hover:text-[#FD5E03] hover:underline flex items-center gap-0.5"
+          >
+            Delete Account ↗
           </a>
         </div>
       </div>
