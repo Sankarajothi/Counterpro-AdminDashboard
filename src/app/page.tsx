@@ -1,12 +1,52 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Sidebar } from '../components/Sidebar';
-import { Header } from '../components/Header';
+import { Header, ExportFormat } from '../components/Header';
 import { ShopDrawer } from '../components/ShopDrawer';
+
+function convertToCSV(data: Record<string, any>[]): string {
+  if (!data || data.length === 0) return '';
+  const headers = Object.keys(data[0]);
+  const rows = data.map((row) =>
+    headers
+      .map((header) => {
+        const val = row[header] === null || row[header] === undefined ? '' : String(row[header]);
+        const escaped = val.replace(/"/g, '""');
+        return `"${escaped}"`;
+      })
+      .join(',')
+  );
+  return [headers.join(','), ...rows].join('\r\n');
+}
+
+function downloadBlob(content: string, filename: string, mimeType: string) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 import { LoginPage } from '../components/LoginPage';
+import { FounderDashboardView } from '../components/views/FounderDashboardView';
+import { ProductAnalyticsView } from '../components/views/ProductAnalyticsView';
+import { DailyUserMetricsView } from '../components/views/DailyUserMetricsView';
+import { DailyBillsView } from '../components/views/DailyBillsView';
+import { RevenueTrendView } from '../components/views/RevenueTrendView';
+import { CustomerTrackingView } from '../components/views/CustomerTrackingView';
+import { IncompleteSignupsView } from '../components/views/IncompleteSignupsView';
+import { UserDetailsView } from '../components/views/UserDetailsView';
 import { OverviewView } from '../components/views/OverviewView';
 import { ShopsView } from '../components/views/ShopsView';
+import { StaffAccessView } from '../components/views/StaffAccessView';
+import { ReportsBIView } from '../components/views/ReportsBIView';
+import { HardwareTelemetryView } from '../components/views/HardwareTelemetryView';
+import { SystemHealthView } from '../components/views/SystemHealthView';
+import { SupportOutreachView } from '../components/views/SupportOutreachView';
 import { UsageView } from '../components/views/UsageView';
 import { PaymentsView } from '../components/views/PaymentsView';
 import { OrdersView } from '../components/views/OrdersView';
@@ -19,7 +59,9 @@ import { Shop } from '../types/database';
 export default function AdminConsolePage() {
   const [adminUser, setAdminUser] = useState<{ email: string; role: string; name: string } | null>(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
-  const [currentView, setCurrentView] = useState('overview');
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [dateFilter, setDateFilter] = useState('all');
+  const [customRange, setCustomRange] = useState<{ start?: string; end?: string }>({});
   const [period, setPeriod] = useState('Month');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
@@ -104,51 +146,437 @@ export default function AdminConsolePage() {
     showToast('Logged out of Admin Console');
   };
 
+  // Date Filter Logic
+  const filteredData = useMemo(() => {
+    if (dateFilter === 'all') return data;
+
+    const now = new Date();
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+
+    if (dateFilter === 'today') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    } else if (dateFilter === 'yesterday') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 0, 0, 0, 0);
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59, 999);
+    } else if (dateFilter === 'this_week') {
+      const day = now.getDay();
+      const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday
+      startDate = new Date(now.getFullYear(), now.getMonth(), diff, 0, 0, 0, 0);
+      endDate = now;
+    } else if (dateFilter === 'last_week') {
+      const day = now.getDay();
+      const diff = now.getDate() - day + (day === 0 ? -6 : 1) - 7; // Last Monday
+      startDate = new Date(now.getFullYear(), now.getMonth(), diff, 0, 0, 0, 0);
+      endDate = new Date(now.getFullYear(), now.getMonth(), diff + 6, 23, 59, 59, 999);
+    } else if (dateFilter === '7days') {
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      endDate = now;
+    } else if (dateFilter === 'this_month') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      endDate = now;
+    } else if (dateFilter === 'last_month') {
+      startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0, 0);
+      endDate = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    } else if (dateFilter === '30days') {
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      endDate = now;
+    } else if (dateFilter === '90days') {
+      startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      endDate = now;
+    } else if (dateFilter === 'this_year') {
+      startDate = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+      endDate = now;
+    } else if (dateFilter === 'custom' && customRange.start && customRange.end) {
+      startDate = new Date(`${customRange.start}T00:00:00`);
+      endDate = new Date(`${customRange.end}T23:59:59.999`);
+    }
+
+    if (!startDate) return data;
+
+    const startTs = startDate.getTime();
+    const endTs = (endDate || now).getTime();
+
+    const isWithin = (dStr?: string | null) => {
+      if (!dStr) return false;
+      const t = new Date(dStr).getTime();
+      return t >= startTs && t <= endTs;
+    };
+
+    return {
+      ...data,
+      bills: data.bills.filter((b) => isWithin(b.created_at || b.completed_at)),
+      payments: data.payments.filter((p) => isWithin(p.paid_at || p.created_at)),
+      expenses: data.expenses.filter((e) => isWithin(e.expense_date || e.created_at)),
+    };
+  }, [data, dateFilter, customRange]);
+
+  // Universal Search Results Generator
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return undefined;
+
+    const matchingShops = data.shops
+      .filter((s) => s.name.toLowerCase().includes(q) || s.phone.includes(q) || s.city.toLowerCase().includes(q))
+      .slice(0, 4)
+      .map((s) => ({ id: s.id, name: s.name, city: s.city, phone: s.phone }));
+
+    const matchingBills = data.bills
+      .filter((b) => (b.bill_number && b.bill_number.toLowerCase().includes(q)) || (b.customer_name && b.customer_name.toLowerCase().includes(q)))
+      .slice(0, 4)
+      .map((b) => {
+        const s = data.shops.find((sh) => sh.id === b.shop_id);
+        return {
+          id: b.id,
+          billNumber: b.bill_number,
+          amount: Number(b.total_amount || 0),
+          shopName: s?.name || 'Shop',
+        };
+      });
+
+    const matchingStaff = data.shopMembers
+      .map((m) => {
+        const prof = data.profiles.find((p) => p.id === m.user_id);
+        const sh = data.shops.find((s) => s.id === m.shop_id);
+        return {
+          id: m.id,
+          name: prof?.full_name || 'Staff',
+          role: m.role,
+          shopName: sh?.name || 'Shop',
+        };
+      })
+      .filter((st) => st.name.toLowerCase().includes(q) || st.role.toLowerCase().includes(q))
+      .slice(0, 4);
+
+    const matchingDeletions = data.accountDeletions
+      .filter((d) => (d.shop_name && d.shop_name.toLowerCase().includes(q)) || (d.reason && d.reason.toLowerCase().includes(q)))
+      .slice(0, 3)
+      .map((d) => ({
+        id: d.id,
+        shopName: d.shop_name || 'Shop',
+        reason: d.reason || 'Account Deleted',
+      }));
+
+    return {
+      shops: matchingShops,
+      bills: matchingBills,
+      staff: matchingStaff,
+      deletions: matchingDeletions,
+    };
+  }, [searchQuery, data]);
+
+  const handleSelectSearchResult = (type: string, id: string) => {
+    if (type === 'shop') {
+      const sh = data.shops.find((s) => s.id === id);
+      if (sh) {
+        setSelectedShop(sh);
+        setCurrentView('salons_360');
+      }
+    } else if (type === 'bill') {
+      setCurrentView('daily_bills');
+    } else if (type === 'staff') {
+      setCurrentView('staff_access');
+    } else if (type === 'deletion') {
+      setCurrentView('account_deletions');
+    }
+    setSearchQuery('');
+  };
+
+  // Multi-format Export handler
+  const handleExportCurrentView = (format: ExportFormat = 'csv') => {
+    if (format === 'print') {
+      window.print();
+      showToast('Opened print preview');
+      return;
+    }
+
+    let exportItems: Record<string, any>[] = [];
+    let name = currentView;
+
+    if (currentView === 'overview' || currentView === 'shops') {
+      exportItems = data.shops.map((s) => {
+        const shopBills = filteredData.bills.filter((b) => b.shop_id === s.id && b.status === 'completed');
+        const totalGmv = shopBills.reduce((acc, b) => acc + Number(b.total_amount || 0), 0);
+        const sub = data.subscriptions.find((sub) => sub.shop_id === s.id);
+        return {
+          'Shop ID': s.id,
+          'Shop Name': s.name,
+          'Shop Type': s.shop_type || 'General',
+          'City': s.city || '-',
+          'Phone': s.phone || '-',
+          'Status': s.is_active ? 'Active' : 'Inactive',
+          'Orders (Date Range)': shopBills.length,
+          'Revenue (INR)': totalGmv,
+          'Free Limit Usage': `${shopBills.length}/100 Sales Used`,
+          'Subscription Plan': (sub?.plan || 'free').toUpperCase(),
+          'Subscription Status': (sub?.status || 'trialing').toUpperCase(),
+          'Created Date': s.created_at ? new Date(s.created_at).toLocaleDateString() : '-',
+        };
+      });
+      name = 'counter365-shops';
+    } else if (currentView === 'orders') {
+      exportItems = filteredData.bills.map((b) => {
+        const s = data.shops.find((sh) => sh.id === b.shop_id);
+        return {
+          'Bill ID': b.id,
+          'Bill Number': b.bill_number || '-',
+          'Shop Name': s?.name || 'Shop',
+          'Customer Name': b.customer_name || 'Walk-in Customer',
+          'Customer Phone': b.customer_phone || '-',
+          'Payment Mode': (b.payment_mode || 'Cash').toUpperCase(),
+          'Status': (b.status || 'completed').toUpperCase(),
+          'Subtotal (INR)': b.subtotal || b.total_amount || 0,
+          'GST Amount (INR)': b.gst_amount || 0,
+          'Paid Amount (INR)': b.paid_amount || 0,
+          'Total Amount (INR)': b.total_amount || 0,
+          'Pending Amount (INR)': b.pending_amount || 0,
+          'Date & Time': b.created_at ? new Date(b.created_at).toLocaleString() : '-',
+        };
+      });
+      name = 'counter365-orders-bills';
+    } else if (currentView === 'payments') {
+      exportItems = filteredData.payments.map((p) => {
+        const s = data.shops.find((sh) => sh.id === p.shop_id);
+        return {
+          'Payment ID': p.id,
+          'Bill ID': p.bill_id || '-',
+          'Shop Name': s?.name || '-',
+          'Amount (INR)': p.amount || 0,
+          'Payment Method': (p.payment_method || 'Cash').toUpperCase(),
+          'Status': (p.status || 'successful').toUpperCase(),
+          'Operation ID': p.client_operation_id || '-',
+          'Payment Date': p.paid_at || p.created_at ? new Date(p.paid_at || p.created_at).toLocaleString() : '-',
+        };
+      });
+      name = 'counter365-payments';
+    } else if (currentView === 'subscriptions') {
+      exportItems = data.subscriptions.map((s) => {
+        const shop = data.shops.find((sh) => sh.id === s.shop_id);
+        const shopBills = data.bills.filter((b) => b.shop_id === s.shop_id && b.status === 'completed');
+        return {
+          'Subscription ID': s.id,
+          'Shop Name': shop?.name || '-',
+          'Plan': (s.plan || 'free').toUpperCase(),
+          'Status': (s.status || 'trialing').toUpperCase(),
+          'Price (INR)': s.amount || 0,
+          'Billing Cycle': s.interval || 'monthly',
+          'Sales Limit Progress': `${shopBills.length}/100 Free Sales`,
+          'Team Access': '0/0 Members (Pro Feature)',
+          'Created Date': s.created_at ? new Date(s.created_at).toLocaleDateString() : '-',
+        };
+      });
+      name = 'counter365-subscriptions';
+    } else if (currentView === 'staff') {
+      exportItems = data.shopMembers.map((m) => {
+        const p = data.profiles.find((pr) => pr.id === m.user_id);
+        const s = data.shops.find((sh) => sh.id === m.shop_id);
+        return {
+          'Member ID': m.id,
+          'Staff Name': p?.full_name || 'Staff Member',
+          'Phone': p?.phone || '-',
+          'Shop Name': s?.name || '-',
+          'Role': (m.role || 'cashier').toUpperCase(),
+          'Status': m.is_active ? 'Active' : 'Inactive',
+          'Joined At': m.created_at ? new Date(m.created_at).toLocaleDateString() : '-',
+        };
+      });
+      name = 'counter365-staff-access';
+    } else if (currentView === 'deletions') {
+      exportItems = data.accountDeletions.map((d) => ({
+        'Request ID': d.id,
+        'Shop Name': d.shop_name || '-',
+        'Owner Name': d.owner_name || '-',
+        'Phone': d.phone || '-',
+        'Reason': d.reason || '-',
+        'Feedback': d.feedback || '-',
+        'Deleted At': d.deleted_at ? new Date(d.deleted_at).toLocaleString() : '-',
+      }));
+      name = 'counter365-account-deletions';
+    } else if (currentView === 'reports') {
+      const completedBills = filteredData.bills.filter((b) => b.status === 'completed');
+      const totalRev = completedBills.reduce((acc, b) => acc + Number(b.total_amount || 0), 0);
+      exportItems = [{
+        'Report Scope': 'Platform Summary',
+        'Date Preset': dateFilter,
+        'Total Shops': data.shops.length,
+        'Completed Orders': completedBills.length,
+        'Total Revenue (INR)': totalRev,
+        'Average Order Value (INR)': completedBills.length > 0 ? Math.round(totalRev / completedBills.length) : 0,
+        'Export Date': new Date().toLocaleString(),
+      }];
+      name = 'counter365-reports-summary';
+    } else {
+      exportItems = [
+        {
+          'View': currentView,
+          'Active Date Filter': dateFilter,
+          'Timestamp': new Date().toISOString(),
+          'Total System Shops': data.shops.length,
+          'Total System Bills': data.bills.length,
+        }
+      ];
+      name = `counter365-${currentView}`;
+    }
+
+    if (exportItems.length === 0) {
+      showToast('No records available to export for current view');
+      return;
+    }
+
+    const dateStamp = new Date().toISOString().split('T')[0];
+    const fileName = `${name}-${dateFilter}-${dateStamp}`;
+
+    if (format === 'json') {
+      const jsonStr = JSON.stringify(exportItems, null, 2);
+      downloadBlob(jsonStr, `${fileName}.json`, 'application/json;charset=utf-8;');
+      showToast(`Exported ${exportItems.length} records to JSON`);
+    } else if (format === 'excel') {
+      const csvStr = convertToCSV(exportItems);
+      // Prepend UTF-8 BOM so Excel opens Hindi/Rupee/special chars properly
+      downloadBlob('\uFEFF' + csvStr, `${fileName}.csv`, 'text/csv;charset=utf-8;');
+      showToast(`Exported ${exportItems.length} records to Excel`);
+    } else {
+      // Standard CSV
+      const csvStr = convertToCSV(exportItems);
+      downloadBlob(csvStr, `${fileName}.csv`, 'text/csv;charset=utf-8;');
+      showToast(`Exported ${exportItems.length} records to CSV`);
+    }
+  };
+
   // Derived counts
   const activeShops = data.shops.filter((s) => s.is_active);
   const trialShops = data.subscriptions.filter((s) => s.status === 'trialing');
   const expiredShops = data.subscriptions.filter((s) => s.status === 'expired');
-  const proSubs = data.subscriptions.filter((s) => s.plan === 'pro');
-  const arr = proSubs.reduce((acc, s) => acc + Number(s.amount || 199), 0);
-  const completedBills = data.bills.filter((b) => b.status === 'completed');
+  const proSubs = data.subscriptions.filter((s) => s.plan?.toLowerCase() === 'pro');
+  const arr = proSubs.reduce((acc, s) => acc + Number(s.amount || 0), 0);
+  const completedBills = filteredData.bills.filter((b) => b.status === 'completed');
 
-  // Dynamic View Titles & Subtitles matching reference HTML
+  // Dynamic View Titles & Subtitles matching StyleFleet hierarchy
   const viewMeta: { [key: string]: [string, string] } = {
+    dashboard: [
+      'Founder Dashboard',
+      `Live executive KPIs, today's sales & real merchant metrics (${dateFilter === 'all' ? 'All Time' : dateFilter})`,
+    ],
+    product_analytics: [
+      'Product Analytics',
+      `${data.menuItems.length} catalog items across ${data.menuCategories.length} categories — Live from Supabase`,
+    ],
+    daily_user_metrics: [
+      'Daily User Metrics',
+      `Staff accounts, roles & merchant logins across ${data.shops.length} stores`,
+    ],
+    daily_bills: [
+      'Daily Order Metrics',
+      `${completedBills.length} completed transactions recorded in live database`,
+    ],
+    revenue_trend: [
+      'Revenue Trend',
+      `Cumulative gross volume & payment collection breakdown`,
+    ],
     overview: [
-      'Revenue summary',
-      `Platform-wide totals for the ${period.toLowerCase()}`,
+      'Platform Overview',
+      `Executive 360 platform summary and performance metrics`,
+    ],
+    customer_tracking: [
+      'Customer Tracking',
+      `Identified shopper directory, visit frequencies & purchase volume`,
+    ],
+    incomplete_signups: [
+      'Incomplete signups',
+      `Shop onboarding completeness, hardware readiness & missing setup audit`,
+    ],
+    account_deletions: [
+      'Deleted users',
+      `${data.accountDeletions.length} account deletion requests & regulatory audit records`,
+    ],
+    app_telemetry: [
+      'Touch Heatmap & Telemetry',
+      'Wireless ESC/POS thermal printer pairing, Bluetooth drivers & sync queues',
+    ],
+    diagnostic_logs: [
+      'App Bugs & Diagnostics',
+      'Realtime system audit trail, error events & operational logs',
+    ],
+    salons_360: [
+      'Shop Directory',
+      `${data.shops.length} merchant stores — All on Free Plan (100 Sales Limit)`,
     ],
     shops: [
-      'Registered shops',
-      `${data.shops.length} shops — ${activeShops.length} active, ${trialShops.length} on trial, ${expiredShops.length} expired`,
+      'Shop Directory',
+      `${data.shops.length} merchant stores — All on Free Plan (100 Sales Limit)`,
     ],
-    deletions: [
-      'Account deletions',
-      `${data.accountDeletions.length} deleted accounts & offboarding feedback`,
+    subscription_plans: [
+      'Subscription & 100 Quotas',
+      `Quota tracking, free sales allowance (100 limit) & Pro upgrade status`,
     ],
-    usage: [
-      'Usage & engagement',
-      `How shops actually use the app this ${period.toLowerCase()}`,
+    staff_access: [
+      'Staff Access Control',
+      `1 Owner per shop on Free Tier — 0 Pro staff until upgrade`,
     ],
-    payments: [
-      'Payments',
-      `Subscription & POS billing — ${formatINR(arr)} annual recurring`,
+    staff: [
+      'Staff Access Control',
+      `1 Owner per shop on Free Tier — 0 Pro staff until upgrade`,
     ],
-    orders: [
-      'Orders & items',
-      `${completedBills.length} orders processed this ${period.toLowerCase()}`,
+    platform_audit: [
+      'Activity Logs',
+      'Tamper-proof event logs across bills, updates & admin operations',
     ],
     logs: [
-      'Activity logs',
-      'Every account, menu, payment and sync event',
+      'Activity Logs',
+      'Tamper-proof event logs across bills, updates & admin operations',
+    ],
+    user_details: [
+      'User Details',
+      `${data.profiles.length} registered profiles authenticated via Supabase`,
+    ],
+    purchases: [
+      'Payment History',
+      `${data.payments.length} payment transactions recorded in live database`,
+    ],
+    payments: [
+      'Payment History',
+      `${data.payments.length} payment transactions recorded in live database`,
+    ],
+    system_health: [
+      'Shop Health',
+      'PostgreSQL multi-tenant RLS status, database latency & storage metrics',
+    ],
+    health: [
+      'Shop Health',
+      'PostgreSQL multi-tenant RLS status, database latency & storage metrics',
+    ],
+    reports_bi: [
+      'Analytics & Business Intelligence',
+      'Downloadable intelligence logs, tax records, invoice summaries & churn audits',
+    ],
+    reports: [
+      'Analytics & Business Intelligence',
+      'Downloadable intelligence logs, tax records, invoice summaries & churn audits',
+    ],
+    crm_added_users: [
+      'CRM added users',
+      'Customers registered directly through POS billing transactions',
+    ],
+    support_messages: [
+      'Support & WhatsApp Outreach',
+      'Direct merchant communications, onboarding greetings & subscription notices',
+    ],
+    support: [
+      'Support & WhatsApp Outreach',
+      'Direct merchant communications, onboarding greetings & subscription notices',
     ],
     privacy: [
-      'Privacy Policy',
-      'Official legal compliance, app store governance & public policy documentation',
+      'Privacy Policy Documentation',
+      'Official legal disclosure & statutory compliance information',
+    ],
+    orders: [
+      'Daily Order Metrics',
+      `${completedBills.length} completed transactions recorded in live database`,
     ],
   };
 
-  const currentMeta = viewMeta[currentView] || ['Admin Console', 'Counter365 System'];
+  const currentMeta = viewMeta[currentView] || ['Admin Console', 'CounterPro 365 System'];
 
   if (isAuthChecking) {
     return (
@@ -174,7 +602,7 @@ export default function AdminConsolePage() {
 
   return (
     <div className="min-h-screen flex bg-[#F8F9FA] text-[#101318]">
-      {/* Fixed Sticky Sidebar */}
+      {/* Sticky Left Sidebar */}
       <Sidebar
         currentView={currentView}
         onSelectView={(v) => {
@@ -182,85 +610,132 @@ export default function AdminConsolePage() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         shopCount={data.shops.length}
-        paymentAlertCount={data.payments.filter((p) => p.status === 'failed').length || 2}
-        logCount={data.bills.length + data.expenses.length + data.shops.length + data.accountDeletions.length}
+        staffCount={data.shopMembers.length}
+        billsCount={completedBills.length}
         deletionsCount={data.accountDeletions.length}
         lastUpdated={data.lastFetched}
         adminUser={adminUser}
         onLogout={handleLogout}
+        onOpenPrivacy={() => setCurrentView('privacy')}
+        onOpenDeleteAccount={() => setCurrentView('account_deletions')}
       />
 
       {/* Main Content Area */}
       <main className="flex-1 min-w-0 flex flex-col">
-        {/* Sticky Header Bar */}
+        {/* Sticky Top Header Bar */}
         <Header
           title={currentMeta[0]}
           subtitle={currentMeta[1]}
-          period={period}
-          onPeriodChange={(p) => {
-            setPeriod(p);
-            showToast(`Timeframe switched to ${p}`);
+          dateFilter={dateFilter}
+          onDateFilterChange={(df, start, end) => {
+            setDateFilter(df);
+            if (start && end) setCustomRange({ start, end });
+            showToast(`Date filter applied: ${df}`);
           }}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          searchResults={searchResults}
+          onSelectSearchResult={handleSelectSearchResult}
           onRefresh={() => {
             loadData();
             showToast('Refreshed data from Supabase');
           }}
+          onExportFormat={handleExportCurrentView}
           isLoading={isLoading}
         />
 
         {/* View Container */}
-        <div className="flex-1 p-[22px_26px_40px] flex flex-col gap-[22px]">
-          {currentView === 'overview' && (
-            <OverviewView
+        <div className="flex-1 p-[20px_24px_40px] flex flex-col gap-[20px]">
+          {/* 1. Founder Dashboard */}
+          {currentView === 'dashboard' && (
+            <FounderDashboardView
               shops={data.shops}
-              bills={data.bills}
-              billItems={data.billItems}
+              bills={filteredData.bills}
+              payments={filteredData.payments}
               subscriptions={data.subscriptions}
-              payments={data.payments}
-              period={period}
-              onOpenShopDrawer={setSelectedShop}
-            />
-          )}
-
-          {currentView === 'shops' && (
-            <ShopsView
-              shops={data.shops}
-              bills={data.bills}
-              subscriptions={data.subscriptions}
-              searchQuery={searchQuery}
-              period={period}
-              onOpenShopDrawer={setSelectedShop}
-            />
-          )}
-
-          {currentView === 'usage' && (
-            <UsageView
-              shops={data.shops}
-              bills={data.bills}
               profiles={data.profiles}
               shopMembers={data.shopMembers}
-              menuItems={data.menuItems}
-              expenses={data.expenses}
-              period={period}
               onOpenShopDrawer={setSelectedShop}
+              onNavigate={(v) => {
+                setCurrentView(v);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
           )}
 
-          {currentView === 'payments' && (
-            <PaymentsView
+          {/* 2. Product Analytics */}
+          {currentView === 'product_analytics' && (
+            <ProductAnalyticsView
               shops={data.shops}
-              subscriptions={data.subscriptions}
-              payments={data.payments}
-              bills={data.bills}
-              period={period}
-              searchQuery={searchQuery}
+              menuItems={data.menuItems}
+              menuCategories={data.menuCategories}
+              billItems={data.billItems}
+              bills={filteredData.bills}
+            />
+          )}
+
+          {/* 3. Daily User Metrics */}
+          {currentView === 'daily_user_metrics' && (
+            <DailyUserMetricsView
+              shops={data.shops}
+              profiles={data.profiles}
+              shopMembers={data.shopMembers}
+            />
+          )}
+
+          {/* 4. Daily Order Metrics */}
+          {(currentView === 'daily_bills' || currentView === 'orders') && (
+            <DailyBillsView
+              bills={filteredData.bills}
+              shops={data.shops}
+              payments={filteredData.payments}
               onOpenShopDrawer={setSelectedShop}
             />
           )}
 
-          {currentView === 'deletions' && (
+          {/* 5. Revenue Trend */}
+          {currentView === 'revenue_trend' && (
+            <RevenueTrendView
+              bills={filteredData.bills}
+              shops={data.shops}
+              payments={filteredData.payments}
+            />
+          )}
+
+          {/* 6. Overview */}
+          {currentView === 'overview' && (
+            <OverviewView
+              shops={filteredData.shops}
+              bills={filteredData.bills}
+              billItems={filteredData.billItems}
+              subscriptions={filteredData.subscriptions}
+              payments={filteredData.payments}
+              period={period}
+              onOpenShopDrawer={setSelectedShop}
+            />
+          )}
+
+          {/* 7. Customer Tracking */}
+          {currentView === 'customer_tracking' && (
+            <CustomerTrackingView
+              customers={data.customers}
+              bills={filteredData.bills}
+              shops={data.shops}
+              title="Customer Tracking"
+              subtitle="Verified customer transaction lineage from Counter Pro POS"
+            />
+          )}
+
+          {/* 8. Incomplete signups */}
+          {currentView === 'incomplete_signups' && (
+            <IncompleteSignupsView
+              shops={data.shops}
+              onOpenShopDrawer={setSelectedShop}
+            />
+          )}
+
+          {/* 9. Deleted users / Account Deletions */}
+          {(currentView === 'account_deletions' || currentView === 'deletions') && (
             <DeletionsView
               deletions={data.accountDeletions}
               searchQuery={searchQuery}
@@ -268,31 +743,136 @@ export default function AdminConsolePage() {
             />
           )}
 
-          {currentView === 'orders' && (
-            <OrdersView
+          {/* 10. App Activity: Touch Heatmap / Telemetry */}
+          {(currentView === 'app_telemetry' || currentView === 'hardware') && (
+            <HardwareTelemetryView
+              shops={data.shops}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* 11. App Activity: App Bugs / Diagnostics & Audit Logs */}
+          {(currentView === 'diagnostic_logs' || currentView === 'platform_audit' || currentView === 'logs') && (
+            <LogsView
+              shops={filteredData.shops}
+              bills={filteredData.bills}
+              menuItems={filteredData.menuItems}
+              expenses={filteredData.expenses}
+              subscriptions={filteredData.subscriptions}
+              shopMembers={filteredData.shopMembers}
+              accountDeletions={filteredData.accountDeletions}
+              searchQuery={searchQuery}
+            />
+          )}
+
+          {/* 12. Shop Analytics: Shop Directory (salons_360 / shops) */}
+          {(currentView === 'salons_360' || currentView === 'shops') && (
+            <ShopsView
+              shops={data.shops}
+              bills={filteredData.bills}
+              subscriptions={data.subscriptions}
+              profiles={data.profiles}
+              shopMembers={data.shopMembers}
+              menuItems={data.menuItems}
+              accountDeletions={data.accountDeletions}
+              searchQuery={searchQuery}
+              period={period}
+              onOpenShopDrawer={setSelectedShop}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* 13. Shop Analytics: Subscription & 100 Quotas */}
+          {(currentView === 'subscription_plans' || currentView === 'payments' || currentView === 'purchases') && (
+            <PaymentsView
+              shops={filteredData.shops}
+              subscriptions={filteredData.subscriptions}
+              payments={filteredData.payments}
+              bills={filteredData.bills}
+              period={period}
+              searchQuery={searchQuery}
+              onOpenShopDrawer={setSelectedShop}
+            />
+          )}
+
+          {/* 14. Shop Analytics: Staff Access Control */}
+          {(currentView === 'staff_access' || currentView === 'staff') && (
+            <StaffAccessView
+              shops={data.shops}
+              profiles={data.profiles}
+              shopMembers={data.shopMembers}
+              bills={data.bills}
+              subscriptions={data.subscriptions}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* 15. Shop Analytics: User Details */}
+          {currentView === 'user_details' && (
+            <UserDetailsView
+              profiles={data.profiles}
+              shopMembers={data.shopMembers}
+              shops={data.shops}
+            />
+          )}
+
+          {/* 16. Shop Analytics: Shop Health */}
+          {(currentView === 'system_health' || currentView === 'health') && (
+            <SystemHealthView
+              data={data}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* 17. Shop Analytics: Analytics / Reports BI */}
+          {(currentView === 'reports_bi' || currentView === 'reports') && (
+            <ReportsBIView
               shops={data.shops}
               bills={data.bills}
               billItems={data.billItems}
+              payments={data.payments}
+              subscriptions={data.subscriptions}
+              accountDeletions={data.accountDeletions}
               menuItems={data.menuItems}
-              menuCategories={data.menuCategories}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* 18. CRM Added Users */}
+          {currentView === 'crm_added_users' && (
+            <CustomerTrackingView
+              customers={data.customers}
+              bills={filteredData.bills}
+              shops={data.shops}
+              title="CRM Added Users"
+              subtitle="Customers captured directly through POS checkout interactions"
+            />
+          )}
+
+          {/* 19. Engagement: Support */}
+          {(currentView === 'support_messages' || currentView === 'support') && (
+            <SupportOutreachView
+              shops={data.shops}
+              subscriptions={data.subscriptions}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* 20. Usage View */}
+          {currentView === 'usage' && (
+            <UsageView
+              shops={filteredData.shops}
+              bills={filteredData.bills}
+              profiles={filteredData.profiles}
+              shopMembers={filteredData.shopMembers}
+              menuItems={filteredData.menuItems}
+              expenses={filteredData.expenses}
               period={period}
               onOpenShopDrawer={setSelectedShop}
             />
           )}
 
-          {currentView === 'logs' && (
-            <LogsView
-              shops={data.shops}
-              bills={data.bills}
-              menuItems={data.menuItems}
-              expenses={data.expenses}
-              subscriptions={data.subscriptions}
-              shopMembers={data.shopMembers}
-              accountDeletions={data.accountDeletions}
-              searchQuery={searchQuery}
-            />
-          )}
-
+          {/* 21. Privacy Policy */}
           {currentView === 'privacy' && (
             <PrivacyView onShowToast={showToast} />
           )}

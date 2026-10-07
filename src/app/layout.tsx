@@ -16,7 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[var(--color-surface)] text-[var(--color-text)]">
+      <body
+        style={{ fontFamily: '-apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
+        className="min-h-screen bg-[var(--color-surface)] text-[var(--color-text)]"
+      >
         {children}
       </body>
     </html>

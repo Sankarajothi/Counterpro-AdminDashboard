@@ -128,6 +128,31 @@ export function ShopDrawer({
 
         {/* Drawer Body */}
         <div className="p-[20px_22px_32px] flex flex-col gap-6">
+          {/* 100 Sales Limit Free Quota Box */}
+          <div className="bg-[#FFF7ED] border border-[#FED7AA] rounded-[8px] p-3.5">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-bold text-[#C2410C] uppercase tracking-wide">
+                100 Sales Limit Quota Tracker
+              </span>
+              <span className="tag text-[10px] font-bold bg-[#FD5E03] text-white">
+                {subscription?.plan?.toUpperCase() || 'FREE TIER'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-[#9A3412] font-medium mb-1.5">
+              <span>{completedBills.length} / 100 sales completed</span>
+              <span className="font-bold">{Math.max(0, 100 - completedBills.length)} remaining</span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-orange-100 overflow-hidden">
+              <div
+                className="h-full bg-[#FD5E03] rounded-full"
+                style={{ width: `${Math.min(100, (completedBills.length / 100) * 100)}%` }}
+              />
+            </div>
+            <div className="text-[10.5px] text-[#9A3412]/80 mt-1.5">
+              Multi-user staff members and unlimited billing unlock upon upgrading to CounterPro Pro.
+            </div>
+          </div>
+
           {/* 4 KPIs Grid */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-[#F8F9FA] rounded-[8px] p-3.5 border border-[var(--color-divider)]">

@@ -40,9 +40,10 @@ export function OverviewView({
 
   // Subscriptions
   const proSubs = subscriptions.filter((s) => s.plan === 'pro');
+  const freeSubs = subscriptions.filter((s) => s.plan === 'free');
   const trialSubs = subscriptions.filter((s) => s.status === 'trialing');
   const expiredSubs = subscriptions.filter((s) => s.status === 'expired' || s.status === 'cancelled');
-  const totalSubRevenue = subscriptions.reduce((acc, s) => acc + Number(s.amount || 199), 0);
+  const totalSubRevenue = subscriptions.reduce((acc, s) => acc + Number(s.amount || 0), 0);
 
   // Group GMV by month from bills
   const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -226,22 +227,22 @@ export function OverviewView({
         </div>
 
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">SUBSCRIPTION REVENUE</div>
+          <div className="card-kicker">PRO SUBSCRIPTIONS</div>
           <div className="font-heading text-[30px] font-bold leading-none text-[#FD5E03]">
-            {formatINR(totalSubRevenue)}
+            {proSubs.length} <span className="text-[16px] font-normal text-gray-400">/ {shops.length}</span>
           </div>
           <div className="text-[11px] text-black/50">
-            annual recurring, ₹199 / shop
+            {freeSubs.length || shops.length} shops on Free 100 Sales Limit
           </div>
         </div>
 
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">CHURN RISK</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {expiredSubs.length + trialSubs.length}
+          <div className="card-kicker">100 SALES FREE QUOTA USED</div>
+          <div className="font-heading text-[30px] font-bold leading-none text-emerald-600">
+            {completedBills.length} <span className="text-[15px] font-normal text-gray-400">/ {shops.length * 100}</span>
           </div>
           <div className="text-[11px] text-black/50">
-            {expiredSubs.length} expired, {trialSubs.length} trials ending
+            {Math.round((completedBills.length / Math.max(1, shops.length * 100)) * 100)}% of platform free sales limit consumed
           </div>
         </div>
       </div>
@@ -321,31 +322,33 @@ export function OverviewView({
           </div>
 
           <h3 className="m-0 mt-5 mb-2.5 text-[15px] font-bold text-[#101318]">
-            Subscription mix
+            Subscription & Limit Mix
           </h3>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FD5E03] flex-none" />
+              <span className="text-[13px] font-medium flex-1">Free Tier — 100 Sales Limit</span>
+              <span className="text-[11px] text-black/50">1 owner, 0 staff</span>
+              <span className="font-heading text-[13px] font-bold w-12 text-right">
+                {freeSubs.length || shops.length}
+              </span>
+            </div>
+            <div className="flex items-center gap-2.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#101318] flex-none" />
-              <span className="text-[13px] font-medium flex-1">Pro — yearly</span>
-              <span className="text-[11px] text-black/50">₹199 / year</span>
+              <span className="text-[13px] font-medium flex-1">Pro Plan — Unlimited</span>
+              <span className="text-[11px] text-black/50">multi-user staff enabled</span>
               <span className="font-heading text-[13px] font-bold w-12 text-right">
                 {proSubs.length}
               </span>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FD5E03] flex-none" />
-              <span className="text-[13px] font-medium flex-1">Trial — 30 days</span>
-              <span className="text-[11px] text-black/50">all active</span>
-              <span className="font-heading text-[13px] font-bold w-12 text-right">
-                {trialSubs.length}
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-none" />
+              <span className="text-[13px] font-medium flex-1">Total Sales towards 100 Limit</span>
+              <span className="text-[11px] text-emerald-600 font-semibold font-mono">
+                {completedBills.length} / {shops.length * 100}
               </span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FDBA74] flex-none" />
-              <span className="text-[13px] font-medium flex-1">Expired</span>
-              <span className="text-[11px] text-black/50">win-back queue</span>
-              <span className="font-heading text-[13px] font-bold w-12 text-right">
-                {expiredSubs.length}
+              <span className="font-heading text-[13px] font-bold w-12 text-right text-emerald-600">
+                {Math.round((completedBills.length / Math.max(1, shops.length * 100)) * 100)}%
               </span>
             </div>
           </div>

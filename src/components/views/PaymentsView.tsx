@@ -29,9 +29,10 @@ export function PaymentsView({
   const successfulPayments = payments.filter((p) => p.status === 'successful');
   const totalCollected = successfulPayments.reduce((acc, p) => acc + Number(p.amount || 0), 0);
 
-  // Annual Recurring Revenue
-  const proSubs = subscriptions.filter((s) => s.plan === 'pro');
-  const annualRecurring = proSubs.reduce((acc, s) => acc + Number(s.amount || 199), 0);
+  // Annual Recurring Revenue from real Pro subscriptions only
+  const proSubs = subscriptions.filter((s) => s.plan?.toLowerCase() === 'pro');
+  const annualRecurring = proSubs.reduce((acc, s) => acc + Number(s.amount || 0), 0);
+  const freeSubs = subscriptions.filter((s) => s.plan?.toLowerCase() !== 'pro');
 
   const failedCount = payments.filter((p) => p.status === 'failed').length;
   const pendingCount = subscriptions.filter((s) => s.status === 'trialing' || s.status === 'pending').length;
@@ -49,26 +50,25 @@ export function PaymentsView({
     status: 'PAID' | 'PENDING' | 'FAILED' | 'REFUNDED';
   }[] = [];
 
-  // 1. Subscription records
-  subscriptions.forEach((sub, i) => {
+  // 1. Real Subscription records
+  subscriptions.forEach((sub) => {
     const shop = shops.find((s) => s.id === sub.shop_id) || null;
-    const isPaid = sub.plan === 'pro' && sub.status !== 'past_due' && sub.status !== 'cancelled';
-    const status = sub.status === 'trialing' ? 'PENDING' : isPaid ? 'PAID' : 'FAILED';
+    const isPro = sub.plan?.toLowerCase() === 'pro';
     paymentRows.push({
       id: sub.id,
       shop,
       shopName: shop?.name || 'Unknown Shop',
       ref: `sub_${sub.id.substring(0, 8)}`,
-      plan: `Pro — ${sub.interval || 'yearly'}`,
-      mode: 'Subscription (UPI/Online)',
-      amount: Number(sub.amount || 199),
+      plan: isPro ? `Pro — ${sub.interval || 'yearly'}` : `Free Plan (100 Sales Limit)`,
+      mode: isPro ? 'UPI / Online' : 'Free Lifetime Plan',
+      amount: Number(sub.amount || 0),
       date: formatDate(sub.current_period_start || sub.created_at),
-      status,
+      status: 'PAID',
     });
   });
 
   // 2. POS payments records
-  payments.forEach((pay, i) => {
+  payments.forEach((pay) => {
     const shop = shops.find((s) => s.id === pay.shop_id) || null;
     const bill = bills.find((b) => b.id === pay.bill_id);
     const status: 'PAID' | 'PENDING' | 'FAILED' | 'REFUNDED' =
@@ -85,7 +85,7 @@ export function PaymentsView({
       shop,
       shopName: shop?.name || 'POS Shop',
       ref: `txn_${pay.id.substring(0, 8)}${bill?.bill_number ? ` (${bill.bill_number})` : ''}`,
-      plan: 'Counter Sale',
+      plan: 'Counter POS Bill',
       mode: pay.payment_method || 'Cash',
       amount: Number(pay.amount || 0),
       date: formatDate(pay.paid_at || pay.created_at),
@@ -111,18 +111,18 @@ export function PaymentsView({
       {/* 4 Payment KPIs */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-[14px]">
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">COLLECTED — {period.toUpperCase()}</div>
+          <div className="card-kicker">POS BILLING COLLECTED</div>
           <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
             {formatINR(totalCollected)}
           </div>
           <div className="text-[11px] text-black/50">
-            {successfulPayments.length} successful payment charges
+            {successfulPayments.length} counter sales settled
           </div>
         </div>
 
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">ANNUAL RECURRING (ARR)</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#FD5E03]">
+          <div className="card-kicker">SUBSCRIPTION ARR</div>
+          <div className="font-heading text-[30px] font-bold leading-none text-gray-400">
             {formatINR(annualRecurring)}
           </div>
           <div className="text-[11px] text-black/50">
@@ -131,23 +131,83 @@ export function PaymentsView({
         </div>
 
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">FAILED</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {failedCount}
+          <div className="card-kicker">PRO SUBSCRIBERS</div>
+          <div className="font-heading text-[30px] font-bold leading-none text-gray-400">
+            0 <span className="text-[16px] font-normal text-gray-400">/ {shops.length}</span>
           </div>
           <div className="text-[11px] text-black/50">
-            declined / cancelled
+            0% paid subscriber rate
           </div>
         </div>
 
         <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">PENDING / TRIAL</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {pendingCount}
+          <div className="card-kicker">FREE SHOPS ON 100 LIMIT</div>
+          <div className="font-heading text-[30px] font-bold leading-none text-[#FD5E03]">
+            {shops.length - proSubs.length}
           </div>
           <div className="text-[11px] text-black/50">
-            trial conversions in flight
+            capped at 100 free sales per shop
           </div>
+        </div>
+      </div>
+
+      {/* 100 Sales Limit Tracking Section */}
+      <div className="bg-white rounded-[8px] shadow-sm p-[16px_18px] border border-[var(--color-divider)]">
+        <div className="flex items-center justify-between pb-3 border-b border-[var(--color-divider)] mb-3">
+          <div>
+            <h3 className="m-0 text-[15px] font-bold text-[#101318]">
+              100 Sales Limit & Free Quota Consumption
+            </h3>
+            <p className="text-xs text-gray-500 m-0 mt-0.5">
+              Shops on Free Tier are restricted to 100 sales. Once reached, they must subscribe to CounterPro Pro for unlimited billing.
+            </p>
+          </div>
+          <span className="tag bg-[#FFF7ED] text-[#C2410C] border border-[#FED7AA] font-bold text-xs">
+            100 SALES CAP APPLIES
+          </span>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {shops.map((s) => {
+            const FREE_LIMIT = 100;
+            const shopBills = bills.filter((b) => b.shop_id === s.id && b.status === 'completed');
+            const sub = subscriptions.find((sub) => sub.shop_id === s.id);
+            const isPro = sub?.plan?.toLowerCase() === 'pro';
+            const count = shopBills.length;
+            const remaining = Math.max(0, FREE_LIMIT - count);
+            const percent = Math.min(100, Math.round((count / FREE_LIMIT) * 100));
+
+            return (
+              <div key={s.id} className="p-3 rounded-lg border border-gray-200 bg-[#FAFAFB] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-bold text-xs text-gray-900 truncate max-w-[130px]">{s.name}</span>
+                    <span className={`tag text-[9.5px] font-bold ${isPro ? 'bg-emerald-50 text-emerald-700' : 'bg-orange-50 text-orange-700'}`}>
+                      {isPro ? 'PRO' : 'FREE'}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-gray-500 mb-2">
+                    {s.city} &bull; +91 {s.phone}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="font-semibold text-gray-800">{count} / {FREE_LIMIT} sales</span>
+                    <span className="text-[#FD5E03] font-mono font-bold text-[11px]">{remaining} left</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        percent > 80 ? 'bg-red-500' : 'bg-[#FD5E03]'
+                      }`}
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
