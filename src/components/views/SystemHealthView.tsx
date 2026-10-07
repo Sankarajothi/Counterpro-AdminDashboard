@@ -127,7 +127,9 @@ export function SystemHealthView({ data, onShowToast }: SystemHealthViewProps) {
             <Database className="w-4 h-4 text-[#FD5E03]" />
             <span>Database Tables & Multi-Tenant RLS Status</span>
           </h4>
-          <span className="text-xs text-gray-400 font-mono">Project Ref: zycggjadexwzhluofbfs</span>
+          <span className="text-xs text-gray-400 font-mono">
+            Project Ref: {(process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://tziqjkklqtmjlncoraba.supabase.co').replace(/^https?:\/\//, '').split('.')[0]}
+          </span>
         </div>
 
         <div className="overflow-x-auto">
