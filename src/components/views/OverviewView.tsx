@@ -449,9 +449,6 @@ export function OverviewView({
           Shops w/ Customers <strong className="ml-1">{shopsWithCustomersCount.toLocaleString()}</strong>
         </button>
 
-        <div className="px-3 py-1.5 rounded-full text-[12px] font-medium bg-gray-50 border border-gray-200 text-gray-700">
-          Total Shoppers Captured <strong className="font-bold text-black ml-1">{totalCustomersAdded.toLocaleString()}</strong>
-        </div>
 
         <button
           onClick={() => handlePillClick('near_limit')}

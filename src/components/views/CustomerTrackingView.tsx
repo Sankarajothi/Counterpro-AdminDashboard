@@ -199,7 +199,7 @@ export function CustomerTrackingView({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs hover:border-[#FD5E03]/50 transition-all">
           <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
-            <span>Total Captured Shoppers</span>
+            <span>Total Shoppers</span>
             <div className="p-2 rounded-xl bg-[#FFF7ED] text-[#FD5E03]">
               <Users className="w-4 h-4" />
             </div>
@@ -322,7 +322,7 @@ export function CustomerTrackingView({
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         <div className="p-4 bg-[#FAFAFB] border-b border-gray-200 flex items-center justify-between text-xs text-gray-500">
           <div>
-            Showing <strong className="text-gray-900">{filteredCustomers.length}</strong> of {allCustomers.length} captured profiles
+            Showing <strong className="text-gray-900">{filteredCustomers.length}</strong> of {allCustomers.length} customer profiles
           </div>
           <div className="font-mono text-gray-400">
             WhatsApp messaging & loyalty spend
