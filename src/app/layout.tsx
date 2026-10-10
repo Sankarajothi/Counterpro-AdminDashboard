@@ -5,7 +5,12 @@ export const metadata: Metadata = {
   title: 'Counter365 — Admin Console',
   description: 'Production Admin Console for Counter365 Billing & Retail System',
   icons: {
-    icon: '/assets/counterpro-logo.png',
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/icon.png',
   },
 };
 
