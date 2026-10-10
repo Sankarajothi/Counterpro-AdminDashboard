@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAdminCredentials } from '../../../../lib/adminAuthStore';
 
 export async function GET(req: NextRequest) {
   const session365 = req.cookies.get('counter365_admin_session');
@@ -6,12 +7,13 @@ export async function GET(req: NextRequest) {
   const session = session365 || sessionPro;
 
   if (session && session.value === 'authenticated_admin_session_valid') {
+    const creds = getAdminCredentials();
     return NextResponse.json({
       authenticated: true,
       user: {
-        email: process.env.ADMIN_USERNAME || 'counter365@tecstellar.com',
+        email: creds.email,
         role: 'Super Admin',
-        name: 'Counter365 Admin',
+        name: creds.name || 'Counter365 Admin',
       },
     });
   }

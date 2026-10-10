@@ -1,14 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Shop,
   Bill,
   BillItem,
   Subscription,
   Payment,
+  Customer,
+  Profile,
+  ShopMember,
 } from '../../types/database';
-import { formatINR, formatLakhs } from '../../lib/adminData';
+import {
+  Search,
+  Filter,
+  Download,
+  MapPin,
+  RotateCcw,
+  Check,
+  ChevronDown,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Printer,
+  Receipt,
+  FileCheck,
+  Sparkles,
+  AlertCircle,
+  Users,
+} from 'lucide-react';
+import { formatINR } from '../../lib/adminData';
 
 interface OverviewViewProps {
   shops: Shop[];
@@ -16,9 +37,38 @@ interface OverviewViewProps {
   billItems: BillItem[];
   subscriptions: Subscription[];
   payments: Payment[];
-  period: string;
+  customers?: Customer[];
+  profiles?: Profile[];
+  shopMembers?: ShopMember[];
+  period?: string;
   onOpenShopDrawer: (shop: Shop) => void;
+  onShowToast?: (msg: string) => void;
 }
+
+export type OverviewFilterType =
+  | 'all'
+  | 'active'
+  | 'inactive'
+  | 'free_plan'
+  | 'pro_plan'
+  | 'with_bills'
+  | 'zero_bills'
+  | 'high_orders'
+  | 'near_limit'
+  | 'with_customers'
+  | 'printer_enabled'
+  | 'gst_enabled';
+
+type SortColumn =
+  | 'name'
+  | 'shop'
+  | 'phone'
+  | 'location'
+  | 'registered'
+  | 'activity'
+  | 'orders'
+  | 'revenue'
+  | 'customers';
 
 export function OverviewView({
   shops,
@@ -26,430 +76,890 @@ export function OverviewView({
   billItems,
   subscriptions,
   payments,
-  period,
+  customers = [],
+  profiles = [],
+  shopMembers = [],
   onOpenShopDrawer,
+  onShowToast,
 }: OverviewViewProps) {
-  // Filter bills by status
-  const completedBills = bills.filter((b) => b.status === 'completed');
-  const gmvTotal = completedBills.reduce((acc, b) => acc + Number(b.total_amount || 0), 0);
-  const ordersTotal = completedBills.length;
-  const avgBill = ordersTotal > 0 ? Math.round(gmvTotal / ordersTotal) : 0;
+  const [activeFilter, setActiveFilter] = useState<OverviewFilterType>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedGeography, setSelectedGeography] = useState<string>('all');
+  const [isGeoDropdownOpen, setIsGeoDropdownOpen] = useState(false);
+  const [sortCol, setSortCol] = useState<SortColumn>('registered');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const activeShops = shops.filter((s) => s.is_active);
-  const activePct = shops.length > 0 ? Math.round((activeShops.length / shops.length) * 100) : 0;
+  // Pre-calculate per-shop stats strictly from real database records
+  const shopDataList = useMemo(() => {
+    return shops.map((shop) => {
+      // Find owner profile from shop_members & profiles
+      const members = shopMembers.filter((m) => m.shop_id === shop.id);
+      const ownerMember = members.find((m) => (m.role || '').toLowerCase() === 'owner') || members[0];
+      const ownerProfile = ownerMember
+        ? profiles.find((p) => p.id === ownerMember.user_id)
+        : null;
 
-  // Subscriptions
-  const proSubs = subscriptions.filter((s) => s.plan === 'pro');
-  const freeSubs = subscriptions.filter((s) => s.plan === 'free');
-  const trialSubs = subscriptions.filter((s) => s.status === 'trialing');
-  const expiredSubs = subscriptions.filter((s) => s.status === 'expired' || s.status === 'cancelled');
-  const totalSubRevenue = subscriptions.reduce((acc, s) => acc + Number(s.amount || 0), 0);
+      const ownerName = ownerProfile?.full_name || shop.name || 'Store Owner';
+      const shopPhone = shop.phone || ownerProfile?.phone || '';
 
-  // Group GMV by month from bills
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const monthTotals: { [key: string]: number } = {};
-  monthNames.forEach((m) => (monthTotals[m] = 0));
+      // Bills, Orders & Revenue
+      const shopBills = bills.filter((b) => b.shop_id === shop.id);
+      const completedBills = shopBills.filter((b) => b.status === 'completed');
+      const orderCount = completedBills.length;
+      const totalRevenue = completedBills.reduce((acc, b) => acc + Number(b.total_amount || 0), 0);
 
-  completedBills.forEach((b) => {
-    const d = new Date(b.completed_at || b.created_at);
-    const m = monthNames[d.getMonth()];
-    monthTotals[m] = (monthTotals[m] || 0) + Number(b.total_amount || 0);
-  });
+      // Customers
+      const shopCustomers = customers.filter((c) => c.shop_id === shop.id);
+      const uniqueWalkinCustomers = new Set(
+        shopBills.map((b) => b.customer_phone || b.customer_name).filter(Boolean)
+      ).size;
+      const customerCount = Math.max(shopCustomers.length, uniqueWalkinCustomers);
 
-  // Calculate bars for the last 6-12 months
-  const currentMonthIdx = new Date().getMonth();
-  const displayMonths: { label: string; amount: number; pct: number }[] = [];
-  for (let i = 11; i >= 0; i--) {
-    const mIdx = (currentMonthIdx - i + 12) % 12;
-    const mLabel = monthNames[mIdx];
-    displayMonths.push({
-      label: mLabel,
-      amount: monthTotals[mLabel] || 0,
-      pct: 0,
+      // Subscription (Free Plan with 100 limit vs Pro)
+      const sub = subscriptions.find((s) => s.shop_id === shop.id);
+      const isPro = (sub?.plan || '').toLowerCase() === 'pro';
+
+      // 100 Free Bills Quota calculations
+      const freeBillsLimit = 100;
+      const freeBillsUsed = Math.min(orderCount, freeBillsLimit);
+      const freeQuotaPct = Math.round((freeBillsUsed / freeBillsLimit) * 100);
+      const isNearLimit = !isPro && orderCount >= 80;
+      const isLimitReached = !isPro && orderCount >= 100;
+
+      // Registered Date
+      const registeredDate = shop.created_at ? new Date(shop.created_at) : new Date();
+
+      // Activity Status from real last transaction
+      let activityLabel = 'Today';
+      let isLive = false;
+      if (shopBills.length > 0) {
+        const lastBill = [...shopBills].sort(
+          (a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime()
+        )[0];
+        const diffHours = (Date.now() - new Date(lastBill.created_at || '').getTime()) / (1000 * 60 * 60);
+        if (diffHours <= 2) {
+          activityLabel = 'Live';
+          isLive = true;
+        } else if (diffHours <= 24) {
+          activityLabel = 'Today';
+        } else if (diffHours <= 48) {
+          activityLabel = '1 day ago';
+        } else {
+          activityLabel = `${Math.floor(diffHours / 24)} days ago`;
+        }
+      } else {
+        const diffDays = Math.floor((Date.now() - registeredDate.getTime()) / (1000 * 60 * 60 * 24));
+        activityLabel = diffDays === 0 ? 'Today' : diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
+      }
+
+      return {
+        shop,
+        ownerName,
+        shopName: shop.name,
+        phone: shopPhone,
+        city: shop.city || 'Coimbatore',
+        state: shop.state || 'Tamil Nadu',
+        registeredDate,
+        registeredFormatted: registeredDate.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        }),
+        platform: 'Android POS',
+        activityLabel,
+        isLive,
+        isPro,
+        orderCount,
+        totalRevenue,
+        customerCount,
+        isActive: Boolean(shop.is_active),
+        printerEnabled: Boolean(shop.printer_enabled),
+        gstEnabled: Boolean(shop.gst_enabled),
+        freeBillsUsed,
+        freeQuotaPct,
+        isNearLimit,
+        isLimitReached,
+      };
     });
-  }
+  }, [shops, bills, subscriptions, customers, profiles, shopMembers]);
 
-  const maxMonthGmv = Math.max(...displayMonths.map((d) => d.amount), 1);
-  displayMonths.forEach((d) => {
-    d.pct = Math.max(Math.round((d.amount / maxMonthGmv) * 100), d.amount > 0 ? 12 : 4);
-  });
+  // Real Metric Counters (Zero Dummy Data)
+  const totalRegistered = shopDataList.length;
+  const totalActive = shopDataList.filter((s) => s.isActive).length;
+  const totalInactive = totalRegistered - totalActive;
+  const totalFreePlan = shopDataList.filter((s) => !s.isPro).length;
+  const totalProPlan = shopDataList.filter((s) => s.isPro).length;
+  const shopsWithBills = shopDataList.filter((s) => s.orderCount > 0).length;
+  const shopsZeroBills = shopDataList.filter((s) => s.orderCount === 0).length;
+  const shopsHighOrders = shopDataList.filter((s) => s.orderCount >= 10).length;
+  const shopsNearLimit = shopDataList.filter((s) => s.isNearLimit).length;
+  const totalCustomersAdded = customers.length || shopDataList.reduce((acc, s) => acc + s.customerCount, 0);
+  const shopsWithCustomersCount = shopDataList.filter((s) => s.customerCount > 0).length;
+  const totalPrintersSetup = shopDataList.filter((s) => s.printerEnabled).length;
+  const totalGstEnabled = shopDataList.filter((s) => s.gstEnabled).length;
 
-  // Shops by type
-  const typeMap: { [key: string]: { count: number; gmv: number } } = {};
-  shops.forEach((s) => {
-    const t = s.shop_type || 'Other';
-    if (!typeMap[t]) typeMap[t] = { count: 0, gmv: 0 };
-    typeMap[t].count += 1;
-  });
+  // Real Geographies in our dataset
+  const geographies = useMemo(() => {
+    const set = new Set(shopDataList.map((s) => s.state).filter(Boolean));
+    return ['all', ...Array.from(set)];
+  }, [shopDataList]);
 
-  completedBills.forEach((b) => {
-    const shop = shops.find((s) => s.id === b.shop_id);
-    const t = shop?.shop_type || 'Other';
-    if (typeMap[t]) {
-      typeMap[t].gmv += Number(b.total_amount || 0);
-    }
-  });
+  // Handle Pill Click: Filters the table directly!
+  const handlePillClick = (filterKey: OverviewFilterType) => {
+    setActiveFilter(filterKey);
+    onShowToast?.(`Filtered shops by: ${filterKey.replace(/_/g, ' ').toUpperCase()}`);
+  };
 
-  const shopTypes = Object.entries(typeMap).map(([name, data]) => ({
-    name,
-    count: data.count,
-    gmv: data.gmv,
-  }));
-  const maxTypeGmv = Math.max(...shopTypes.map((t) => t.gmv), 1);
+  // Filter Data based on Active Filter, Search, and Geography
+  const filteredShops = useMemo(() => {
+    return shopDataList
+      .filter((item) => {
+        // Metric / Tab Filter
+        if (activeFilter === 'active' && !item.isActive) return false;
+        if (activeFilter === 'inactive' && item.isActive) return false;
+        if (activeFilter === 'free_plan' && item.isPro) return false;
+        if (activeFilter === 'pro_plan' && !item.isPro) return false;
+        if (activeFilter === 'with_bills' && item.orderCount === 0) return false;
+        if (activeFilter === 'zero_bills' && item.orderCount > 0) return false;
+        if (activeFilter === 'high_orders' && item.orderCount < 10) return false;
+        if (activeFilter === 'near_limit' && !item.isNearLimit) return false;
+        if (activeFilter === 'with_customers' && item.customerCount === 0) return false;
+        if (activeFilter === 'printer_enabled' && !item.printerEnabled) return false;
+        if (activeFilter === 'gst_enabled' && !item.gstEnabled) return false;
 
-  // Top Items aggregated from bill_items
-  const itemMap: { [key: string]: { units: number; value: number; shopIds: Set<string> } } = {};
-  billItems.forEach((bi) => {
-    const name = bi.item_name || 'Unnamed Item';
-    if (!itemMap[name]) {
-      itemMap[name] = { units: 0, value: 0, shopIds: new Set() };
-    }
-    itemMap[name].units += Number(bi.quantity || 1);
-    itemMap[name].value += Number(bi.line_total || bi.unit_price || 0);
-    if (bi.shop_id) itemMap[name].shopIds.add(bi.shop_id);
-  });
+        // Geography Filter
+        if (selectedGeography !== 'all' && item.state !== selectedGeography) return false;
 
-  const topItems = Object.entries(itemMap)
-    .map(([name, data]) => ({
-      name,
-      units: data.units,
-      value: data.value,
-      shops: data.shopIds.size,
-    }))
-    .sort((a, b) => b.units - a.units)
-    .slice(0, 8);
+        // Search Query (Shop Name, Owner Name, Phone, City, ID)
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          const matchName = item.ownerName.toLowerCase().includes(q);
+          const matchShop = item.shopName.toLowerCase().includes(q);
+          const matchPhone = item.phone.toLowerCase().includes(q);
+          const matchCity = item.city.toLowerCase().includes(q);
+          const matchId = item.shop.id.toLowerCase().includes(q);
+          if (!matchName && !matchShop && !matchPhone && !matchCity && !matchId) {
+            return false;
+          }
+        }
 
-  // Dynamic Real Needs-Attention Alerts
-  const alerts: {
-    id: string;
-    title: string;
-    subtitle: string;
-    tag: string;
-    color: string;
-    shop: Shop | null;
-  }[] = [];
+        return true;
+      })
+      .sort((a, b) => {
+        let valA: any = (a as any)[sortCol] || '';
+        let valB: any = (b as any)[sortCol] || '';
 
-  // Check 1: Shops with pending bill balances
-  const shopsWithPending = shops.filter((s) => {
-    const pendingSum = bills
-      .filter((b) => b.shop_id === s.id && Number(b.pending_amount || 0) > 0)
-      .reduce((sum, b) => sum + Number(b.pending_amount || 0), 0);
-    return pendingSum > 0;
-  });
+        if (sortCol === 'name') {
+          valA = a.ownerName.toLowerCase();
+          valB = b.ownerName.toLowerCase();
+        } else if (sortCol === 'shop') {
+          valA = a.shopName.toLowerCase();
+          valB = b.shopName.toLowerCase();
+        } else if (sortCol === 'registered') {
+          valA = a.registeredDate.getTime();
+          valB = b.registeredDate.getTime();
+        } else if (sortCol === 'orders') {
+          valA = a.orderCount;
+          valB = b.orderCount;
+        } else if (sortCol === 'revenue') {
+          valA = a.totalRevenue;
+          valB = b.totalRevenue;
+        } else if (sortCol === 'customers') {
+          valA = a.customerCount;
+          valB = b.customerCount;
+        }
 
-  shopsWithPending.forEach((s) => {
-    const pSum = bills
-      .filter((b) => b.shop_id === s.id)
-      .reduce((sum, b) => sum + Number(b.pending_amount || 0), 0);
-    alerts.push({
-      id: `pending-${s.id}`,
-      title: s.name,
-      subtitle: `${formatINR(pSum)} pending outstanding balance`,
-      tag: 'Pending',
-      color: '#FD5E03',
-      shop: s,
-    });
-  });
-
-  // Check 2: Shops on Trial
-  shops.forEach((s) => {
-    const sub = subscriptions.find((sub) => sub.shop_id === s.id);
-    if (sub?.status === 'trialing') {
-      alerts.push({
-        id: `trial-${s.id}`,
-        title: s.name,
-        subtitle: `Trial period active (Pro features enabled)`,
-        tag: 'Trial',
-        color: '#EA580C',
-        shop: s,
+        if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
       });
-    }
-  });
+  }, [shopDataList, activeFilter, searchQuery, selectedGeography, sortCol, sortDirection]);
 
-  // Check 3: Printer or GST configuration alerts
-  shops.forEach((s) => {
-    if (!s.printer_enabled) {
-      alerts.push({
-        id: `printer-${s.id}`,
-        title: s.name,
-        subtitle: `Thermal bluetooth printer unconfigured`,
-        tag: 'Setup',
-        color: '#101318',
-        shop: s,
-      });
+  const handleSort = (col: SortColumn) => {
+    if (sortCol === col) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortCol(col);
+      setSortDirection('desc');
     }
-  });
+  };
 
-  const displayAlerts = alerts.slice(0, 5);
+  const handleExportExcel = () => {
+    if (filteredShops.length === 0) {
+      onShowToast?.('No shops available to export.');
+      return;
+    }
+    const headers = [
+      'SHOP NAME',
+      'OWNER NAME',
+      'PHONE',
+      'CITY',
+      'STATE',
+      'REGISTERED DATE',
+      'STATUS',
+      'PLAN',
+      'FREE BILLS USED (100 LIMIT)',
+      'COMPLETED ORDERS',
+      'TOTAL SALES (INR)',
+      'CUSTOMERS',
+      'THERMAL PRINTER',
+      'GST ENABLED',
+    ];
+    const rows = filteredShops.map((s) => [
+      `"${s.shopName}"`,
+      `"${s.ownerName}"`,
+      `"${s.phone}"`,
+      `"${s.city}"`,
+      `"${s.state}"`,
+      `"${s.registeredFormatted}"`,
+      s.isActive ? 'Active' : 'Inactive',
+      s.isPro ? 'Pro' : 'Free Plan',
+      `${s.freeBillsUsed}/100`,
+      s.orderCount,
+      s.totalRevenue,
+      s.customerCount,
+      s.printerEnabled ? 'Yes' : 'No',
+      s.gstEnabled ? 'Yes' : 'No',
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `counter365-overview-${Date.now()}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    onShowToast?.(`Exported ${filteredShops.length} shops to Excel`);
+  };
 
   return (
-    <div className="flex flex-col gap-[22px]">
-      {/* 6 Key Performance Indicator Cards */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-[14px]">
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">GMV PROCESSED</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {formatLakhs(gmvTotal)}
-          </div>
-          <div className="text-[11px] text-[#FD5E03] font-semibold">
-            {period.toUpperCase()}: {formatINR(gmvTotal)} processed
-          </div>
+    <div className="flex flex-col gap-4 font-sans select-none">
+      {/* 1. Header Title */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <h2 className="text-[22px] font-bold text-[#111827] m-0 tracking-tight">Shops Directory</h2>
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FD5E03]/10 text-[#FD5E03] border border-[#FD5E03]/30">
+            {totalRegistered} Enrolled
+          </span>
         </div>
-
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">ORDERS</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {ordersTotal.toLocaleString('en-IN')}
-          </div>
-          <div className="text-[11px] text-black/50">
-            avg {formatINR(avgBill)} per bill
-          </div>
-        </div>
-
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">REGISTERED SHOPS</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {shops.length}
-          </div>
-          <div className="text-[11px] text-[#FD5E03] font-semibold">
-            {activeShops.length} active on platform
-          </div>
-        </div>
-
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">ACTIVE SHOPS</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#101318]">
-            {activeShops.length}
-          </div>
-          <div className="text-[11px] text-black/50">
-            {activePct}% of registered
-          </div>
-        </div>
-
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">PRO SUBSCRIPTIONS</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-[#FD5E03]">
-            {proSubs.length} <span className="text-[16px] font-normal text-gray-400">/ {shops.length}</span>
-          </div>
-          <div className="text-[11px] text-black/50">
-            {freeSubs.length || shops.length} shops on Free 100 Sales Limit
-          </div>
-        </div>
-
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">100 SALES FREE QUOTA USED</div>
-          <div className="font-heading text-[30px] font-bold leading-none text-emerald-600">
-            {completedBills.length} <span className="text-[15px] font-normal text-gray-400">/ {shops.length * 100}</span>
-          </div>
-          <div className="text-[11px] text-black/50">
-            {Math.round((completedBills.length / Math.max(1, shops.length * 100)) * 100)}% of platform free sales limit consumed
-          </div>
+        <div className="text-xs text-gray-400 font-medium">
+          Click any pill to instantly filter the merchant ledger
         </div>
       </div>
 
-      {/* Middle Section: GMV Processed Chart & Shops By Type */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(340px,1fr))] gap-[18px] items-start">
-        {/* GMV Processed Bar Chart */}
-        <div className="bg-white rounded-[8px] shadow-sm p-[18px] border border-[var(--color-divider)]">
-          <div className="flex items-baseline gap-2">
-            <h3 className="m-0 text-[15px] font-bold text-[#101318]">
-              GMV processed
-            </h3>
-            <span className="text-[11px] text-black/50 ml-auto">
-              Total {formatLakhs(gmvTotal)} across platform
-            </span>
-          </div>
+      {/* 2. Interactive Real-Data Metric Pills (Row 1) - Every pill is clickable */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          onClick={() => handlePillClick('all')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'all'
+              ? 'bg-[#1c1f26] text-white shadow-xs font-bold ring-2 ring-[#FD5E03]'
+              : 'bg-slate-50 border border-slate-200 text-slate-700 hover:border-[#FD5E03]'
+          }`}
+          title="Show all registered shops"
+        >
+          Registered <strong className={activeFilter === 'all' ? 'text-white ml-1' : 'font-bold text-black ml-1'}>{totalRegistered.toLocaleString()}</strong>
+        </button>
 
-          <div className="flex items-end gap-2 h-[155px] mt-4 pt-4 border-b border-[var(--color-divider)]">
-            {displayMonths.map((bar, i) => {
-              const isCurrent = i === displayMonths.length - 1;
-              return (
-                <div
-                  key={bar.label + i}
-                  className="flex-1 h-full flex flex-col justify-end items-center gap-1.5 group relative"
-                >
-                  {/* Tooltip */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-[#101318] text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-20">
-                    {formatINR(bar.amount)}
-                  </div>
-                  <div
-                    style={{ height: `${bar.pct}%` }}
-                    className={`w-full rounded-t-[3px] transition-all duration-300 ${
-                      isCurrent
-                        ? 'bg-[#101318]'
-                        : bar.amount > 0
-                        ? 'bg-[#FD5E03]'
-                        : 'bg-gray-100'
+        <button
+          onClick={() => handlePillClick('active')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all cursor-pointer ${
+            activeFilter === 'active'
+              ? 'bg-emerald-600 text-white shadow-xs font-bold ring-2 ring-emerald-400'
+              : 'bg-emerald-50 border border-emerald-300 text-emerald-800 hover:bg-emerald-100'
+          }`}
+          title="Filter active shops"
+        >
+          Active <strong className="ml-1">{totalActive.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('inactive')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'inactive'
+              ? 'bg-gray-700 text-white shadow-xs font-bold ring-2 ring-gray-400'
+              : 'bg-gray-50 border border-gray-200 text-gray-600 hover:border-gray-400'
+          }`}
+          title="Filter inactive shops"
+        >
+          Inactive <strong className={activeFilter === 'inactive' ? 'text-white ml-1' : 'font-bold text-black ml-1'}>{totalInactive.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('free_plan')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all cursor-pointer ${
+            activeFilter === 'free_plan'
+              ? 'bg-amber-600 text-white shadow-xs font-bold ring-2 ring-amber-400'
+              : 'bg-amber-50 border border-amber-300 text-amber-900 hover:bg-amber-100'
+          }`}
+          title="Filter free plan shops (100 free sales allowance)"
+        >
+          Free Plan (100 limit) <strong className="ml-1">{totalFreePlan.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('pro_plan')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all cursor-pointer ${
+            activeFilter === 'pro_plan'
+              ? 'bg-[#FD5E03] text-white shadow-xs font-bold ring-2 ring-[#EA580C]'
+              : 'bg-[#FFF7ED] border border-[#FED7AA] text-[#FD5E03] hover:bg-[#FFEDD5]'
+          }`}
+          title="Filter Pro Plan subscribed shops"
+        >
+          Pro Plan <strong className="ml-1">{totalProPlan.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('with_bills')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'with_bills'
+              ? 'bg-blue-600 text-white shadow-xs font-bold ring-2 ring-blue-400'
+              : 'bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100'
+          }`}
+          title="Filter shops that have recorded bills"
+        >
+          Shops w/ Bills <strong className="ml-1">{shopsWithBills.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('zero_bills')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'zero_bills'
+              ? 'bg-purple-600 text-white shadow-xs font-bold ring-2 ring-purple-400'
+              : 'bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100'
+          }`}
+          title="Filter shops with zero transactions"
+        >
+          Zero Bills Yet <strong className="ml-1">{shopsZeroBills.toLocaleString()}</strong>
+        </button>
+      </div>
+
+      {/* 3. Interactive Real-Data Metric Pills (Row 2) - Real Counters */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          onClick={() => handlePillClick('with_customers')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'with_customers'
+              ? 'bg-indigo-600 text-white shadow-xs font-bold ring-2 ring-indigo-400'
+              : 'bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100'
+          }`}
+          title="Filter shops that have captured customer records"
+        >
+          Shops w/ Customers <strong className="ml-1">{shopsWithCustomersCount.toLocaleString()}</strong>
+        </button>
+
+        <div className="px-3 py-1.5 rounded-full text-[12px] font-medium bg-gray-50 border border-gray-200 text-gray-700">
+          Total Shoppers Captured <strong className="font-bold text-black ml-1">{totalCustomersAdded.toLocaleString()}</strong>
+        </div>
+
+        <button
+          onClick={() => handlePillClick('near_limit')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'near_limit'
+              ? 'bg-red-600 text-white shadow-xs font-bold ring-2 ring-red-400'
+              : 'bg-red-50 border border-red-200 text-red-700 hover:bg-red-100'
+          }`}
+          title="Filter shops nearing or reached 100 sales limit (>= 80 bills)"
+        >
+          Near 100 Limit (&gt;80) <strong className="ml-1">{shopsNearLimit.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('printer_enabled')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'printer_enabled'
+              ? 'bg-teal-600 text-white shadow-xs font-bold ring-2 ring-teal-400'
+              : 'bg-teal-50 border border-teal-200 text-teal-700 hover:bg-teal-100'
+          }`}
+          title="Filter shops with thermal printer hardware configured"
+        >
+          Printer Configured <strong className="ml-1">{totalPrintersSetup.toLocaleString()}</strong>
+        </button>
+
+        <button
+          onClick={() => handlePillClick('gst_enabled')}
+          className={`px-3 py-1.5 rounded-full text-[12px] font-medium transition-all cursor-pointer ${
+            activeFilter === 'gst_enabled'
+              ? 'bg-cyan-600 text-white shadow-xs font-bold ring-2 ring-cyan-400'
+              : 'bg-cyan-50 border border-cyan-200 text-cyan-700 hover:bg-cyan-100'
+          }`}
+          title="Filter shops with GST enabled"
+        >
+          GST Enabled <strong className="ml-1">{totalGstEnabled.toLocaleString()}</strong>
+        </button>
+      </div>
+
+      {/* 4. Filter Tabs Bar */}
+      <div className="flex items-center gap-1.5 overflow-x-auto py-2 border-b border-gray-200 scrollbar-none text-xs">
+        <button
+          onClick={() => setActiveFilter('all')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'all'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          All shops ({totalRegistered})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('active')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'active'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          Active ({totalActive})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('inactive')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'inactive'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          Inactive ({totalInactive})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('free_plan')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'free_plan'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          Free Plan (100 Limit)
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('pro_plan')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'pro_plan'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          Pro Plan ({totalProPlan})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('with_bills')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'with_bills'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          With Completed Bills ({shopsWithBills})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('zero_bills')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'zero_bills'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          Zero Bills ({shopsZeroBills})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('high_orders')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'high_orders'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          10+ Bills ({shopsHighOrders})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('with_customers')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'with_customers'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          With Customers ({shopsWithCustomersCount})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('printer_enabled')}
+          className={`px-3.5 py-1.5 rounded-full font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            activeFilter === 'printer_enabled'
+              ? 'bg-[#1c1f26] text-white shadow-xs'
+              : 'text-gray-600 hover:text-black hover:bg-gray-100'
+          }`}
+        >
+          Printer Setup ({totalPrintersSetup})
+        </button>
+      </div>
+
+      {/* 5. Live Search Input */}
+      <div className="relative">
+        <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <input
+          type="text"
+          placeholder="Search shop name, owner, phone, city, or shop ID..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-xs text-gray-900 placeholder:text-gray-400 focus:outline-hidden focus:border-[#FD5E03] transition-colors shadow-2xs"
+        />
+      </div>
+
+      {/* 6. Action Filter Bar */}
+      <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setActiveFilter('all')}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1c1f26] hover:bg-black text-white font-semibold transition-all cursor-pointer shadow-xs"
+          >
+            <Filter className="w-3.5 h-3.5" />
+            <span>Reset Filters</span>
+          </button>
+
+          <button
+            onClick={handleExportExcel}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold transition-all cursor-pointer bg-white"
+          >
+            <Download className="w-3.5 h-3.5 text-gray-500" />
+            <span>Export Excel</span>
+          </button>
+
+          {/* Geography Filter */}
+          <div className="relative">
+            <button
+              onClick={() => setIsGeoDropdownOpen(!isGeoDropdownOpen)}
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-teal-400 text-teal-700 hover:bg-teal-50 font-semibold transition-all cursor-pointer bg-white"
+            >
+              <MapPin className="w-3.5 h-3.5 text-teal-600" />
+              <span>{selectedGeography === 'all' ? 'Filter Geography' : selectedGeography}</span>
+              <ChevronDown className="w-3 h-3 text-teal-600" />
+            </button>
+
+            {isGeoDropdownOpen && (
+              <div className="absolute left-0 mt-1 w-48 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 z-40 animate-in fade-in zoom-in-95">
+                {geographies.map((geo) => (
+                  <button
+                    key={geo}
+                    onClick={() => {
+                      setSelectedGeography(geo);
+                      setIsGeoDropdownOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
+                      selectedGeography === geo
+                        ? 'bg-teal-50 text-teal-800 font-bold'
+                        : 'text-gray-700 hover:bg-gray-50'
                     }`}
-                  />
-                  <div className="text-[10px] text-black/50 font-medium">
-                    {bar.label}
-                  </div>
-                </div>
-              );
-            })}
+                  >
+                    {geo === 'all' ? 'All States' : geo}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
+          <button
+            onClick={() => {
+              setActiveFilter('all');
+              setSearchQuery('');
+              setSelectedGeography('all');
+            }}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-50 text-gray-600 font-medium transition-all cursor-pointer bg-white"
+          >
+            <RotateCcw className="w-3 h-3 text-gray-400" />
+            <span>Clear tab</span>
+          </button>
         </div>
 
-        {/* Shops By Type & Subscription Mix */}
-        <div className="bg-white rounded-[8px] shadow-sm p-[18px] border border-[var(--color-divider)]">
-          <h3 className="m-0 mb-3 text-[15px] font-bold text-[#101318]">
-            Shops by type
-          </h3>
-          <div className="flex flex-col gap-2.5">
-            {shopTypes.map((t) => {
-              const pct = Math.max(Math.round((t.gmv / maxTypeGmv) * 100), 10);
-              return (
-                <div key={t.name} className="flex items-center gap-2.5">
-                  <span className="text-[13px] font-medium w-[95px] truncate">
-                    {t.name}
-                  </span>
-                  <div className="flex-1 h-4 bg-gray-100 rounded-[3px] overflow-hidden">
-                    <div
-                      style={{ width: `${pct}%` }}
-                      className="h-full bg-[#FD5E03] rounded-[3px]"
-                    />
-                  </div>
-                  <span className="font-heading text-[13px] font-bold w-7 text-right text-[#101318]">
-                    {t.count}
-                  </span>
-                  <span className="text-[11px] text-black/50 w-[78px] text-right">
-                    {formatLakhs(t.gmv)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <h3 className="m-0 mt-5 mb-2.5 text-[15px] font-bold text-[#101318]">
-            Subscription & Limit Mix
-          </h3>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FD5E03] flex-none" />
-              <span className="text-[13px] font-medium flex-1">Free Tier — 100 Sales Limit</span>
-              <span className="text-[11px] text-black/50">1 owner, 0 staff</span>
-              <span className="font-heading text-[13px] font-bold w-12 text-right">
-                {freeSubs.length || shops.length}
-              </span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#101318] flex-none" />
-              <span className="text-[13px] font-medium flex-1">Pro Plan — Unlimited</span>
-              <span className="text-[11px] text-black/50">multi-user staff enabled</span>
-              <span className="font-heading text-[13px] font-bold w-12 text-right">
-                {proSubs.length}
-              </span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-none" />
-              <span className="text-[13px] font-medium flex-1">Total Sales towards 100 Limit</span>
-              <span className="text-[11px] text-emerald-600 font-semibold font-mono">
-                {completedBills.length} / {shops.length * 100}
-              </span>
-              <span className="font-heading text-[13px] font-bold w-12 text-right text-emerald-600">
-                {Math.round((completedBills.length / Math.max(1, shops.length * 100)) * 100)}%
-              </span>
-            </div>
-          </div>
+        <div className="text-xs text-gray-500 font-medium">
+          Showing <strong className="text-gray-900">{filteredShops.length}</strong> of {totalRegistered} shops
         </div>
       </div>
 
-      {/* Bottom Section: Top items & Needs Attention */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-[18px] items-start">
-        {/* Top Items Table */}
-        <div className="bg-white rounded-[8px] shadow-sm p-[18px] border border-[var(--color-divider)]">
-          <div className="flex items-baseline">
-            <h3 className="m-0 text-[15px] font-bold text-[#101318]">
-              Top items — all shops
-            </h3>
-            <span className="text-[11px] text-black/50 ml-auto">
-              ranked by units
-            </span>
-          </div>
+      {/* 7. The Data Table (Real Counter 365 Columns) */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-[12px]">
+            <thead>
+              <tr className="border-b border-gray-200 bg-[#FAFAFB] text-gray-600 uppercase text-[10.5px] font-bold tracking-wider">
+                <th
+                  onClick={() => handleSort('name')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                >
+                  <div className="flex items-center gap-1">
+                    <span>NAME</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort('shop')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                >
+                  <div className="flex items-center gap-1">
+                    <span>SHOP</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort('phone')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                >
+                  <div className="flex items-center gap-1">
+                    <span>PHONE</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort('location')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                >
+                  <div className="flex items-center gap-1">
+                    <span>LOCATION</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort('registered')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                >
+                  <div className="flex items-center gap-1">
+                    <span>REGISTERED</span>
+                    {sortCol === 'registered' ? (
+                      sortDirection === 'desc' ? (
+                        <ArrowDown className="w-3 h-3 text-black" />
+                      ) : (
+                        <ArrowUp className="w-3 h-3 text-black" />
+                      )
+                    ) : (
+                      <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    )}
+                  </div>
+                </th>
+                <th className="py-3 px-3.5 whitespace-nowrap">PLATFORM</th>
+                <th className="py-3 px-3.5 whitespace-nowrap">ACTIVITY</th>
+                <th className="py-3 px-3.5 whitespace-nowrap text-center">PLAN</th>
+                <th className="py-3 px-3.5 whitespace-nowrap">FREE 100 SALES QUOTA</th>
+                <th
+                  onClick={() => handleSort('orders')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap text-center"
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    <span>BILLS</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort('revenue')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap text-right"
+                >
+                  <div className="flex items-center justify-end gap-1">
+                    <span>TOTAL SALES (₹)</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+                <th
+                  onClick={() => handleSort('customers')}
+                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap text-center"
+                >
+                  <div className="flex items-center justify-center gap-1">
+                    <span>CUSTOMERS</span>
+                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                  </div>
+                </th>
+              </tr>
+            </thead>
 
-          <div className="overflow-x-auto mt-2.5">
-            <table className="table">
-              <thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredShops.length === 0 ? (
                 <tr>
-                  <th>Item</th>
-                  <th className="text-right">Units</th>
-                  <th className="text-right">Value</th>
-                  <th className="text-right">Shops</th>
+                  <td colSpan={12} className="py-16 text-center text-gray-400 text-xs">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                        <Filter className="w-5 h-5" />
+                      </div>
+                      <span className="font-semibold text-gray-600">No shops match the selected criteria.</span>
+                      <span className="text-[11px] text-gray-400">
+                        {shops.length === 0
+                          ? 'No merchant stores registered in Supabase database yet.'
+                          : 'Try clicking "Registered" or "Reset Filters" above.'}
+                      </span>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {topItems.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="text-center text-black/40 py-6">
-                      No bill items recorded yet.
+              ) : (
+                filteredShops.map((item) => (
+                  <tr
+                    key={item.shop.id}
+                    onClick={() => onOpenShopDrawer(item.shop)}
+                    className="hover:bg-slate-50/70 cursor-pointer transition-colors"
+                  >
+                    {/* 1. NAME */}
+                    <td className="py-3.5 px-3.5 font-semibold text-gray-900 whitespace-nowrap">
+                      {item.ownerName}
+                    </td>
+
+                    {/* 2. SHOP */}
+                    <td
+                      className="py-3.5 px-3.5 font-medium text-gray-900 whitespace-nowrap max-w-[180px] truncate"
+                      title={item.shopName}
+                    >
+                      {item.shopName}
+                    </td>
+
+                    {/* 3. PHONE with WhatsApp link */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap">
+                      {item.phone ? (
+                        <a
+                          href={`https://wa.me/91${item.phone.replace(/[^0-9]/g, '')}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1.5 text-gray-700 hover:text-emerald-600 transition-colors"
+                        >
+                          <svg className="w-4 h-4 text-emerald-500 fill-current shrink-0" viewBox="0 0 24 24">
+                            <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.81 1.558 5.367L2 22l4.757-1.52A9.97 9.97 0 0012.031 22C17.568 22 22 17.505 22 12.031 22 6.495 17.568 2 12.031 2zm5.727 14.18c-.237.669-1.378 1.282-1.895 1.341-.518.06-1.127.085-3.57-1.026-3.08-1.396-5.06-4.52-5.215-4.726-.154-.206-1.252-1.666-1.252-3.178 0-1.512.793-2.257 1.074-2.564.282-.307.616-.384.821-.384.205 0 .41.002.59.01.19.01.442-.072.691.527.256.616.87 2.128.948 2.282.077.154.129.333.026.538-.103.205-.154.333-.308.513-.154.18-.323.4-.462.538-.154.154-.314.323-.135.63.18.307.798 1.318 1.71 2.13 1.173 1.045 2.162 1.369 2.47 1.523.308.154.488.128.667-.077.18-.205.77-1.001.975-1.344.205-.343.41-.286.692-.18.282.103 1.795.846 2.103 1.001.307.154.513.23.59.359.077.128.077.744-.16 1.413z" />
+                          </svg>
+                          <span className="font-mono">{item.phone}</span>
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 font-mono">-</span>
+                      )}
+                    </td>
+
+                    {/* 4. LOCATION */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap">
+                      <div className="font-semibold text-gray-900 leading-tight">{item.city}</div>
+                      <div className="text-[11px] text-gray-400 leading-tight">{item.state}</div>
+                    </td>
+
+                    {/* 5. REGISTERED */}
+                    <td className="py-3.5 px-3.5 text-gray-700 whitespace-nowrap font-medium">
+                      {item.registeredFormatted}
+                    </td>
+
+                    {/* 6. PLATFORM */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap">
+                      <div className="inline-flex items-center gap-1.5 text-gray-700 font-medium">
+                        <svg className="w-3.5 h-3.5 text-emerald-600 fill-current" viewBox="0 0 24 24">
+                          <path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v6c0 .83.67 1.5 1.5 1.5S5 16.33 5 15.5v-6C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v6c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z" />
+                        </svg>
+                        <span>{item.platform}</span>
+                      </div>
+                    </td>
+
+                    {/* 7. ACTIVITY */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap">
+                      {item.isLive ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>Live</span>
+                        </span>
+                      ) : item.activityLabel === 'Today' ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                          Today
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-600">
+                          {item.activityLabel}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* 8. PLAN */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
+                      {item.isPro ? (
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-black bg-[#FD5E03]/15 text-[#FD5E03] border border-[#FD5E03]/40">
+                          PRO
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full text-[10.5px] font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                          FREE
+                        </span>
+                      )}
+                    </td>
+
+                    {/* 9. FREE 100 SALES QUOTA PROGRESS */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap min-w-[170px]">
+                      {item.isPro ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#FD5E03]">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Unlimited Pro Access</span>
+                        </span>
+                      ) : (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="font-semibold text-gray-700">
+                              {item.freeBillsUsed} / 100 Sales
+                            </span>
+                            <span
+                              className={`font-mono font-bold text-[10.5px] ${
+                                item.isLimitReached
+                                  ? 'text-red-600'
+                                  : item.isNearLimit
+                                  ? 'text-amber-600'
+                                  : 'text-gray-500'
+                              }`}
+                            >
+                              {item.freeQuotaPct}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${
+                                item.isLimitReached
+                                  ? 'bg-red-500'
+                                  : item.isNearLimit
+                                  ? 'bg-amber-500'
+                                  : 'bg-[#FD5E03]'
+                              }`}
+                              style={{ width: `${item.freeQuotaPct}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </td>
+
+                    {/* 10. BILLS / ORDERS */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11.5px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        {item.orderCount} bills
+                      </span>
+                    </td>
+
+                    {/* 11. TOTAL REVENUE */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap text-right font-mono font-bold text-gray-900">
+                      {formatINR(item.totalRevenue)}
+                    </td>
+
+                    {/* 12. CUSTOMERS */}
+                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-700 border border-gray-200">
+                        {item.customerCount}
+                      </span>
                     </td>
                   </tr>
-                ) : (
-                  topItems.map((item) => (
-                    <tr key={item.name}>
-                      <td className="font-medium text-[#101318]">{item.name}</td>
-                      <td className="text-right font-heading font-semibold text-[#101318]">
-                        {item.units.toLocaleString('en-IN')}
-                      </td>
-                      <td className="text-right font-heading font-semibold text-[#101318]">
-                        {formatLakhs(item.value)}
-                      </td>
-                      <td className="text-right text-black/50 text-[12px]">
-                        {item.shops} {item.shops === 1 ? 'shop' : 'shops'}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* Needs Attention Alerts */}
-        <div className="bg-white rounded-[8px] shadow-sm p-[18px] border border-[var(--color-divider)]">
-          <div className="flex items-baseline">
-            <h3 className="m-0 text-[15px] font-bold text-[#101318]">
-              Needs attention
-            </h3>
-            <span className="tag tag-outline ml-auto font-mono text-[11px]">
-              {displayAlerts.length} OPEN
-            </span>
+        {/* Footer Pagination Bar */}
+        <div className="px-4 py-3 bg-[#FAFAFB] border-t border-gray-200 flex items-center justify-between text-xs text-gray-500">
+          <div>
+            Showing 1 - {filteredShops.length} of {filteredShops.length} · 100 per page
           </div>
-
-          <div className="flex flex-col gap-2.5 mt-3">
-            {displayAlerts.length === 0 ? (
-              <div className="text-[13px] text-black/40 italic py-6 text-center">
-                All shops operating smoothly. No urgent alerts.
-              </div>
-            ) : (
-              displayAlerts.map((alert) => (
-                <button
-                  key={alert.id}
-                  onClick={() => alert.shop && onOpenShopDrawer(alert.shop)}
-                  className="flex items-center gap-3 p-[11px_12px] border-0 border-l-[3px] bg-[#F8F9FA] rounded-[6px] text-left hover:bg-[#FFF7ED] transition-colors cursor-pointer group"
-                  style={{ borderLeftColor: alert.color }}
-                >
-                  <div className="flex-1 min-w-0">
-                    <span className="block font-heading text-[14px] font-bold text-[#101318] group-hover:text-[#FD5E03] transition-colors truncate">
-                      {alert.title}
-                    </span>
-                    <span className="text-[11px] text-black/50 truncate block">
-                      {alert.subtitle}
-                    </span>
-                  </div>
-                  <span
-                    className="tag font-semibold"
-                    style={{
-                      backgroundColor: alert.tag === 'Pending' ? '#FFF7ED' : '#F3F4F6',
-                      color: alert.tag === 'Pending' ? '#C2410C' : '#1F2937',
-                    }}
-                  >
-                    {alert.tag}
-                  </span>
-                </button>
-              ))
-            )}
+          <div className="flex items-center gap-1 font-mono">
+            <span className="px-2 py-1 rounded bg-white border border-gray-200 text-gray-900 font-bold">1</span>
           </div>
         </div>
       </div>

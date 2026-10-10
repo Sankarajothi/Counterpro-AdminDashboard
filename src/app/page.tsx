@@ -53,6 +53,7 @@ import { OrdersView } from '../components/views/OrdersView';
 import { LogsView } from '../components/views/LogsView';
 import { DeletionsView } from '../components/views/DeletionsView';
 import { PrivacyView } from '../components/views/PrivacyView';
+import { BroadcastNotificationsView } from '../components/views/BroadcastNotificationsView';
 import { fetchAdminData, AdminDataState, formatINR } from '../lib/adminData';
 import { Shop } from '../types/database';
 
@@ -566,6 +567,18 @@ export default function AdminConsolePage() {
       'Support & WhatsApp Outreach',
       'Direct merchant communications, onboarding greetings & subscription notices',
     ],
+    broadcast: [
+      'Broadcast Announcements',
+      'Global system announcements dispatched live to POS billing counters',
+    ],
+    scheduled_notifications: [
+      'Scheduled Pushes',
+      'Automated timer notifications, quota alerts & upgrade reminders',
+    ],
+    push_notifications: [
+      'Push Notifications',
+      'Instant real-time alerts & high-priority push notices',
+    ],
     privacy: [
       'Privacy Policy Documentation',
       'Official legal disclosure & statutory compliance information',
@@ -642,6 +655,10 @@ export default function AdminConsolePage() {
           }}
           onExportFormat={handleExportCurrentView}
           isLoading={isLoading}
+          adminUser={adminUser}
+          onLogout={handleLogout}
+          onShowToast={showToast}
+          shopsList={data.shops.map((s) => ({ id: s.id, name: s.name }))}
         />
 
         {/* View Container */}
@@ -655,11 +672,15 @@ export default function AdminConsolePage() {
               subscriptions={data.subscriptions}
               profiles={data.profiles}
               shopMembers={data.shopMembers}
+              customers={data.customers}
+              adminUser={adminUser}
+              onUpdateAdminUser={(user) => setAdminUser(user)}
               onOpenShopDrawer={setSelectedShop}
               onNavigate={(v) => {
                 setCurrentView(v);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
+              onShowToast={showToast}
             />
           )}
 
@@ -671,6 +692,7 @@ export default function AdminConsolePage() {
               menuCategories={data.menuCategories}
               billItems={data.billItems}
               bills={filteredData.bills}
+              onShowToast={showToast}
             />
           )}
 
@@ -680,6 +702,7 @@ export default function AdminConsolePage() {
               shops={data.shops}
               profiles={data.profiles}
               shopMembers={data.shopMembers}
+              onShowToast={showToast}
             />
           )}
 
@@ -690,6 +713,7 @@ export default function AdminConsolePage() {
               shops={data.shops}
               payments={filteredData.payments}
               onOpenShopDrawer={setSelectedShop}
+              onShowToast={showToast}
             />
           )}
 
@@ -699,6 +723,7 @@ export default function AdminConsolePage() {
               bills={filteredData.bills}
               shops={data.shops}
               payments={filteredData.payments}
+              onShowToast={showToast}
             />
           )}
 
@@ -710,8 +735,12 @@ export default function AdminConsolePage() {
               billItems={filteredData.billItems}
               subscriptions={filteredData.subscriptions}
               payments={filteredData.payments}
+              customers={data.customers}
+              profiles={data.profiles}
+              shopMembers={data.shopMembers}
               period={period}
               onOpenShopDrawer={setSelectedShop}
+              onShowToast={showToast}
             />
           )}
 
@@ -723,6 +752,7 @@ export default function AdminConsolePage() {
               shops={data.shops}
               title="Customer Tracking"
               subtitle="Verified customer transaction lineage from Counter Pro POS"
+              onShowToast={showToast}
             />
           )}
 
@@ -731,6 +761,7 @@ export default function AdminConsolePage() {
             <IncompleteSignupsView
               shops={data.shops}
               onOpenShopDrawer={setSelectedShop}
+              onShowToast={showToast}
             />
           )}
 
@@ -792,6 +823,7 @@ export default function AdminConsolePage() {
               period={period}
               searchQuery={searchQuery}
               onOpenShopDrawer={setSelectedShop}
+              onShowToast={showToast}
             />
           )}
 
@@ -813,6 +845,7 @@ export default function AdminConsolePage() {
               profiles={data.profiles}
               shopMembers={data.shopMembers}
               shops={data.shops}
+              onShowToast={showToast}
             />
           )}
 
@@ -838,18 +871,7 @@ export default function AdminConsolePage() {
             />
           )}
 
-          {/* 18. CRM Added Users */}
-          {currentView === 'crm_added_users' && (
-            <CustomerTrackingView
-              customers={data.customers}
-              bills={filteredData.bills}
-              shops={data.shops}
-              title="CRM Added Users"
-              subtitle="Customers captured directly through POS checkout interactions"
-            />
-          )}
-
-          {/* 19. Engagement: Support */}
+          {/* Engagement: Support */}
           {(currentView === 'support_messages' || currentView === 'support') && (
             <SupportOutreachView
               shops={data.shops}

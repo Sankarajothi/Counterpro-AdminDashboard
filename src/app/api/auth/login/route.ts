@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAdminCredentials } from '../../../../lib/adminAuthStore';
 
 export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
 
+    const stored = getAdminCredentials();
+
     const validUsers = [
+      stored.email.toLowerCase(),
       (process.env.ADMIN_USERNAME || 'counter365@tecstellar.com').toLowerCase(),
       'counterpro@tecstellar.com',
       'counter365@tecstellar.com',
     ];
     const validPasswords = [
+      stored.passwordHash,
       process.env.ADMIN_PASSWORD || 'Counterproadmin@4321',
       'Counterproadmin@4321',
       'Counter365admin@4321',
@@ -23,7 +28,7 @@ export async function POST(req: NextRequest) {
         user: {
           email: cleanInputUser,
           role: 'Super Admin',
-          name: 'Counter365 Admin',
+          name: stored.name || 'Counter365 Admin',
         },
       });
 

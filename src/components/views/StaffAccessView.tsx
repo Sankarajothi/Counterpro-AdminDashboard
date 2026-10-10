@@ -3,7 +3,20 @@
 import React, { useState } from 'react';
 import { Shop, Profile, ShopMember, Bill, Subscription } from '../../types/database';
 import { formatDate } from '../../lib/adminData';
-import { Users, Shield, Phone, MessageSquare, Search, Lock, AlertCircle, CheckCircle2, Store, Sparkles, TrendingUp } from 'lucide-react';
+import {
+  Users,
+  Shield,
+  Phone,
+  MessageSquare,
+  Search,
+  Lock,
+  AlertCircle,
+  CheckCircle2,
+  Store,
+  Sparkles,
+  TrendingUp,
+  Download
+} from 'lucide-react';
 
 interface StaffAccessViewProps {
   shops: Shop[];
@@ -68,7 +81,7 @@ export function StaffAccessView({
       item.shop.name.toLowerCase().includes(q) ||
       item.ownerName.toLowerCase().includes(q) ||
       item.ownerPhone.includes(q) ||
-      item.shop.city.toLowerCase().includes(q);
+      (item.shop.city || '').toLowerCase().includes(q);
 
     const matchPlan =
       selectedPlanFilter === 'All' ||
@@ -102,84 +115,143 @@ export function StaffAccessView({
     }
   };
 
+  const handleExportCSV = () => {
+    if (!shopQuotaList.length) {
+      onShowToast('No staff records to export.');
+      return;
+    }
+    const headers = ['Shop Name', 'Owner Name', 'Owner Phone', 'Plan', 'Completed Sales', 'Quota Left', 'Multi-User Status'];
+    const rows = shopQuotaList.map((s) => [
+      `"${s.shop.name.replace(/"/g, '""')}"`,
+      `"${s.ownerName.replace(/"/g, '""')}"`,
+      `"${s.ownerPhone}"`,
+      s.isPro ? 'Pro' : 'Free (100 Cap)',
+      s.completedSales,
+      s.remainingSales,
+      s.canAddMembers ? 'Unlocked' : 'Locked to 1 Owner',
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const link = document.createElement('a');
+    link.href = encodeURI(csvContent);
+    link.download = `counterpro-staff-access-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    onShowToast('Exported Staff Access Registry CSV');
+  };
+
   return (
-    <div className="flex flex-col gap-[18px]">
-      {/* Real Policy Notification Banner */}
-      <div className="bg-[#FFF7ED] border border-[#FED7AA] rounded-[8px] p-4 flex items-start gap-3 shadow-xs">
+    <div className="flex flex-col gap-[20px]">
+      {/* Hero Banner */}
+      <div className="bg-white rounded-xl shadow-xs p-5 border border-gray-200/80 flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FD5E03] animate-pulse" />
+            <h2 className="text-[17px] font-bold text-[#101318] m-0">
+              Staff Access Governance & RBAC
+            </h2>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-50 text-[#FD5E03] border border-orange-200 font-semibold">
+              Owner Restrictions
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 m-0 mt-1">
+            Free tier stores operate under a 1-Owner policy with a 100 bill limit. Multi-staff roles require CounterPro Pro.
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportCSV}
+          className="btn btn-secondary text-xs min-h-[34px] px-3 gap-1.5 border-gray-300 hover:border-[#FD5E03]"
+        >
+          <Download className="w-3.5 h-3.5 text-gray-500" />
+          <span>Export CSV</span>
+        </button>
+      </div>
+
+      {/* Subscription Architecture Alert Card */}
+      <div className="bg-orange-50/70 border border-orange-200 rounded-xl p-4 flex items-start gap-3 shadow-xs">
         <Lock className="w-5 h-5 text-[#FD5E03] shrink-0 mt-0.5" />
         <div className="text-xs text-[#9A3412] leading-relaxed">
           <div className="font-bold text-[13px] text-[#C2410C] mb-0.5">
-            CounterPro Subscription Architecture: Multi-User Access & 100 Free Sales Limit
+            Role-Based Access Control: Multi-User Access Tied to CounterPro Pro
           </div>
           <div>
-            In CounterPro, multi-user staff members (Supervisors, Billers, and Cashiers) are only enabled for shops that subscribe to the <strong>CounterPro Pro Plan</strong>. Free tier shops have a strict cap of <strong>100 sales limit</strong> and are restricted to a single Owner login. Below is the real-time consumption of each shop towards their 100 sales limit.
+            Multi-user staff members (Supervisors, Billers, and Cashiers) are exclusively available on the <strong>CounterPro Pro Plan</strong>. Free tier shops have a strict cap of <strong>100 sales limit</strong> and are restricted to a single Owner account.
           </div>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]">
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">SHOP OWNERS (REGISTERED)</div>
-          <div className="font-heading text-[28px] font-bold leading-none text-[#101318]">
-            {shops.length}
+      {/* 4 KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">REGISTERED OWNERS</div>
+            <div className="mt-2 text-2xl font-bold font-heading text-[#101318]">
+              {shops.length}
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">1 registered owner per shop</div>
+          <div className="mt-2 text-[11px] text-gray-500">1 registered owner per store</div>
         </div>
 
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">PRO SUBSCRIBED SHOPS</div>
-          <div className="font-heading text-[28px] font-bold leading-none text-[#FD5E03]">
-            {proShopsCount}
+        <div className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">FREE PLAN ACCOUNTS</div>
+            <div className="mt-2 text-2xl font-bold font-heading text-[#FD5E03]">
+              {freeShopsCount}
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">{freeShopsCount} shops on 100 sales limit</div>
+          <div className="mt-2 text-[11px] text-amber-700 font-medium">100 sales limit applied</div>
         </div>
 
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">UNLOCKED ADDITIONAL STAFF</div>
-          <div className="font-heading text-[28px] font-bold leading-none text-gray-400">
-            0
+        <div className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">UNLOCKED PRO STAFF</div>
+            <div className="mt-2 text-2xl font-bold font-heading text-gray-400">
+              0
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">0 staff until shops subscribe to Pro</div>
+          <div className="mt-2 text-[11px] text-gray-400">Locked until shops upgrade to Pro</div>
         </div>
 
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">TOTAL SALES COMPLETED</div>
-          <div className="font-heading text-[28px] font-bold leading-none text-emerald-600">
-            {totalCompletedSales}
+        <div className="bg-white rounded-xl p-4 border border-gray-200/80 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">TOTAL BILLS RECORDED</div>
+            <div className="mt-2 text-2xl font-bold font-heading text-emerald-700">
+              {totalCompletedSales}
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">across all free tier quotas</div>
+          <div className="mt-2 text-[11px] text-emerald-600 font-medium">Across all free quotas</div>
         </div>
       </div>
 
       {/* Main Quota & Member Roster Table Card */}
-      <div className="bg-white rounded-[8px] shadow-sm p-[16px_16px_10px] border border-[var(--color-divider)]">
+      <div className="bg-white rounded-xl shadow-xs p-5 border border-gray-200/80">
         {/* Filter Bar */}
-        <div className="flex items-center gap-3 flex-wrap pb-3.5 border-b border-[var(--color-divider)]">
+        <div className="flex items-center gap-3 flex-wrap pb-4 border-b border-gray-100">
           <div className="relative min-w-[240px]">
             <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search shop, owner, phone..."
+              placeholder="Search store, owner, phone..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full text-xs pl-8 pr-3 py-1.5 rounded-md border border-[var(--color-divider)] bg-[#FAFAFB] focus:bg-white focus:border-[#FD5E03] outline-none"
+              className="w-full text-xs pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 bg-[#FAFAFB] focus:bg-white focus:border-[#FD5E03] outline-none shadow-xs"
             />
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-[11.5px] font-semibold text-gray-500">Plan:</span>
+            <span className="text-xs font-semibold text-gray-500">Plan:</span>
             {(['All', 'Free', 'Pro'] as const).map((plan) => (
               <button
                 key={plan}
                 onClick={() => setSelectedPlanFilter(plan)}
-                className={`text-xs px-2.5 py-1 rounded-md font-medium border transition-colors ${
+                className={`text-xs px-3 py-1 rounded-lg font-semibold border transition-all ${
                   selectedPlanFilter === plan
-                    ? 'bg-[#101318] text-white border-[#101318]'
-                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                    ? 'bg-[#FD5E03] text-white border-[#FD5E03] shadow-xs'
+                    : 'bg-white text-gray-700 border-gray-200 hover:bg-orange-50 hover:border-orange-200'
                 }`}
               >
-                {plan === 'All' ? 'All Plans' : plan === 'Free' ? 'Free (100 Sales Cap)' : 'Pro (Unlimited)'}
+                {plan === 'All' ? 'All Stores' : plan === 'Free' ? 'Free (100 Cap)' : 'Pro (Unlimited)'}
               </button>
             ))}
           </div>
@@ -190,51 +262,51 @@ export function StaffAccessView({
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="table">
+        <div className="overflow-x-auto mt-3">
+          <table className="table w-full">
             <thead>
-              <tr>
-                <th>Shop & City</th>
-                <th>Registered Owner</th>
-                <th>Subscription Tier</th>
-                <th className="min-w-[200px]">100 Sales Limit Progress</th>
-                <th>Additional Members</th>
-                <th className="text-right">Pro Upgrade Outreach</th>
+              <tr className="border-b border-gray-100 text-[11px] text-gray-400 uppercase tracking-wider">
+                <th className="py-3 text-left">Store & City</th>
+                <th className="py-3 text-left">Registered Owner</th>
+                <th className="py-3 text-left">Subscription Tier</th>
+                <th className="min-w-[180px] py-3 text-left">100 Sales Limit Progress</th>
+                <th className="py-3 text-left">Additional Staff</th>
+                <th className="text-right py-3">Pro Upgrade Outreach</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-50">
               {filteredShops.map((item) => (
-                <tr key={item.shop.id} className="hover:bg-[#FAFAFB]">
-                  <td>
-                    <div className="font-semibold text-[13px] text-gray-900">{item.shop.name}</div>
-                    <div className="text-[11px] text-gray-400">{item.shop.city || 'India'} &bull; {item.shop.shop_type}</div>
+                <tr key={item.shop.id} className="hover:bg-orange-50/30 transition-colors">
+                  <td className="py-3.5">
+                    <div className="font-bold text-xs text-gray-900">{item.shop.name}</div>
+                    <div className="text-[11px] text-gray-400">{item.shop.city || 'India'} &bull; {item.shop.shop_type || 'Retail'}</div>
                   </td>
-                  <td>
-                    <div className="font-medium text-[13px] text-gray-900">{item.ownerName}</div>
+                  <td className="py-3.5">
+                    <div className="font-medium text-xs text-gray-900">{item.ownerName}</div>
                     <div className="text-[11px] text-gray-400 font-mono">+91 {item.ownerPhone}</div>
                   </td>
-                  <td>
+                  <td className="py-3.5">
                     {item.isPro ? (
-                      <span className="tag bg-[#FD5E03] text-white font-bold text-[10.5px]">
+                      <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
                         PRO (UNLIMITED)
                       </span>
                     ) : (
-                      <span className="tag bg-[#FFF7ED] text-[#C2410C] border border-[#FED7AA] font-bold text-[10.5px]">
+                      <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase bg-orange-50 text-[#FD5E03] border border-orange-200">
                         FREE (100 LIMIT)
                       </span>
                     )}
                   </td>
-                  <td>
+                  <td className="py-3.5">
                     <div>
-                      <div className="flex items-center justify-between text-[11.5px] font-medium mb-1">
+                      <div className="flex items-center justify-between text-[11px] font-medium mb-1">
                         <span className="text-gray-900 font-bold">
-                          {item.completedSales} / {FREE_SALES_LIMIT} sales
+                          {item.completedSales} / {FREE_SALES_LIMIT} bills
                         </span>
-                        <span className="text-[#FD5E03] font-mono text-[11px]">
+                        <span className="text-[#FD5E03] font-mono text-[11px] font-semibold">
                           {item.remainingSales} remaining
                         </span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+                      <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${
                             item.quotaUsedPercent > 80
@@ -248,35 +320,40 @@ export function StaffAccessView({
                       </div>
                     </div>
                   </td>
-                  <td>
+                  <td className="py-3.5">
                     {item.canAddMembers ? (
-                      <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        {item.additionalStaffCount} Active Staff
+                      <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Unlocked ({item.additionalStaffCount})
                       </span>
                     ) : (
-                      <span className="text-xs text-gray-400 flex items-center gap-1" title="Locked until Pro subscription">
-                        <Lock className="w-3 h-3 text-gray-400" />
-                        0 (Locked to Pro)
+                      <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <Lock className="w-3 h-3 text-gray-400" /> Locked to Owner
                       </span>
                     )}
                   </td>
-                  <td className="text-right">
+                  <td className="py-3.5 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => handleWhatsApp(item.ownerPhone, item.ownerName, item.shop.name, item.completedSales)}
-                        title="Outreach regarding 100 sales limit & Pro"
-                        className="btn btn-secondary text-xs py-1 px-2.5 gap-1 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                        onClick={() =>
+                          handleWhatsApp(
+                            item.ownerPhone,
+                            item.ownerName,
+                            item.shop.name,
+                            item.completedSales
+                          )
+                        }
+                        className="px-2.5 py-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-md transition-colors flex items-center gap-1"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Upgrade WhatsApp</span>
+                        <MessageSquare className="w-3 h-3" />
+                        <span>WhatsApp</span>
                       </button>
+
                       <button
                         onClick={() => handleCall(item.ownerPhone)}
-                        title="Call Owner"
-                        className="p-1.5 rounded text-gray-500 hover:bg-gray-100"
+                        className="px-2.5 py-1 text-[11px] font-bold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md transition-colors flex items-center gap-1"
                       >
-                        <Phone className="w-3.5 h-3.5" />
+                        <Phone className="w-3 h-3" />
+                        <span>Call</span>
                       </button>
                     </div>
                   </td>

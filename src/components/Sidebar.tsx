@@ -24,11 +24,15 @@ import {
   BarChart3,
   UserPlus,
   MessageSquare,
+  Radio,
+  Clock,
+  Bell,
   ChevronRight,
   LogOut,
   FileText,
   PanelLeftClose,
   PanelLeftOpen,
+  Sparkles,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -91,6 +95,7 @@ export function Sidebar({
     if (view === 'daily_bills') return currentView === 'daily_bills' || currentView === 'orders';
     if (view === 'app_telemetry') return currentView === 'app_telemetry' || currentView === 'hardware';
     if (view === 'support_messages') return currentView === 'support_messages' || currentView === 'support';
+    if (view === 'account_deletions') return currentView === 'account_deletions' || currentView === 'deletions';
     return currentView === view;
   };
 
@@ -109,7 +114,8 @@ export function Sidebar({
     id: string,
     label: string,
     Icon: React.ComponentType<{ className?: string }>,
-    badge?: number | string
+    badge?: number | string,
+    hasDot?: boolean
   ) => {
     const active = isCurrent(id);
     return (
@@ -119,27 +125,32 @@ export function Sidebar({
         title={isCollapsed ? label : undefined}
         className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all group relative text-left cursor-pointer ${
           active
-            ? 'bg-white text-[#1c1f26] font-bold shadow-xs'
+            ? 'bg-[#FD5E03] text-white font-bold shadow-sm shadow-[#FD5E03]/30'
             : 'text-neutral-400 hover:text-white hover:bg-[#252932] font-medium'
         }`}
       >
         <Icon
           className={`w-4 h-4 shrink-0 transition-colors ${
-            active ? 'text-[#1c1f26]' : 'text-neutral-400 group-hover:text-white'
+            active ? 'text-white' : 'text-neutral-400 group-hover:text-white'
           }`}
         />
         {!isCollapsed && (
           <div className="flex-1 flex items-center justify-between overflow-hidden">
             <span className="truncate">{label}</span>
-            {badge !== undefined && Number(badge) > 0 && (
-              <span
-                className={`ml-2 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
-                  active ? 'bg-[#1c1f26] text-white' : 'bg-[#252932] text-neutral-300 border border-[#2d3139]'
-                }`}
-              >
-                {badge}
-              </span>
-            )}
+            <div className="flex items-center gap-1.5 ml-2">
+              {hasDot && (
+                <span className="w-2 h-2 rounded-full bg-[#FD5E03] animate-pulse" />
+              )}
+              {badge !== undefined && Number(badge) > 0 && (
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
+                    active ? 'bg-white/25 text-white' : 'bg-[#252932] text-neutral-300 border border-[#2d3139]'
+                  }`}
+                >
+                  {badge}
+                </span>
+              )}
+            </div>
           </div>
         )}
       </button>
@@ -162,13 +173,13 @@ export function Sidebar({
           isCollapsed ? 'px-3 justify-center' : 'pl-8 pr-3'
         } py-1.5 rounded-lg text-[12px] transition-all group relative text-left cursor-pointer ${
           active
-            ? 'bg-white text-[#1c1f26] font-bold shadow-xs'
+            ? 'bg-[#FD5E03] text-white font-bold shadow-xs'
             : 'text-neutral-400 hover:text-white hover:bg-[#252932] font-medium'
         }`}
       >
         <Icon
           className={`w-3.5 h-3.5 shrink-0 ${
-            active ? 'text-[#1c1f26]' : 'text-neutral-400 group-hover:text-white'
+            active ? 'text-white' : 'text-neutral-400 group-hover:text-white'
           }`}
         />
         {!isCollapsed && (
@@ -177,7 +188,7 @@ export function Sidebar({
             {badge !== undefined && Number(badge) > 0 && (
               <span
                 className={`ml-auto px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold ${
-                  active ? 'bg-[#1c1f26] text-white' : 'bg-[#252932] text-neutral-300 border border-[#2d3139]'
+                  active ? 'bg-white/25 text-white' : 'bg-[#252932] text-neutral-300 border border-[#2d3139]'
                 }`}
               >
                 {badge}
@@ -192,33 +203,30 @@ export function Sidebar({
   return (
     <aside
       className={`flex flex-col h-screen bg-[#1c1f26] text-neutral-400 border-r border-[#2d3139] select-none sticky top-0 transition-all duration-200 z-30 shrink-0 ${
-        isCollapsed ? 'w-[70px]' : 'w-[260px]'
+        isCollapsed ? 'w-[70px]' : 'w-[270px]'
       }`}
     >
       {/* Brand Header */}
       <div className="p-3.5 border-b border-[#2d3139]">
         <div className="flex items-center justify-between">
-          {!isCollapsed ? (
+            {!isCollapsed ? (
             <div className="w-full flex items-center justify-between gap-2.5">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm border border-[#2d3139]">
+                <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shrink-0 shadow-sm bg-black border border-[#2d3139]">
                   <img
                     src="/assets/counterpro-logo.png"
                     alt="CounterPro Logo"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-1 leading-tight">
-                    <span className="text-[12px] font-extrabold text-white tracking-wider uppercase truncate">
-                      COUNTER<span className="text-[#FD5E03]">PRO</span>
-                    </span>
-                    <span className="text-[8.5px] font-black uppercase px-1 py-0.2 rounded bg-[#FD5E03]/20 text-[#FD5E03] border border-[#FD5E03]/40">
-                      365
+                    <span className="text-[13px] font-extrabold text-white tracking-wider uppercase truncate">
+                      COUNTER<span className="text-[#FD5E03]">365</span>
                     </span>
                   </div>
                   <span className="text-[10px] font-semibold text-neutral-400 leading-tight mt-0.5">
-                    Admin Console
+                    Admin / Operations Console
                   </span>
                 </div>
               </div>
@@ -232,11 +240,11 @@ export function Sidebar({
             </div>
           ) : (
             <div className="w-full flex flex-col items-center gap-2 py-1">
-              <div className="w-10 h-10 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-sm border border-[#2d3139]">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center shadow-sm bg-black border border-[#2d3139]">
                 <img
                   src="/assets/counterpro-logo.png"
                   alt="CounterPro Logo"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <button
@@ -285,7 +293,7 @@ export function Sidebar({
               <div className="flex items-center gap-3 min-w-0">
                 <Activity
                   className={`w-4 h-4 shrink-0 transition-colors ${
-                    isAppActivityActive ? 'text-white' : 'text-neutral-400 group-hover:text-white'
+                    isAppActivityActive ? 'text-[#FD5E03]' : 'text-neutral-400 group-hover:text-white'
                   }`}
                 />
                 {!isCollapsed && <span className="truncate">App Activity</span>}
@@ -293,7 +301,7 @@ export function Sidebar({
               {!isCollapsed && (
                 <ChevronRight
                   className={`w-4 h-4 text-neutral-400 group-hover:text-white transition-transform duration-200 shrink-0 ${
-                    isAppActivityOpen ? 'rotate-90' : ''
+                    isAppActivityOpen ? 'rotate-90 text-[#FD5E03]' : ''
                   }`}
                 />
               )}
@@ -321,7 +329,7 @@ export function Sidebar({
               <div className="flex items-center gap-3 min-w-0">
                 <Store
                   className={`w-4 h-4 shrink-0 transition-colors ${
-                    isShopAnalyticsActive ? 'text-white' : 'text-neutral-400 group-hover:text-white'
+                    isShopAnalyticsActive ? 'text-[#FD5E03]' : 'text-neutral-400 group-hover:text-white'
                   }`}
                 />
                 {!isCollapsed && <span className="truncate">Shop Analytics</span>}
@@ -329,7 +337,7 @@ export function Sidebar({
               {!isCollapsed && (
                 <ChevronRight
                   className={`w-4 h-4 text-neutral-400 group-hover:text-white transition-transform duration-200 shrink-0 ${
-                    isShopAnalyticsOpen ? 'rotate-90' : ''
+                    isShopAnalyticsOpen ? 'rotate-90 text-[#FD5E03]' : ''
                   }`}
                 />
               )}
@@ -348,24 +356,22 @@ export function Sidebar({
               </div>
             )}
           </div>
-
-          {renderNavItem('crm_added_users', 'CRM added users', UserPlus)}
         </div>
 
         {/* Section: ENGAGEMENT */}
         <div className="pt-2">
           {!isCollapsed && (
-            <div className="px-3 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-neutral-500 uppercase font-mono">
+            <div className="px-3 pb-1.5 text-[10.5px] font-bold tracking-[0.08em] text-neutral-500 uppercase font-mono">
               ENGAGEMENT
             </div>
           )}
           <div className="space-y-0.5">
-            {renderNavItem('support_messages', 'Support', MessageSquare)}
+            {renderNavItem('support_messages', 'Support', MessageSquare, undefined, true)}
           </div>
         </div>
       </nav>
 
-      {/* Footer Area Matching StyleFleet Exact Behavior */}
+      {/* Footer Area Matching IronDrobe Platform */}
       <div className="p-2.5 border-t border-[#2d3139] bg-[#1c1f26]">
         {!isCollapsed ? (
           <div className="space-y-2">
@@ -373,7 +379,7 @@ export function Sidebar({
               <div className="flex items-center gap-1.5 text-neutral-300 font-bold font-mono">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[10px] tracking-wide uppercase text-neutral-400">
-                  Live Sync (ap-south-1)
+                  Live Supabase (ap-south-1)
                 </span>
               </div>
               <button
@@ -389,22 +395,22 @@ export function Sidebar({
             <div className="flex items-center justify-between gap-1 p-1 bg-[#15171d] rounded-xl border border-[#2d3139]">
               <button
                 onClick={onOpenPrivacy || (() => onSelectView('privacy'))}
-                className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-[#252932] transition-all cursor-pointer flex-1 flex justify-center"
+                className="p-2 rounded-lg text-neutral-400 hover:text-[#FD5E03] hover:bg-[#252932] transition-all cursor-pointer flex-1 flex justify-center"
                 title="Privacy Policy"
               >
                 <FileText className="w-4 h-4" />
               </button>
               <button
                 onClick={onOpenDeleteAccount || (() => onSelectView('account_deletions'))}
-                className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-[#252932] transition-all cursor-pointer flex-1 flex justify-center"
-                title="Account Deletion Info"
+                className="p-2 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-[#252932] transition-all cursor-pointer flex-1 flex justify-center"
+                title="Delete Account Management"
               >
                 <UserX className="w-4 h-4" />
               </button>
               <div className="w-px h-4 bg-[#2d3139] mx-0.5" />
               <button
                 onClick={onLogout}
-                className="p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-[#252932] transition-all cursor-pointer flex-1 flex justify-center"
+                className="p-2 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-[#252932] transition-all cursor-pointer flex-1 flex justify-center"
                 title="Sign Out"
               >
                 <LogOut className="w-4 h-4" />
@@ -419,14 +425,14 @@ export function Sidebar({
             />
             <button
               onClick={onOpenPrivacy || (() => onSelectView('privacy'))}
-              className="p-2 rounded-lg hover:bg-[#252932] text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-lg hover:bg-[#252932] text-neutral-400 hover:text-[#FD5E03] transition-colors cursor-pointer"
               title="Privacy Policy"
             >
               <FileText className="w-4 h-4" />
             </button>
             <button
               onClick={onLogout}
-              className="p-2 rounded-lg hover:bg-[#252932] text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-lg hover:bg-[#252932] text-neutral-400 hover:text-red-400 transition-colors cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />

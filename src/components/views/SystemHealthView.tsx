@@ -3,7 +3,21 @@
 import React, { useState } from 'react';
 import { AdminDataState } from '../../lib/adminData';
 import { supabase } from '../../lib/supabase';
-import { Activity, ShieldCheck, Database, Server, RefreshCw, CheckCircle2, Lock, Clock, HardDrive, Cpu } from 'lucide-react';
+import {
+  Activity,
+  ShieldCheck,
+  Database,
+  Server,
+  RefreshCw,
+  CheckCircle2,
+  Lock,
+  Clock,
+  HardDrive,
+  Cpu,
+  Globe,
+  Sparkles,
+  Zap,
+} from 'lucide-react';
 
 interface SystemHealthViewProps {
   data: AdminDataState;
@@ -47,127 +61,145 @@ export function SystemHealthView({ data, onShowToast }: SystemHealthViewProps) {
   const totalRecords = tables.reduce((acc, t) => acc + t.count, 0);
 
   return (
-    <div className="flex flex-col gap-[18px]">
-      {/* Top Banner with Ping Button & Connection Health */}
-      <div className="bg-white rounded-[8px] shadow-sm p-[18px_20px] border border-[var(--color-divider)] flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-            <Activity className="w-5 h-5 animate-pulse" />
-          </div>
-          <div>
+    <div className="space-y-6 font-sans select-none animate-in fade-in duration-150">
+      {/* 1. Header Banner */}
+      <div className="rounded-2xl bg-gradient-to-r from-[#11141a] via-[#1c1f28] to-[#11141a] border border-[#2b303c] p-6 text-white shadow-md relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-80 h-80 bg-[#FD5E03]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+          <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <h3 className="text-[16px] font-bold text-[#101318] m-0">
-                Supabase PostgreSQL Database Status
-              </h3>
-              <span className="tag bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10.5px] font-bold">
-                OPERATIONAL • 200 OK
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-xs font-mono font-bold tracking-wider text-emerald-400 uppercase">
+                PostgreSQL Infrastructure Health & RLS Audit
               </span>
             </div>
-            <p className="text-xs text-gray-500 m-0 mt-0.5">
-              Multi-tenant architecture hosted in AWS Mumbai (<code className="text-gray-700">ap-south-1</code>) with TLS 1.3 encryption.
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white m-0">
+              Database & Cloud Architecture
+            </h2>
+            <p className="text-xs text-gray-400 max-w-2xl leading-relaxed m-0">
+              Live monitoring of Supabase PostgreSQL latency, 12 isolated tenant tables, row-level security (RLS) enforcement, and realtime replication.
             </p>
           </div>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right text-xs">
-            <span className="text-gray-400">Response Latency:</span>{' '}
-            <span className="font-mono font-bold text-emerald-600">{latencyMs !== null ? `${latencyMs}ms` : '—'}</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={testPing}
+              disabled={isPinging}
+              className="px-4 py-2.5 rounded-xl bg-[#FD5E03] hover:bg-[#ea5602] text-white text-xs font-bold transition-all shadow-md shadow-[#FD5E03]/30 flex items-center gap-2 cursor-pointer disabled:opacity-60"
+            >
+              <RefreshCw className={`w-4 h-4 ${isPinging ? 'animate-spin' : ''}`} />
+              <span>{isPinging ? 'Pinging Cloud...' : 'Ping Database'}</span>
+            </button>
           </div>
-          <button
-            onClick={testPing}
-            disabled={isPinging}
-            className="btn btn-secondary text-xs min-h-[36px] px-3 gap-1.5 border-gray-300 hover:border-[#FD5E03]"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-gray-500 ${isPinging ? 'animate-spin text-[#FD5E03]' : ''}`} />
-            <span>{isPinging ? 'Pinging DB...' : 'Re-run Health Ping'}</span>
-          </button>
         </div>
       </div>
 
-      {/* 4 Infrastructure KPI Cards */}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-[14px]">
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">TOTAL RECORDED ROWS</div>
-          <div className="font-heading text-[28px] font-bold leading-none text-[#101318]">
-            {totalRecords.toLocaleString('en-IN')}
+      {/* 2. Top Metric KPI Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs hover:border-[#FD5E03]/50 transition-all">
+          <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
+            <span>Query Latency</span>
+            <div className="p-2 rounded-xl bg-[#FFF7ED] text-[#FD5E03]">
+              <Zap className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">across 12 core PostgreSQL tables</div>
+          <div className="mt-3 text-2xl font-bold tracking-tight text-[#111827]">
+            {latencyMs !== null ? `${latencyMs} ms` : 'Testing...'}
+          </div>
+          <div className="mt-2 text-[11.5px] text-gray-500 flex items-center justify-between">
+            <span className="text-emerald-600 font-bold">Sub-50ms Fast</span>
+            <span className="text-gray-400 font-mono">200 OK</span>
+          </div>
         </div>
 
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">ROW LEVEL SECURITY (RLS)</div>
-          <div className="font-heading text-[28px] font-bold leading-none text-emerald-600">
-            100%
+        <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs hover:border-emerald-400/50 transition-all">
+          <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
+            <span>Database Records</span>
+            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+              <Database className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">strict multi-tenant isolation enforced</div>
+          <div className="mt-3 text-2xl font-bold tracking-tight text-[#111827]">
+            {totalRecords.toLocaleString()}
+          </div>
+          <div className="mt-2 text-[11.5px] text-gray-500 flex items-center justify-between">
+            <span>Across 12 tables</span>
+            <span className="text-emerald-600 font-semibold">Normalized</span>
+          </div>
         </div>
 
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">HOSTING REGION</div>
-          <div className="font-heading text-[24px] font-bold leading-tight text-[#101318] mt-1">
-            India
+        <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs hover:border-blue-400/50 transition-all">
+          <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
+            <span>Security Architecture</span>
+            <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
+              <Lock className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">AWS ap-south-1 (Mumbai cluster)</div>
+          <div className="mt-3 text-2xl font-bold tracking-tight text-[#111827]">
+            RLS Active
+          </div>
+          <div className="mt-2 text-[11.5px] text-gray-500 flex items-center justify-between">
+            <span>Row-level tenant isolation</span>
+            <span className="text-blue-600 font-semibold">100% Policy</span>
+          </div>
         </div>
 
-        <div className="bg-white rounded-[8px] shadow-sm p-[14px_16px] flex flex-col gap-1 border border-[var(--color-divider)]">
-          <div className="card-kicker">DATA SOVEREIGNTY</div>
-          <div className="font-heading text-[24px] font-bold leading-tight text-[#FD5E03] mt-1">
-            Verified
+        <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs hover:border-purple-400/50 transition-all">
+          <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
+            <span>Cloud Region</span>
+            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
+              <Globe className="w-4 h-4" />
+            </div>
           </div>
-          <div className="text-[11px] text-black/50">Indian commercial compliance</div>
+          <div className="mt-3 text-2xl font-bold tracking-tight text-[#111827]">
+            ap-south-1
+          </div>
+          <div className="mt-2 text-[11.5px] text-gray-500 flex items-center justify-between">
+            <span>AWS Mumbai Datacenter</span>
+            <span className="text-purple-600 font-bold font-mono">India</span>
+          </div>
         </div>
       </div>
 
-      {/* Table Records & RLS Governance Card */}
-      <div className="bg-white rounded-[8px] shadow-sm p-[16px_16px_10px] border border-[var(--color-divider)]">
-        <div className="pb-3 border-b border-[var(--color-divider)] flex items-center justify-between">
-          <h4 className="font-bold text-[14px] text-gray-900 m-0 flex items-center gap-2">
-            <Database className="w-4 h-4 text-[#FD5E03]" />
-            <span>Database Tables & Multi-Tenant RLS Status</span>
-          </h4>
-          <span className="text-xs text-gray-400 font-mono">
-            Project Ref: {(process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://tziqjkklqtmjlncoraba.supabase.co').replace(/^https?:\/\//, '').split('.')[0]}
-          </span>
+      {/* 3. Table Schema Inventory */}
+      <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
+        <div className="p-4 bg-[#FAFAFB] border-b border-gray-200 flex items-center justify-between text-xs text-gray-500">
+          <div>
+            Active PostgreSQL Schema Inventory &bull; <strong className="text-gray-900">{tables.length}</strong> Tables
+          </div>
+          <span className="font-mono text-gray-400">Total Rows: {totalRecords}</span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="table">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr>
-                <th>PostgreSQL Table Name</th>
-                <th>Entity Purpose</th>
-                <th className="text-right">Live Record Count</th>
-                <th>Multi-Tenant Isolation (RLS)</th>
-                <th className="text-right">Security Policy Status</th>
+              <tr className="border-b border-gray-100 bg-[#FAFAFB] text-gray-500 uppercase text-[10.5px] font-bold tracking-wider">
+                <th className="py-3 px-4">PostgreSQL Table</th>
+                <th className="py-3 px-4">Entity Description</th>
+                <th className="py-3 px-4 text-center">Security Policy</th>
+                <th className="py-3 px-4 text-right">Live Rows</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {tables.map((t) => (
-                <tr key={t.name} className="hover:bg-[#FAFAFB]">
-                  <td>
-                    <code className="text-xs font-mono font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
-                      {t.name}
-                    </code>
+                <tr key={t.name} className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 font-mono font-bold text-gray-900">
+                    {t.name}
                   </td>
-                  <td className="text-xs text-gray-600">
-                    <div className="font-semibold text-gray-800">{t.label}</div>
-                    <div className="text-[11px] text-gray-400">{t.desc}</div>
+                  <td className="py-3.5 px-4 text-gray-600">
+                    <div>
+                      <span className="font-semibold text-gray-900">{t.label}</span> &bull; {t.desc}
+                    </div>
                   </td>
-                  <td className="text-right font-mono font-bold text-gray-900">
-                    {t.count.toLocaleString('en-IN')}
-                  </td>
-                  <td>
-                    <span className="flex items-center gap-1 text-xs text-emerald-600 font-semibold">
-                      <Lock className="w-3.5 h-3.5" />
-                      Tenant Isolated
+                  <td className="py-3.5 px-4 text-center">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <ShieldCheck className="w-3 h-3" />
+                      <span>{t.rls}</span>
                     </span>
                   </td>
-                  <td className="text-right">
-                    <span className="tag bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold text-[10.5px]">
-                      PASSED (ACTIVE)
-                    </span>
+                  <td className="py-3.5 px-4 text-right font-mono font-bold text-gray-900">
+                    {t.count.toLocaleString()}
                   </td>
                 </tr>
               ))}

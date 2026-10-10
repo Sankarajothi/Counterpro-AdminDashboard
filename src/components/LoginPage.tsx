@@ -54,11 +54,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
       <div className="w-full max-w-[400px] bg-white rounded-[10px] shadow-lg border border-[#E2E8F0] overflow-hidden">
         {/* Header Section */}
         <div className="pt-8 pb-6 px-8 text-center flex flex-col items-center border-b border-[#F1F5F9] bg-white">
-          <div className="w-14 h-14 rounded-lg bg-white p-1 border border-[#E2E8F0] shadow-xs flex items-center justify-center mb-3">
+          <div className="w-16 h-16 rounded-full bg-black overflow-hidden shadow-md flex items-center justify-center mb-3.5 border border-gray-200">
             <img
               src="/assets/counterpro-logo.png"
-              alt="Counter365"
-              className="w-full h-full object-contain"
+              alt="CounterPro Brand Logo"
+              className="w-full h-full object-cover"
             />
           </div>
           
