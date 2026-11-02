@@ -238,27 +238,12 @@ export function Sidebar({
       <div className="px-4 py-3.5 border-b border-white/10 bg-[#1C1917]">
         {!isCollapsed ? (
           <div className="flex items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-[#EA580C] flex items-center justify-center shrink-0 shadow-xs">
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M16.5 8C15.3 6.8 13.7 6 12 6C8.7 6 6 8.7 6 12C6 15.3 8.7 18 12 18C13.7 18 15.3 17.2 16.5 16"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="12" cy="12" r="2.2" fill="currentColor" />
-                </svg>
-              </div>
-              <div className="flex flex-col min-w-0 leading-none">
-                <div className="flex items-center text-[19px] font-black tracking-tight leading-none">
-                  <span className="text-white">Counter</span>
-                  <span className="text-[#EA580C]">365</span>
-                </div>
-                <span className="text-[10px] text-stone-400 font-medium tracking-wide mt-1 truncate">
-                  A Tecstellar Product
-                </span>
-              </div>
+            <div className="flex items-center min-w-0">
+              <img
+                src="/assets/counter365-dark-theme-logo.png"
+                alt="Counter365 - A Tecstellar Product"
+                className="h-8 w-auto max-w-[190px] object-contain"
+              />
             </div>
             <button
               onClick={() => setIsCollapsed(true)}
@@ -272,18 +257,14 @@ export function Sidebar({
           <div className="w-full flex flex-col items-center gap-2 py-1">
             <button
               onClick={() => setIsCollapsed(false)}
-              className="w-10 h-10 rounded-xl bg-[#EA580C] flex items-center justify-center shadow-xs cursor-pointer hover:bg-[#C2410C] transition-colors"
+              className="p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
               title="Expand Sidebar"
             >
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M16.5 8C15.3 6.8 13.7 6 12 6C8.7 6 6 8.7 6 12C6 15.3 8.7 18 12 18C13.7 18 15.3 17.2 16.5 16"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                <circle cx="12" cy="12" r="2.2" fill="currentColor" />
-              </svg>
+              <img
+                src="/assets/counter365-dark-theme-emblem.png"
+                alt="Counter365"
+                className="w-7 h-7 object-contain"
+              />
             </button>
           </div>
         )}
