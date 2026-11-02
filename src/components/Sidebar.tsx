@@ -234,20 +234,35 @@ export function Sidebar({
         isCollapsed ? 'w-[70px]' : 'w-[270px]'
       }`}
     >
-      {/* Brand Header with User's Uploaded Counter365 Logo */}
-      <div className="p-3 border-b border-white/10 bg-[#1C1917]">
+      {/* Brand Header: Seamless Counter365 Logo & Wordmark matching dark theme */}
+      <div className="px-4 py-3.5 border-b border-white/10 bg-[#1C1917]">
         {!isCollapsed ? (
           <div className="flex items-center justify-between gap-2.5">
-            <div className="flex-1 bg-white rounded-xl p-2 flex items-center justify-center shadow-xs">
-              <img
-                src="/assets/counter365-full-logo.png"
-                alt="Counter365 - A Tecstellar Product"
-                className="w-full h-8 object-contain"
-              />
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-[#EA580C] flex items-center justify-center shrink-0 shadow-xs">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M16.5 8C15.3 6.8 13.7 6 12 6C8.7 6 6 8.7 6 12C6 15.3 8.7 18 12 18C13.7 18 15.3 17.2 16.5 16"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+                </svg>
+              </div>
+              <div className="flex flex-col min-w-0 leading-none">
+                <div className="flex items-center text-[19px] font-black tracking-tight leading-none">
+                  <span className="text-white">Counter</span>
+                  <span className="text-[#EA580C]">365</span>
+                </div>
+                <span className="text-[10px] text-stone-400 font-medium tracking-wide mt-1 truncate">
+                  A Tecstellar Product
+                </span>
+              </div>
             </div>
             <button
               onClick={() => setIsCollapsed(true)}
-              className="hidden lg:flex p-1.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+              className="hidden lg:flex p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
               title="Collapse Sidebar"
             >
               <PanelLeftClose className="w-4 h-4" />
@@ -255,19 +270,20 @@ export function Sidebar({
           </div>
         ) : (
           <div className="w-full flex flex-col items-center gap-2 py-1">
-            <div className="w-10 h-10 rounded-xl bg-white p-1 flex items-center justify-center shadow-xs border border-white/20">
-              <img
-                src="/assets/counter365-full-logo.png"
-                alt="Counter365"
-                className="w-full h-full object-contain"
-              />
-            </div>
             <button
               onClick={() => setIsCollapsed(false)}
-              className="hidden lg:flex p-1 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-[#EA580C] flex items-center justify-center shadow-xs cursor-pointer hover:bg-[#C2410C] transition-colors"
               title="Expand Sidebar"
             >
-              <PanelLeftOpen className="w-3.5 h-3.5" />
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M16.5 8C15.3 6.8 13.7 6 12 6C8.7 6 6 8.7 6 12C6 15.3 8.7 18 12 18C13.7 18 15.3 17.2 16.5 16"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
+                <circle cx="12" cy="12" r="2.2" fill="currentColor" />
+              </svg>
             </button>
           </div>
         )}
