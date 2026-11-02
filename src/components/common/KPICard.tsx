@@ -21,20 +21,20 @@ export const KPICard: React.FC<KPICardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-lg border border-slate-200/80 p-3.5 transition-colors ${
-        onClick ? 'cursor-pointer hover:bg-slate-50/70 hover:border-slate-300' : ''
+      className={`bg-white rounded-xl border border-[#EA580C]/15 p-4 shadow-2xs transition-all ${
+        onClick ? 'cursor-pointer hover:border-[#EA580C]/40 hover:bg-[#FFEDD5]/20 hover:shadow-xs' : ''
       }`}
     >
       {/* Top row: Label */}
       <div className={`flex items-center justify-between gap-1.5 ${isXs ? 'mb-0' : isSm ? 'mb-0.5' : 'mb-1'}`}>
         <span
           className={`${
-            isXs ? 'text-[10px]' : isSm ? 'text-[10.5px]' : 'text-[11.5px]'
-          } font-normal text-slate-500 truncate`}
+            isXs ? 'text-[9.5px]' : isSm ? 'text-[10px]' : 'text-[11px]'
+          } font-bold uppercase tracking-wider text-slate-500 font-mono truncate`}
         >
           {title}
         </span>
-        {Icon && <Icon className="w-3.5 h-3.5 text-slate-400" />}
+        {Icon && <Icon className="w-4 h-4 text-[#EA580C]" />}
       </div>
 
       {/* Main Metric Value */}

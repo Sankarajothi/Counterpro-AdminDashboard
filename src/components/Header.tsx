@@ -35,27 +35,24 @@ export function Header({
   onAddUserAccount,
 }: HeaderProps) {
   return (
-    <header className="h-12 px-5 bg-[#f8fafc] border-b border-slate-200/80 flex items-center justify-between sticky top-0 z-20 shrink-0">
-      <div className="flex items-center gap-3 min-w-0">
-        <h1 className="text-[13.5px] font-semibold text-slate-900 tracking-tight truncate">
+    <header className="flex items-center gap-4 px-[24px] py-[13px] bg-white border-b border-[#EA580C]/20 shadow-xs flex-wrap sticky top-0 z-20">
+      <div>
+        <h1 className="m-0 text-[18px] sm:text-[20px] font-bold tracking-tight text-slate-900">
           {title}
         </h1>
         {subtitle && (
-          <>
-            <span className="text-slate-300 text-xs">/</span>
-            <span className="text-[11.5px] text-slate-500 font-normal truncate hidden sm:inline">
-              {subtitle}
-            </span>
-          </>
+          <div className="text-[11px] text-slate-500 font-normal mt-0.5">
+            {subtitle}
+          </div>
         )}
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2.5 ml-auto flex-wrap">
         {/* Add user account button */}
         {onAddUserAccount && (
           <button
             onClick={onAddUserAccount}
-            className="h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-1.5 text-xs font-medium shadow-2xs cursor-pointer"
+            className="min-h-[32px] px-3.5 rounded-lg border border-[#EA580C]/25 bg-white text-black hover:bg-[#FFEDD5] transition-colors flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer"
           >
             <span>+ Add user account</span>
           </button>
@@ -66,7 +63,7 @@ export function Header({
           <button
             onClick={onOpenResetModal}
             title="Reset Password"
-            className="h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-1.5 text-xs font-medium shadow-2xs cursor-pointer"
+            className="min-h-[32px] px-3.5 rounded-lg border border-[#EA580C]/25 bg-white text-black hover:bg-[#FFEDD5] transition-colors flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer"
           >
             <span>Reset password</span>
           </button>
@@ -77,7 +74,7 @@ export function Header({
           <button
             onClick={onLogout}
             title="Sign Out"
-            className="h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-600 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50/50 transition-colors flex items-center gap-1.5 text-xs font-medium shadow-2xs cursor-pointer"
+            className="min-h-[32px] px-3.5 rounded-lg bg-[#EA580C] hover:bg-[#C2410C] text-white transition-colors flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer"
           >
             <span>Sign out</span>
           </button>

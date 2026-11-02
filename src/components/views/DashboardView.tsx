@@ -671,7 +671,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Header bar: Title, exact date chip, All Time selector, Refresh icon, Export */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">Founder Dashboard</h1>
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">Founder Dashboard</h1>
           {exactDateInput && (
             <button
               type="button"
@@ -680,7 +680,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 setBillsPage(1);
               }}
               title="Clear date"
-              className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 cursor-pointer"
+              className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FFEDD5] text-black border border-[#EA580C]/30 hover:bg-[#EA580C]/20 cursor-pointer"
             >
               {effectiveDateRange.label} ✕
             </button>
@@ -690,8 +690,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           {/* All Time Date Filter Icon & Selector */}
           <div className="relative inline-flex items-center">
-            <div className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 text-xs font-medium shadow-2xs hover:bg-slate-50 transition-colors">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#EA580C]/25 bg-white text-black text-xs font-bold shadow-2xs hover:bg-[#FFEDD5] transition-colors">
+              <Calendar className="w-3.5 h-3.5 text-[#EA580C]" />
               <select
                 value={selectedOption}
                 onChange={(e) => {
@@ -699,7 +699,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   setExactDateInput('');
                   setBillsPage(1);
                 }}
-                className="bg-transparent text-xs font-medium text-slate-700 outline-none cursor-pointer"
+                className="bg-transparent text-xs font-bold text-black outline-none cursor-pointer"
               >
                 <option value="all_time">All Time</option>
                 <option value="today">Today</option>
@@ -718,9 +718,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             }}
             disabled={loading}
             title="Refresh Data"
-            className="w-8 h-8 rounded-md border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center justify-center cursor-pointer shadow-2xs"
+            className="p-2 rounded-lg border border-[#EA580C]/25 bg-white text-black hover:bg-[#FFEDD5] transition-colors flex items-center justify-center cursor-pointer shadow-2xs"
           >
-            <RotateCcw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
+            <RotateCcw className={`w-3.5 h-3.5 text-[#EA580C] ${loading ? 'animate-spin' : ''}`} />
           </button>
 
           {/* Export Button */}
@@ -925,8 +925,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         )}
       </div>
 
-      {/* 5 Tabs matching framed-sheet design */}
-      <div className="flex items-center gap-6 border-b border-slate-200/80 overflow-x-auto">
+      {/* 5 Tabs matching Counter365 brand palette */}
+      <div className="flex items-center gap-5 border-b border-slate-200 overflow-x-auto">
         {[
           { id: 'daily_ledger', label: `Daily (${dailyBillingBreakdown.length})` },
           { id: 'all_bills', label: `Orders (${scopedBills.length})` },
@@ -939,10 +939,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`pb-2 -mb-px border-b-2 text-xs transition-colors cursor-pointer whitespace-nowrap ${
+              className={`px-0.5 pb-2.5 -mb-px border-b-2 text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 isActive
-                  ? 'border-slate-900 text-slate-900 font-semibold'
-                  : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300 font-normal'
+                  ? 'border-[#EA580C] text-[#C2410C] font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-900 font-medium'
               }`}
             >
               {tab.label}

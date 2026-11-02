@@ -461,157 +461,157 @@ export function OverviewView({
       {/* 1. Header Title */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900 m-0 tracking-tight">Overview &amp; Shops Directory</h2>
-          <span className="px-2 py-0.5 rounded text-[11px] font-mono tabular-nums text-slate-600 bg-slate-100 border border-slate-200">
-            {totalRegistered} shops
+          <h2 className="text-[20px] sm:text-[22px] font-bold text-slate-900 m-0 tracking-tight">Overview &amp; Shops Directory</h2>
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EA580C]/10 text-[#EA580C] border border-[#EA580C]/30 font-mono tabular-nums">
+            {totalRegistered} Registered Shops
           </span>
         </div>
       </div>
 
       {/* 2. Interactive Metric Filter Pills */}
-      <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="flex items-center gap-2 flex-wrap">
         <button
           onClick={() => handlePillClick('all')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'all'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Show all registered shops"
         >
-          Registered <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>{totalRegistered.toLocaleString()}</span>
+          Registered <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'all' ? 'text-white' : 'text-black'}`}>{totalRegistered.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('active')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'active'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter active shops"
         >
-          Active <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'active' ? 'text-slate-300' : 'text-slate-500'}`}>{totalActive.toLocaleString()}</span>
+          Active <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'active' ? 'text-white' : 'text-black'}`}>{totalActive.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('inactive')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'inactive'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter inactive shops"
         >
-          Inactive <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'inactive' ? 'text-slate-300' : 'text-slate-500'}`}>{totalInactive.toLocaleString()}</span>
+          Inactive <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'inactive' ? 'text-white' : 'text-black'}`}>{totalInactive.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('free_plan')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'free_plan'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter free plan shops (100 free sales allowance)"
         >
-          Free Plan <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'free_plan' ? 'text-slate-300' : 'text-slate-500'}`}>{totalFreePlan.toLocaleString()}</span>
+          Free Plan (100 limit) <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'free_plan' ? 'text-white' : 'text-black'}`}>{totalFreePlan.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('pro_plan')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'pro_plan'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter Pro Plan subscribed shops"
         >
-          Pro Plan <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'pro_plan' ? 'text-slate-300' : 'text-slate-500'}`}>{totalProPlan.toLocaleString()}</span>
+          Pro Plan <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'pro_plan' ? 'text-white' : 'text-black'}`}>{totalProPlan.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('positive')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'positive'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter shops with positive response"
         >
-          Positive <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'positive' ? 'text-slate-300' : 'text-slate-500'}`}>{totalPositive.toLocaleString()}</span>
+          Positive <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'positive' ? 'text-white' : 'text-black'}`}>{totalPositive.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('negative')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'negative'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter shops with negative response"
         >
-          Negative <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'negative' ? 'text-slate-300' : 'text-slate-500'}`}>{totalNegative.toLocaleString()}</span>
+          Negative <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'negative' ? 'text-white' : 'text-black'}`}>{totalNegative.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('follow_ups')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'follow_ups'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter shops with scheduled follow-ups"
         >
-          Follow-ups <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'follow_ups' ? 'text-slate-300' : 'text-slate-500'}`}>{totalFollowUps.toLocaleString()}</span>
+          Follow-ups <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'follow_ups' ? 'text-white' : 'text-black'}`}>{totalFollowUps.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('with_bills')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'with_bills'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter shops that have recorded bills"
         >
-          With Bills <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'with_bills' ? 'text-slate-300' : 'text-slate-500'}`}>{shopsWithBills.toLocaleString()}</span>
+          Shops w/ Bills <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'with_bills' ? 'text-white' : 'text-black'}`}>{shopsWithBills.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('zero_bills')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'zero_bills'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter shops with zero transactions"
         >
-          Zero Bills <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'zero_bills' ? 'text-slate-300' : 'text-slate-500'}`}>{shopsZeroBills.toLocaleString()}</span>
+          Zero Bills <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'zero_bills' ? 'text-white' : 'text-black'}`}>{shopsZeroBills.toLocaleString()}</strong>
         </button>
 
         <button
           onClick={() => handlePillClick('near_limit')}
-          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
+          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
             activeFilter === 'near_limit'
-              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
+              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-bold'
+              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold shadow-2xs'
           }`}
           title="Filter shops nearing 100 sales limit (>= 80 bills)"
         >
-          Near Limit (&gt;80) <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'near_limit' ? 'text-slate-300' : 'text-slate-500'}`}>{shopsNearLimit.toLocaleString()}</span>
+          Near Limit (&gt;80) <strong className={`ml-1 font-mono tabular-nums ${activeFilter === 'near_limit' ? 'text-white' : 'text-black'}`}>{shopsNearLimit.toLocaleString()}</strong>
         </button>
       </div>
 
       {/* 5. Live Search Input */}
       <div className="relative">
-        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         <input
           type="text"
           placeholder="Search shop name, owner, phone, city, or ID..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-8 pr-3 h-8 text-xs rounded-md border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 shadow-2xs"
+          className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 bg-white text-xs text-gray-900 placeholder:text-gray-400 focus:outline-hidden focus:border-[#EA580C] transition-colors shadow-2xs"
         />
       </div>
 
@@ -624,37 +624,37 @@ export function OverviewView({
               setSelectedGeography('all');
               setSearchQuery('');
             }}
-            className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold transition-all cursor-pointer shadow-xs border border-[#C2410C]"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-            <span>Reset filters</span>
+            <RotateCcw className="w-3.5 h-3.5 text-white" />
+            <span className="font-bold text-white">Reset filters</span>
           </button>
 
           <button
             onClick={handleExportExcel}
-            className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors cursor-pointer shadow-2xs"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-[#EA580C]/40 bg-white hover:bg-[#FFEDD5] hover:border-[#EA580C] text-black font-bold transition-all cursor-pointer shadow-2xs group"
           >
-            <Download className="w-3.5 h-3.5 text-slate-400" />
-            <span>Export CSV</span>
+            <Download className="w-3.5 h-3.5 text-[#EA580C]" />
+            <span className="font-bold text-black">Export Excel</span>
           </button>
 
           {/* Geography Filter */}
           <div className="relative">
             <button
               onClick={() => setIsGeoDropdownOpen(!isGeoDropdownOpen)}
-              className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors cursor-pointer shadow-2xs"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-[#EA580C]/40 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold transition-all cursor-pointer bg-white shadow-2xs"
             >
-              <MapPin className="w-3.5 h-3.5 text-slate-400" />
-              <span>
+              <MapPin className="w-3.5 h-3.5 text-[#EA580C]" />
+              <span className="font-bold text-black">
                 {selectedGeography === 'all'
                   ? 'Geography'
                   : geographyOptions.find((g) => g.id === selectedGeography)?.label || selectedGeography}
               </span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
+              <ChevronDown className="w-3 h-3 text-[#EA580C]" />
             </button>
 
             {isGeoDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-52 bg-white border border-slate-200 rounded-lg shadow-lg p-1 z-40">
+              <div className="absolute left-0 mt-1 w-52 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 z-40 animate-in fade-in zoom-in-95">
                 {geographyOptions.map((opt) => (
                   <button
                     key={opt.id}
@@ -663,14 +663,14 @@ export function OverviewView({
                       setIsGeoDropdownOpen(false);
                       onShowToast?.(`Filtered to ${opt.label}`);
                     }}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs transition-colors cursor-pointer flex items-center justify-between ${
+                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center justify-between ${
                       selectedGeography === opt.id
-                        ? 'bg-slate-100 text-slate-900 font-medium'
-                        : 'text-slate-700 hover:bg-slate-50'
+                        ? 'bg-[#FFEDD5] text-[#C2410C] font-bold'
+                        : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     <span>{opt.label}</span>
-                    {selectedGeography === opt.id && <Check className="w-3.5 h-3.5 text-slate-900" />}
+                    {selectedGeography === opt.id && <Check className="w-3.5 h-3.5 text-[#EA580C]" />}
                   </button>
                 ))}
               </div>
@@ -678,8 +678,8 @@ export function OverviewView({
           </div>
         </div>
 
-        <div className="text-xs text-slate-500 font-normal">
-          Showing <span className="font-mono tabular-nums text-slate-900 font-medium">{filteredShops.length}</span> of <span className="font-mono tabular-nums">{totalRegistered}</span> shops
+        <div className="text-xs text-gray-500 font-medium">
+          Showing <strong className="text-gray-900 font-mono tabular-nums">{filteredShops.length}</strong> of <span className="font-mono tabular-nums">{totalRegistered}</span> shops
         </div>
       </div>
 
