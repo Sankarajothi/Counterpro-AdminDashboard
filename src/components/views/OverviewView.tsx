@@ -461,195 +461,157 @@ export function OverviewView({
       {/* 1. Header Title */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
-          <h2 className="text-[22px] font-bold text-[#111827] m-0 tracking-tight">Overview &amp; Shops Directory</h2>
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EA580C]/10 text-[#EA580C] border border-[#EA580C]/30">
-            {totalRegistered} Registered Shops
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900 m-0 tracking-tight">Overview &amp; Shops Directory</h2>
+          <span className="px-2 py-0.5 rounded text-[11px] font-mono tabular-nums text-slate-600 bg-slate-100 border border-slate-200">
+            {totalRegistered} shops
           </span>
         </div>
       </div>
 
-
-      {/* 2. Interactive Metric Filter Pills (Unified Single Row / Flow with Theme Palette) */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* 2. Interactive Metric Filter Pills */}
+      <div className="flex items-center gap-1.5 flex-wrap">
         <button
           onClick={() => handlePillClick('all')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'all'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Show all registered shops"
         >
-          Registered <strong className={`ml-1 ${activeFilter === 'all' ? 'text-white' : 'text-black font-black'}`}>{totalRegistered.toLocaleString()}</strong>
+          Registered <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'all' ? 'text-slate-300' : 'text-slate-500'}`}>{totalRegistered.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('active')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'active'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter active shops"
         >
-          Active <strong className={`ml-1 ${activeFilter === 'active' ? 'text-white' : 'text-black font-black'}`}>{totalActive.toLocaleString()}</strong>
+          Active <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'active' ? 'text-slate-300' : 'text-slate-500'}`}>{totalActive.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('inactive')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'inactive'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter inactive shops"
         >
-          Inactive <strong className={`ml-1 ${activeFilter === 'inactive' ? 'text-white' : 'text-black font-black'}`}>{totalInactive.toLocaleString()}</strong>
+          Inactive <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'inactive' ? 'text-slate-300' : 'text-slate-500'}`}>{totalInactive.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('free_plan')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'free_plan'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter free plan shops (100 free sales allowance)"
         >
-          Free Plan (100 limit) <strong className={`ml-1 ${activeFilter === 'free_plan' ? 'text-white' : 'text-black font-black'}`}>{totalFreePlan.toLocaleString()}</strong>
+          Free Plan <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'free_plan' ? 'text-slate-300' : 'text-slate-500'}`}>{totalFreePlan.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('pro_plan')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'pro_plan'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter Pro Plan subscribed shops"
         >
-          Pro Plan <strong className={`ml-1 ${activeFilter === 'pro_plan' ? 'text-white' : 'text-black font-black'}`}>{totalProPlan.toLocaleString()}</strong>
+          Pro Plan <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'pro_plan' ? 'text-slate-300' : 'text-slate-500'}`}>{totalProPlan.toLocaleString()}</span>
         </button>
 
-        {/* User-Requested Response & Follow-up Pills */}
         <button
           onClick={() => handlePillClick('positive')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'positive'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter shops with positive response"
         >
-          Positive <strong className={`ml-1 ${activeFilter === 'positive' ? 'text-white' : 'text-black font-black'}`}>{totalPositive.toLocaleString()}</strong>
+          Positive <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'positive' ? 'text-slate-300' : 'text-slate-500'}`}>{totalPositive.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('negative')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'negative'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter shops with negative response"
         >
-          Negative <strong className={`ml-1 ${activeFilter === 'negative' ? 'text-white' : 'text-black font-black'}`}>{totalNegative.toLocaleString()}</strong>
+          Negative <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'negative' ? 'text-slate-300' : 'text-slate-500'}`}>{totalNegative.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('follow_ups')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'follow_ups'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter shops with scheduled follow-ups"
         >
-          Follow-ups <strong className={`ml-1 ${activeFilter === 'follow_ups' ? 'text-white' : 'text-black font-black'}`}>{totalFollowUps.toLocaleString()}</strong>
+          Follow-ups <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'follow_ups' ? 'text-slate-300' : 'text-slate-500'}`}>{totalFollowUps.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('with_bills')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'with_bills'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter shops that have recorded bills"
         >
-          Shops w/ Bills <strong className={`ml-1 ${activeFilter === 'with_bills' ? 'text-white' : 'text-black font-black'}`}>{shopsWithBills.toLocaleString()}</strong>
+          With Bills <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'with_bills' ? 'text-slate-300' : 'text-slate-500'}`}>{shopsWithBills.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('zero_bills')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'zero_bills'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
           title="Filter shops with zero transactions"
         >
-          Zero Bills Yet <strong className={`ml-1 ${activeFilter === 'zero_bills' ? 'text-white' : 'text-black font-black'}`}>{shopsZeroBills.toLocaleString()}</strong>
-        </button>
-
-        <button
-          onClick={() => handlePillClick('with_customers')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
-            activeFilter === 'with_customers'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
-          }`}
-          title="Filter shops that have captured customer records"
-        >
-          Shops w/ Customers <strong className={`ml-1 ${activeFilter === 'with_customers' ? 'text-white' : 'text-black font-black'}`}>{shopsWithCustomersCount.toLocaleString()}</strong>
+          Zero Bills <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'zero_bills' ? 'text-slate-300' : 'text-slate-500'}`}>{shopsZeroBills.toLocaleString()}</span>
         </button>
 
         <button
           onClick={() => handlePillClick('near_limit')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
+          className={`px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer border ${
             activeFilter === 'near_limit'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
+              ? 'bg-slate-900 text-white border-slate-900 font-medium shadow-2xs'
+              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 font-normal shadow-2xs'
           }`}
-          title="Filter shops nearing or reached 100 sales limit (>= 80 bills)"
+          title="Filter shops nearing 100 sales limit (>= 80 bills)"
         >
-          Near 100 Limit (&gt;80) <strong className={`ml-1 ${activeFilter === 'near_limit' ? 'text-white' : 'text-black font-black'}`}>{shopsNearLimit.toLocaleString()}</strong>
-        </button>
-
-        <button
-          onClick={() => handlePillClick('printer_enabled')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
-            activeFilter === 'printer_enabled'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
-          }`}
-          title="Filter shops with thermal printer hardware configured"
-        >
-          Printer Configured <strong className={`ml-1 ${activeFilter === 'printer_enabled' ? 'text-white' : 'text-black font-black'}`}>{totalPrintersSetup.toLocaleString()}</strong>
-        </button>
-
-        <button
-          onClick={() => handlePillClick('gst_enabled')}
-          className={`px-3 py-1.5 rounded-full text-[12px] transition-all cursor-pointer border ${
-            activeFilter === 'gst_enabled'
-              ? 'bg-[#EA580C] text-white border-[#EA580C] shadow-xs font-black'
-              : 'bg-white border-[#EA580C]/30 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold'
-          }`}
-          title="Filter shops with GST enabled"
-        >
-          GST Enabled <strong className={`ml-1 ${activeFilter === 'gst_enabled' ? 'text-white' : 'text-black font-black'}`}>{totalGstEnabled.toLocaleString()}</strong>
+          Near Limit (&gt;80) <span className={`ml-1 font-mono tabular-nums ${activeFilter === 'near_limit' ? 'text-slate-300' : 'text-slate-500'}`}>{shopsNearLimit.toLocaleString()}</span>
         </button>
       </div>
 
       {/* 5. Live Search Input */}
       <div className="relative">
-        <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
         <input
           type="text"
-          placeholder="Search shop name, owner, phone, city, or shop ID..."
+          placeholder="Search shop name, owner, phone, city, or ID..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-xs text-gray-900 placeholder:text-gray-400 focus:outline-hidden focus:border-[#D4621A] transition-colors shadow-2xs"
+          className="w-full pl-8 pr-3 h-8 text-xs rounded-md border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 shadow-2xs"
         />
       </div>
 
@@ -662,37 +624,37 @@ export function OverviewView({
               setSelectedGeography('all');
               setSearchQuery('');
             }}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold transition-all cursor-pointer shadow-xs border border-[#C2410C]"
+            className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors cursor-pointer shadow-2xs"
           >
-            <Filter className="w-3.5 h-3.5 text-white" />
-            <span className="font-bold text-white">Reset Filters</span>
+            <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+            <span>Reset filters</span>
           </button>
 
           <button
             onClick={handleExportExcel}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-[#EA580C]/40 bg-white hover:bg-[#FFEDD5] hover:border-[#EA580C] text-black font-bold transition-all cursor-pointer shadow-2xs group"
+            className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors cursor-pointer shadow-2xs"
           >
-            <Download className="w-3.5 h-3.5 text-[#EA580C]" />
-            <span className="font-bold text-black">Export Excel</span>
+            <Download className="w-3.5 h-3.5 text-slate-400" />
+            <span>Export CSV</span>
           </button>
 
           {/* Geography Filter */}
           <div className="relative">
             <button
               onClick={() => setIsGeoDropdownOpen(!isGeoDropdownOpen)}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-[#EA580C]/40 text-black hover:bg-[#FFEDD5] hover:border-[#EA580C] font-bold transition-all cursor-pointer bg-white shadow-2xs"
+              className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-medium transition-colors cursor-pointer shadow-2xs"
             >
-              <MapPin className="w-3.5 h-3.5 text-[#EA580C]" />
-              <span className="font-bold text-black">
+              <MapPin className="w-3.5 h-3.5 text-slate-400" />
+              <span>
                 {selectedGeography === 'all'
-                  ? 'Filter Geography'
+                  ? 'Geography'
                   : geographyOptions.find((g) => g.id === selectedGeography)?.label || selectedGeography}
               </span>
-              <ChevronDown className="w-3 h-3 text-[#EA580C]" />
+              <ChevronDown className="w-3 h-3 text-slate-400" />
             </button>
 
             {isGeoDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-52 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 z-40 animate-in fade-in zoom-in-95">
+              <div className="absolute left-0 mt-1 w-52 bg-white border border-slate-200 rounded-lg shadow-lg p-1 z-40">
                 {geographyOptions.map((opt) => (
                   <button
                     key={opt.id}
@@ -701,148 +663,133 @@ export function OverviewView({
                       setIsGeoDropdownOpen(false);
                       onShowToast?.(`Filtered to ${opt.label}`);
                     }}
-                    className={`w-full text-left px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center justify-between ${
+                    className={`w-full text-left px-2.5 py-1.5 rounded-md text-xs transition-colors cursor-pointer flex items-center justify-between ${
                       selectedGeography === opt.id
-                        ? 'bg-[#F8F3F0] text-[#D4621A] font-bold'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-slate-100 text-slate-900 font-medium'
+                        : 'text-slate-700 hover:bg-slate-50'
                     }`}
                   >
                     <span>{opt.label}</span>
-                    {selectedGeography === opt.id && <Check className="w-3.5 h-3.5 text-[#D4621A]" />}
+                    {selectedGeography === opt.id && <Check className="w-3.5 h-3.5 text-slate-900" />}
                   </button>
                 ))}
               </div>
             )}
           </div>
-
-          <button
-            onClick={() => {
-              setActiveFilter('all');
-              setSearchQuery('');
-              setSelectedGeography('all');
-            }}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-50 text-gray-600 font-medium transition-all cursor-pointer bg-white"
-          >
-            <RotateCcw className="w-3 h-3 text-gray-400" />
-            <span>Clear tab</span>
-          </button>
         </div>
 
-        <div className="text-xs text-gray-500 font-medium">
-          Showing <strong className="text-gray-900">{filteredShops.length}</strong> of {totalRegistered} shops
+        <div className="text-xs text-slate-500 font-normal">
+          Showing <span className="font-mono tabular-nums text-slate-900 font-medium">{filteredShops.length}</span> of <span className="font-mono tabular-nums">{totalRegistered}</span> shops
         </div>
       </div>
 
       {/* 7. The Data Table (Real Counter 365 Columns) */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200/80 shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-[12px]">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-gray-200 bg-[#FAFAFB] text-gray-600 uppercase text-[10.5px] font-bold tracking-wider">
+              <tr className="border-b border-slate-200/80 bg-slate-50/60 text-slate-500 text-[11.5px] font-medium">
                 <th
                   onClick={() => handleSort('name')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap font-medium"
                 >
                   <div className="flex items-center gap-1">
-                    <span>NAME</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Owner</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('shop')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap font-medium"
                 >
                   <div className="flex items-center gap-1">
-                    <span>SHOP</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Shop name</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
-                <th className="py-3 px-3.5 whitespace-nowrap">
-                  <span>SHOP TYPE</span>
+                <th className="py-2.5 px-3.5 whitespace-nowrap font-medium">
+                  <span>Type</span>
                 </th>
                 <th
                   onClick={() => handleSort('phone')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap font-medium"
                 >
                   <div className="flex items-center gap-1">
-                    <span>PHONE</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Phone</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('location')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap font-medium"
                 >
                   <div className="flex items-center gap-1">
-                    <span>LOCATION</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Location</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('registered')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap font-medium"
                 >
                   <div className="flex items-center gap-1">
-                    <span>REGISTERED</span>
+                    <span>Registered</span>
                     {sortCol === 'registered' ? (
                       sortDirection === 'desc' ? (
-                        <ArrowDown className="w-3 h-3 text-black" />
+                        <ArrowDown className="w-3 h-3 text-slate-900" />
                       ) : (
-                        <ArrowUp className="w-3 h-3 text-black" />
+                        <ArrowUp className="w-3 h-3 text-slate-900" />
                       )
                     ) : (
-                      <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                      <ArrowUpDown className="w-3 h-3 text-slate-400" />
                     )}
                   </div>
                 </th>
-                <th className="py-3 px-3.5 whitespace-nowrap">PLATFORM</th>
-                <th className="py-3 px-3.5 whitespace-nowrap">ACTIVITY</th>
-                <th className="py-3 px-3.5 whitespace-nowrap text-center">RESPONSE</th>
-                <th className="py-3 px-3.5 whitespace-nowrap text-center">ACTIVE CURRENT PLAN</th>
-                <th className="py-3 px-3.5 whitespace-nowrap">FREE 100 SALES QUOTA</th>
+                <th className="py-2.5 px-3.5 whitespace-nowrap font-medium">Platform</th>
+                <th className="py-2.5 px-3.5 whitespace-nowrap font-medium">Activity</th>
+                <th className="py-2.5 px-3.5 whitespace-nowrap text-center font-medium">Response</th>
+                <th className="py-2.5 px-3.5 whitespace-nowrap text-center font-medium">Current plan</th>
+                <th className="py-2.5 px-3.5 whitespace-nowrap font-medium">Quota (100)</th>
                 <th
                   onClick={() => handleSort('orders')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap text-center"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap text-center font-medium"
                 >
                   <div className="flex items-center justify-center gap-1">
-                    <span>BILLS</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Bills</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('revenue')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap text-right"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap text-right font-medium"
                 >
                   <div className="flex items-center justify-end gap-1">
-                    <span>TOTAL REVENUE (₹)</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Total revenue (₹)</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
                 <th
                   onClick={() => handleSort('customers')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-black whitespace-nowrap text-center"
+                  className="py-2.5 px-3.5 cursor-pointer hover:text-slate-900 whitespace-nowrap text-center font-medium"
                 >
                   <div className="flex items-center justify-center gap-1">
-                    <span>CUSTOMERS</span>
-                    <ArrowUpDown className="w-3 h-3 text-gray-400" />
+                    <span>Customers</span>
+                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {filteredShops.length === 0 ? (
                 <tr>
-                  <td colSpan={14} className="py-16 text-center text-gray-400 text-xs">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                        <Filter className="w-5 h-5" />
-                      </div>
-                      <span className="font-semibold text-gray-600">No shops match the selected criteria.</span>
-                      <span className="text-[11px] text-gray-400">
+                  <td colSpan={14} className="py-12 text-center text-slate-400 text-xs">
+                    <div className="flex flex-col items-center justify-center gap-1.5">
+                      <span className="font-medium text-slate-600">No shops match the selected criteria.</span>
+                      <span className="text-[11px] text-slate-400">
                         {shops.length === 0
                           ? 'No merchant stores registered in Supabase database yet.'
-                          : 'Try clicking "Registered" or "Reset Filters" above.'}
+                          : 'Try clicking "Registered" or "Reset filters" above.'}
                       </span>
                     </div>
                   </td>
@@ -852,162 +799,154 @@ export function OverviewView({
                   <tr
                     key={item.shop.id}
                     onClick={() => onOpenShopDrawer(item.shop)}
-                    className="hover:bg-[#FFEDD5]/40 cursor-pointer transition-colors"
+                    className="hover:bg-slate-50/70 cursor-pointer transition-colors"
                   >
                     {/* 1. NAME */}
-                    <td className="py-3.5 px-3.5 font-semibold text-gray-900 whitespace-nowrap">
+                    <td className="py-2.5 px-3.5 font-medium text-slate-900 whitespace-nowrap">
                       {item.ownerName}
                     </td>
 
                     {/* 2. SHOP */}
                     <td
-                      className="py-3.5 px-3.5 font-medium text-gray-900 whitespace-nowrap max-w-[180px] truncate"
+                      className="py-2.5 px-3.5 font-normal text-slate-800 whitespace-nowrap max-w-[180px] truncate"
                       title={item.shopName}
                     >
                       {item.shopName}
                     </td>
 
                     {/* 2b. SHOP TYPE */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#D4621A]/10 text-[#D4621A] border border-[#D4621A]/20 shadow-2xs font-sans">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700">
                         {item.shopType}
                       </span>
                     </td>
 
                     {/* 3. PHONE with WhatsApp link */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
                       {item.phone ? (
                         <a
                           href={`https://wa.me/91${item.phone.replace(/[^0-9]/g, '')}`}
                           target="_blank"
                           rel="noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1.5 text-gray-700 hover:text-[#D4621A] transition-colors"
+                          className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors font-mono tabular-nums text-xs"
                         >
-                          <svg className="w-4 h-4 text-[#D4621A] fill-current shrink-0" viewBox="0 0 24 24">
-                            <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.81 1.558 5.367L2 22l4.757-1.52A9.97 9.97 0 0012.031 22C17.568 22 22 17.505 22 12.031 22 6.495 17.568 2 12.031 2zm5.727 14.18c-.237.669-1.378 1.282-1.895 1.341-.518.06-1.127.085-3.57-1.026-3.08-1.396-5.06-4.52-5.215-4.726-.154-.206-1.252-1.666-1.252-3.178 0-1.512.793-2.257 1.074-2.564.282-.307.616-.384.821-.384.205 0 .41.002.59.01.19.01.442-.072.691.527.256.616.87 2.128.948 2.282.077.154.129.333.026.538-.103.205-.154.333-.308.513-.154.18-.323.4-.462.538-.154.154-.314.323-.135.63.18.307.798 1.318 1.71 2.13 1.173 1.045 2.162 1.369 2.47 1.523.308.154.488.128.667-.077.18-.205.77-1.001.975-1.344.205-.343.41-.286.692-.18.282.103 1.795.846 2.103 1.001.307.154.513.23.59.359.077.128.077.744-.16 1.413z" />
-                          </svg>
-                          <span className="font-mono">{item.phone}</span>
+                          <span>{item.phone}</span>
                         </a>
                       ) : (
-                        <span className="text-gray-400 font-mono">-</span>
+                        <span className="text-slate-400 font-mono">-</span>
                       )}
                     </td>
 
                     {/* 4. LOCATION */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap">
-                      <div className="font-semibold text-gray-900 leading-tight">{item.city}</div>
-                      <div className="text-[11px] text-gray-400 leading-tight">{item.state}</div>
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
+                      <div className="font-normal text-slate-800">{item.city}</div>
+                      <div className="text-[10.5px] text-slate-400">{item.state}</div>
                     </td>
 
                     {/* 5. REGISTERED */}
-                    <td className="py-3.5 px-3.5 text-gray-700 whitespace-nowrap font-medium">
+                    <td className="py-2.5 px-3.5 text-slate-600 whitespace-nowrap font-normal">
                       {item.registeredFormatted}
                     </td>
 
                     {/* 6. PLATFORM */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap">
-                      <div className="inline-flex items-center gap-1.5 text-gray-700 font-medium">
-                        <svg className="w-3.5 h-3.5 text-[#D4621A] fill-current" viewBox="0 0 24 24">
-                          <path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v6c0 .83.67 1.5 1.5 1.5S5 16.33 5 15.5v-6C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v6c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z" />
-                        </svg>
-                        <span>{item.platform}</span>
-                      </div>
+                    <td className="py-2.5 px-3.5 whitespace-nowrap text-slate-600">
+                      <span>{item.platform}</span>
                     </td>
 
                     {/* 7. ACTIVITY */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
                       {item.isLive ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#F8F3F0] text-[#D4621A] border border-[#D4621A]/25">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#D4621A] animate-pulse" />
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-[#dcfae5] text-[#04250e]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                           <span>Live</span>
                         </span>
                       ) : item.activityLabel === 'Today' ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#FFEDD5] text-black border border-[#EA580C]/30">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-[#fffbeb] text-[#92400e]">
                           Today
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-600">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-normal bg-slate-100 text-slate-600">
                           {item.activityLabel}
                         </span>
                       )}
                     </td>
 
                     {/* 8. RESPONSE */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap text-center">
                       {item.latestResponse ? (
                         <div className="inline-flex flex-col items-center">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                            className={`px-2 py-0.5 rounded text-[10px] font-medium ${
                               item.latestResponse.outcome === 'Positive'
-                                ? 'bg-[#EA580C] text-white border border-[#EA580C]'
-                                : 'bg-black text-white border border-black'
+                                ? 'bg-[#dcfae5] text-[#04250e]'
+                                : 'bg-[#ffedea] text-[#831c1e]'
                             }`}
                           >
                             {item.latestResponse.outcome}
                           </span>
                           {item.latestResponse.employee_name && (
-                            <span className="text-[10px] text-black/70 font-bold mt-0.5 font-mono">
+                            <span className="text-[10px] text-slate-500 mt-0.5">
                               by {item.latestResponse.employee_name}
                             </span>
                           )}
                           {item.latestResponse.follow_up_date && (
-                            <span className="text-[9.5px] text-[#EA580C] font-extrabold mt-0.5">
-                              📅 {item.latestResponse.follow_up_date.slice(0, 10)}
+                            <span className="text-[9.5px] text-slate-500 font-mono mt-0.5">
+                              {item.latestResponse.follow_up_date.slice(0, 10)}
                             </span>
                           )}
                         </div>
                       ) : (
-                        <span className="text-black/30 font-mono text-xs">—</span>
+                        <span className="text-slate-300 font-mono text-xs">—</span>
                       )}
                     </td>
 
                     {/* 9. ACTIVE CURRENT PLAN */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap text-center">
                       {item.isPro ? (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-black bg-[#EA580C] text-white border border-[#C2410C]">
-                          PRO ({item.currentPlanStatus === 'active' ? 'Active' : item.currentPlanStatus})
+                        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-[#dcfae5] text-[#04250e]">
+                          Pro ({item.currentPlanStatus === 'active' ? 'Active' : item.currentPlanStatus})
                         </span>
                       ) : (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-[#EA580C]/10 text-[#C2410C] border border-[#EA580C]/30 font-mono">
+                        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-[#ebedee] text-[#353736]">
                           {item.currentPlanName} ({item.currentPlanStatus === 'active' ? 'Active' : item.currentPlanStatus})
                         </span>
                       )}
                     </td>
 
                     {/* 9. FREE 100 SALES QUOTA PROGRESS */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap min-w-[170px]">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap min-w-[150px]">
                       {item.isPro ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#D4621A]">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>Unlimited Pro Access</span>
+                        <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 font-normal">
+                          <Sparkles className="w-3 h-3 text-amber-500" />
+                          <span>Unlimited Pro</span>
                         </span>
                       ) : (
                         <div className="space-y-1">
                           <div className="flex items-center justify-between text-[11px]">
-                            <span className="font-semibold text-gray-700">
-                              {item.freeBillsUsed} / 100 Sales
+                            <span className="font-mono tabular-nums text-slate-700">
+                              {item.freeBillsUsed} / 100
                             </span>
                             <span
-                              className={`font-mono font-bold text-[10.5px] ${
+                              className={`font-mono text-[10.5px] tabular-nums ${
                                 item.isLimitReached
-                                  ? 'text-red-600'
+                                  ? 'text-rose-600 font-medium'
                                   : item.isNearLimit
-                                  ? 'text-amber-600'
-                                  : 'text-gray-500'
+                                  ? 'text-amber-600 font-medium'
+                                  : 'text-slate-500'
                               }`}
                             >
                               {item.freeQuotaPct}%
                             </span>
                           </div>
-                          <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                          <div className="w-full bg-slate-100 rounded-full h-1 overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all ${
                                 item.isLimitReached
-                                  ? 'bg-red-500'
+                                  ? 'bg-rose-500'
                                   : item.isNearLimit
                                   ? 'bg-amber-500'
-                                  : 'bg-[#D4621A]'
+                                  : 'bg-slate-700'
                               }`}
                               style={{ width: `${item.freeQuotaPct}%` }}
                             />
@@ -1017,20 +956,20 @@ export function OverviewView({
                     </td>
 
                     {/* 10. BILLS / ORDERS */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11.5px] font-semibold bg-[#F8F3F0] text-[#D4621A] border border-[#D4621A]/25">
-                        {item.orderCount} bills
+                    <td className="py-2.5 px-3.5 whitespace-nowrap text-center">
+                      <span className="font-mono tabular-nums text-xs text-slate-800">
+                        {item.orderCount}
                       </span>
                     </td>
 
                     {/* 11. TOTAL REVENUE */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap text-right font-mono font-bold text-gray-900">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap text-right font-mono tabular-nums font-medium text-slate-900">
                       {formatINR(item.totalRevenue)}
                     </td>
 
                     {/* 12. CUSTOMERS */}
-                    <td className="py-3.5 px-3.5 whitespace-nowrap text-center">
-                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-700 border border-gray-200">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap text-center">
+                      <span className="font-mono tabular-nums text-xs text-slate-700">
                         {item.customerCount}
                       </span>
                     </td>
@@ -1042,12 +981,12 @@ export function OverviewView({
         </div>
 
         {/* Footer Pagination Bar */}
-        <div className="px-4 py-3 bg-[#FAFAFB] border-t border-gray-200 flex items-center justify-between text-xs text-gray-500">
+        <div className="px-4 py-2.5 bg-slate-50/50 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
           <div>
-            Showing 1 - {filteredShops.length} of {filteredShops.length} · 100 per page
+            Showing <span className="font-mono tabular-nums">1 - {filteredShops.length}</span> of <span className="font-mono tabular-nums">{filteredShops.length}</span> shops
           </div>
-          <div className="flex items-center gap-1 font-mono">
-            <span className="px-2 py-1 rounded bg-white border border-gray-200 text-gray-900 font-bold">1</span>
+          <div className="flex items-center gap-1 font-mono text-xs">
+            <span className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-900 font-medium">1</span>
           </div>
         </div>
       </div>

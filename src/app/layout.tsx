@@ -21,10 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        style={{ fontFamily: '"Plus Jakarta Sans", sans-serif' }}
-        className="min-h-screen bg-[var(--color-surface)] text-[var(--color-text)]"
-      >
+      <body className="min-h-screen bg-[#f8fafc] text-slate-900 antialiased selection:bg-orange-100 selection:text-orange-900">
         {children}
       </body>
     </html>

@@ -483,8 +483,8 @@ function MainDashboardContent() {
   const currentMeta = viewMeta[currentView] || ['Founder Dashboard', 'CounterPro 365 System'];
 
   return (
-    <div className="min-h-screen flex bg-[#F8F3F0] text-[#101318]">
-      {/* Sticky Left Sidebar matching StyleFleet */}
+    <div className="min-h-screen flex bg-[#f8fafc] text-slate-900">
+      {/* Sticky Left Sidebar */}
       <Sidebar
         currentView={currentView}
         onSelectView={(v) => {
@@ -518,10 +518,11 @@ function MainDashboardContent() {
           onLogout={logout}
         />
 
-        {/* Viewport */}
-        <div className="flex-1 p-[20px_24px_40px] flex flex-col gap-[20px]">
-          {viewingShopDetail ? (
-            <ShopDetailPage
+        {/* Viewport: Framed Sheet */}
+        <div className="flex-1 p-2 sm:p-3 pb-6 flex flex-col min-w-0">
+          <div className="flex-1 bg-white rounded-xl border border-slate-200/80 p-4 sm:p-6 shadow-none flex flex-col gap-5">
+            {viewingShopDetail ? (
+              <ShopDetailPage
               shop={viewingShopDetail}
               profiles={profiles}
               staff={staff}
@@ -787,6 +788,7 @@ function MainDashboardContent() {
               )}
             </>
           )}
+          </div>
         </div>
       </main>
 

@@ -83,8 +83,8 @@ interface DashboardViewProps {
   initialTab?: 'overview' | 'daily_ledger' | 'all_bills' | 'salon_breakdown' | 'subscription_revenue';
 }
 
-// Brand Design System Palette: Chart bars #F97316, #EA580C, #C2410C, #FFEDD5
-const CHART_PALETTE = ['#F97316', '#EA580C', '#C2410C', '#FFEDD5', '#101318', '#94A3B8'];
+// Minimal professional chart palette adhering to taste-skill
+const CHART_PALETTE = ['#0f172a', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0'];
 
 const Metric: React.FC<{ label: string; value: string; sub?: string; onClick?: () => void }> = ({
   label,
@@ -94,11 +94,11 @@ const Metric: React.FC<{ label: string; value: string; sub?: string; onClick?: (
 }) => (
   <div
     onClick={onClick}
-    className={`px-4 py-3 min-w-0 ${onClick ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
+    className={`p-3.5 min-w-0 ${onClick ? 'cursor-pointer hover:bg-slate-50/70 transition-colors' : ''}`}
   >
-    <div className="text-[11px] text-slate-500 truncate">{label}</div>
-    <div className="text-lg font-semibold text-slate-900 tabular-nums truncate">{value}</div>
-    {sub && <div className="text-[11px] text-slate-400 truncate">{sub}</div>}
+    <div className="text-[11.5px] text-slate-500 font-normal truncate">{label}</div>
+    <div className="text-xl font-mono tabular-nums text-slate-900 font-semibold tracking-tight mt-1 truncate">{value}</div>
+    {sub && <div className="text-[10.5px] text-slate-400 font-normal mt-0.5 truncate">{sub}</div>}
   </div>
 );
 
@@ -667,11 +667,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   }, [activeTab, dailyBillingBreakdown, salonContributions, salonTierLedger, scopedBills, exactDateInput, selectedOption]);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Header bar: Title, exact date chip, All Time selector, Refresh icon, Export */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">Founder Dashboard</h1>
+          <h1 className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">Founder Dashboard</h1>
           {exactDateInput && (
             <button
               type="button"
@@ -680,7 +680,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 setBillsPage(1);
               }}
               title="Clear date"
-              className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#FFEDD5] text-black border border-[#EA580C]/30 hover:bg-[#EA580C]/20 cursor-pointer"
+              className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 cursor-pointer"
             >
               {effectiveDateRange.label} ✕
             </button>
@@ -690,8 +690,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           {/* All Time Date Filter Icon & Selector */}
           <div className="relative inline-flex items-center">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#EA580C]/25 bg-white text-black text-xs font-bold shadow-2xs hover:bg-[#FFEDD5] transition-colors">
-              <Calendar className="w-3.5 h-3.5 text-[#EA580C]" />
+            <div className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-700 text-xs font-medium shadow-2xs hover:bg-slate-50 transition-colors">
+              <Calendar className="w-3.5 h-3.5 text-slate-400" />
               <select
                 value={selectedOption}
                 onChange={(e) => {
@@ -699,7 +699,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   setExactDateInput('');
                   setBillsPage(1);
                 }}
-                className="bg-transparent text-xs font-bold text-black outline-none cursor-pointer"
+                className="bg-transparent text-xs font-medium text-slate-700 outline-none cursor-pointer"
               >
                 <option value="all_time">All Time</option>
                 <option value="today">Today</option>
@@ -718,9 +718,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             }}
             disabled={loading}
             title="Refresh Data"
-            className="p-2 rounded-lg border border-[#EA580C]/25 bg-white text-black hover:bg-[#FFEDD5] transition-colors flex items-center justify-center cursor-pointer shadow-2xs"
+            className="w-8 h-8 rounded-md border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors flex items-center justify-center cursor-pointer shadow-2xs"
           >
-            <RotateCcw className={`w-3.5 h-3.5 text-[#EA580C] ${loading ? 'animate-spin' : ''}`} />
+            <RotateCcw className={`w-3.5 h-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
           </button>
 
           {/* Export Button */}
@@ -733,7 +733,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Summary: Platform SaaS Subscription & Sales Metrics (Founder Dashboard) - Exactly 6 cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border-y border-slate-200 divide-x divide-slate-100 bg-white rounded-xl shadow-xs">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border border-slate-200/80 divide-x divide-y lg:divide-y-0 divide-slate-100 bg-white rounded-lg shadow-2xs overflow-hidden">
         <Metric
           label="Total Revenue"
           value={formatCurrency(totalBilledRupees)}
@@ -773,16 +773,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Filter Bar */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between gap-3 text-xs">
-          <div className="text-slate-600">
-            <span className="font-medium text-slate-900">{effectiveDateRange.label}</span>
+          <div className="text-slate-500">
+            <span className="font-medium text-slate-800">{effectiveDateRange.label}</span>
             <span className="mx-1.5 text-slate-300">|</span>
-            {validScopedBills.length} orders · {formatCurrency(totalBilledRupees)}
+            {validScopedBills.length} orders · <span className="font-mono tabular-nums">{formatCurrency(totalBilledRupees)}</span>
             {hasActiveFilters && (
               <button
                 onClick={handleResetFilters}
-                className="ml-3 text-[#D4621A] hover:text-[#bf5312] underline cursor-pointer"
+                className="ml-2.5 text-slate-600 hover:text-slate-900 underline cursor-pointer"
                 title="Reset all active filters"
               >
                 Reset
@@ -792,24 +792,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <button
             type="button"
             onClick={() => setShowFilters((v) => !v)}
-            className="px-2.5 py-1 rounded-md border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 cursor-pointer"
+            className="h-7 px-2.5 rounded-md border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900 cursor-pointer text-xs"
           >
             {showFilters ? 'Hide filters' : 'Filters'}
           </button>
         </div>
 
         {showFilters && (
-          <div className="space-y-3 border border-slate-200 rounded-lg bg-white p-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="space-y-3 border border-slate-200/80 rounded-lg bg-slate-50/50 p-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-600">Shop</label>
+                <label className="text-[11px] font-medium text-slate-500">Shop</label>
                 <select
                   value={selectedSalonFilter}
                   onChange={(e) => {
                     setSelectedSalonFilter(e.target.value);
                     setBillsPage(1);
                   }}
-                  className="w-full text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#D4621A] cursor-pointer"
+                  className="w-full text-xs font-medium h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-slate-400 cursor-pointer shadow-2xs"
                 >
                   <option value="all">All Shops ({shops.length})</option>
                   {shops.map((s) => (
@@ -822,11 +822,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-slate-600">Date</label>
+                  <label className="text-[11px] font-medium text-slate-500">Date</label>
                   {exactDateInput && (
                     <button
                       onClick={() => setExactDateInput('')}
-                      className="text-[10px] text-slate-500 hover:text-slate-900 font-medium cursor-pointer underline"
+                      className="text-[10px] text-slate-400 hover:text-slate-700 cursor-pointer underline"
                     >
                       Clear
                     </button>
@@ -839,19 +839,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     setExactDateInput(e.target.value);
                     setBillsPage(1);
                   }}
-                  className="w-full text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#D4621A] cursor-pointer"
+                  className="w-full text-xs font-medium h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-slate-400 cursor-pointer shadow-2xs"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-600">Payment</label>
+                <label className="text-[11px] font-medium text-slate-500">Payment</label>
                 <select
                   value={paymentMethodFilter}
                   onChange={(e) => {
                     setPaymentMethodFilter(e.target.value);
                     setBillsPage(1);
                   }}
-                  className="w-full text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#D4621A] cursor-pointer"
+                  className="w-full text-xs font-medium h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-slate-400 cursor-pointer shadow-2xs"
                 >
                   <option value="all">All Methods</option>
                   <option value="CASH">CASH</option>
@@ -866,14 +866,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-600">Status</label>
+                <label className="text-[11px] font-medium text-slate-500">Status</label>
                 <select
                   value={billStatusFilter}
                   onChange={(e) => {
                     setBillStatusFilter(e.target.value);
                     setBillsPage(1);
                   }}
-                  className="w-full text-xs font-medium px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#D4621A] cursor-pointer"
+                  className="w-full text-xs font-medium h-8 px-2.5 rounded-md border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-slate-400 cursor-pointer shadow-2xs"
                 >
                   <option value="all">All</option>
                   <option value="paid">Paid</option>
@@ -883,9 +883,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 pt-2 border-t border-slate-200/60">
               <div className="relative flex-1 max-w-md">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search invoice, shop, customer, phone"
@@ -894,11 +894,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     setSearchQuery(e.target.value);
                     setBillsPage(1);
                   }}
-                  className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#D4621A]"
+                  className="w-full pl-8 pr-2.5 h-8 text-xs rounded-md border border-slate-200 bg-white text-slate-800 focus:outline-none focus:border-slate-400 shadow-2xs"
                 />
               </div>
 
-              <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs">
+              <div className="inline-flex rounded-md border border-slate-200 bg-white p-0.5 text-xs shadow-2xs">
                 {(
                   [
                     ['all', 'All'],
@@ -910,9 +910,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <button
                     key={id}
                     onClick={() => setSegmentFilter(id)}
-                    className={`px-3 py-1 rounded-md font-medium transition-all ${
+                    className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
                       segmentFilter === id
-                        ? 'bg-[#D4621A] text-white shadow-xs'
+                        ? 'bg-slate-900 text-white'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -925,8 +925,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         )}
       </div>
 
-      {/* 5 Tabs matching StyleFleet */}
-      <div className="flex items-center gap-5 border-b border-slate-200 overflow-x-auto">
+      {/* 5 Tabs matching framed-sheet design */}
+      <div className="flex items-center gap-6 border-b border-slate-200/80 overflow-x-auto">
         {[
           { id: 'daily_ledger', label: `Daily (${dailyBillingBreakdown.length})` },
           { id: 'all_bills', label: `Orders (${scopedBills.length})` },
@@ -939,10 +939,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`px-0.5 pb-2.5 -mb-px border-b-2 text-xs transition-colors cursor-pointer whitespace-nowrap ${
+              className={`pb-2 -mb-px border-b-2 text-xs transition-colors cursor-pointer whitespace-nowrap ${
                 isActive
-                  ? 'border-[#EA580C] text-[#C2410C] font-bold'
-                  : 'border-transparent text-slate-500 hover:text-slate-900 font-medium'
+                  ? 'border-slate-900 text-slate-900 font-semibold'
+                  : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300 font-normal'
               }`}
             >
               {tab.label}
@@ -1066,17 +1066,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-slate-200">
+          <div className="overflow-x-auto rounded-lg border border-slate-200/80">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50/80 text-slate-500 font-semibold uppercase tracking-wider text-[10.5px] border-b border-slate-200">
+              <thead className="bg-slate-50/60 text-slate-500 font-medium text-[11.5px] border-b border-slate-200/80">
                 <tr>
-                  <th className="px-4 py-2.5">Date</th>
-                  <th className="px-4 py-2.5">Orders</th>
-                  <th className="px-4 py-2.5">Revenue</th>
-                  <th className="px-4 py-2.5">Avg Order</th>
-                  <th className="px-4 py-2.5">Paid / Pending</th>
-                  <th className="px-4 py-2.5">Top Merchant</th>
-                  <th className="px-4 py-2.5 text-right">Action</th>
+                  <th className="px-4 py-2.5 font-medium">Date</th>
+                  <th className="px-4 py-2.5 font-medium">Orders</th>
+                  <th className="px-4 py-2.5 font-medium">Revenue</th>
+                  <th className="px-4 py-2.5 font-medium">Avg Order</th>
+                  <th className="px-4 py-2.5 font-medium">Paid / Pending</th>
+                  <th className="px-4 py-2.5 font-medium">Top Merchant</th>
+                  <th className="px-4 py-2.5 font-medium text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-sans">
@@ -1090,29 +1090,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   dailyBillingBreakdown.map((row) => (
                     <tr
                       key={row.rawDate}
-                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
+                      className="hover:bg-slate-50/70 transition-colors cursor-pointer"
                       onClick={() => handleSelectDayDrilldown(row.rawDate)}
                     >
                       <td className="px-4 py-2.5">
-                        <div className="font-semibold text-slate-900">{row.displayDate}</div>
-                        <span className="text-[10px] text-slate-400">{row.rawDate}</span>
+                        <div className="font-medium text-slate-900">{row.displayDate}</div>
+                        <span className="text-[10px] text-slate-400 font-mono">{row.rawDate}</span>
                       </td>
 
-                      <td className="px-4 py-2.5">
-                        <span className="text-slate-800 font-medium">{row.billsCount}</span>
+                      <td className="px-4 py-2.5 font-mono tabular-nums">
+                        <span className="text-slate-700">{row.billsCount}</span>
                       </td>
 
-                      <td className="px-4 py-2.5 font-semibold text-slate-900 tabular-nums">
+                      <td className="px-4 py-2.5 font-medium text-slate-900 font-mono tabular-nums">
                         {formatCurrency(row.totalAmountRupees)}
                       </td>
 
-                      <td className="px-4 py-2.5 text-slate-600 tabular-nums">
+                      <td className="px-4 py-2.5 text-slate-600 font-mono tabular-nums">
                         {formatCurrency(row.avgBillRupees)}
                       </td>
 
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                          <span className="text-[#D4621A] font-medium">{row.paidBillsCount} paid</span>
+                          <span className="text-emerald-700 font-medium">{row.paidBillsCount} paid</span>
                           <span className="text-slate-300">•</span>
                           <span>{row.pendingBillsCount} pending</span>
                         </div>
@@ -1120,7 +1120,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                       <td className="px-4 py-2.5">
                         <div className="font-medium text-slate-800">{row.topSalonName}</div>
-                        <span className="text-[11px] text-slate-400">
+                        <span className="text-[11px] text-slate-400 font-mono tabular-nums">
                           {row.topSalonBills} orders
                         </span>
                       </td>
@@ -1131,7 +1131,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             e.stopPropagation();
                             handleSelectDayDrilldown(row.rawDate);
                           }}
-                          className="text-xs font-semibold text-[#D4621A] hover:underline cursor-pointer"
+                          className="text-xs font-medium text-slate-700 hover:text-slate-900 hover:underline cursor-pointer"
                         >
                           View
                         </button>
