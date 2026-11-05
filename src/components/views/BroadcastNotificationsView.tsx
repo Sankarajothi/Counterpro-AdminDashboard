@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Shop, AppBroadcast } from '../../types/database';
 import {
   fetchBroadcasts,
@@ -32,6 +32,11 @@ import {
   Calendar,
   Image as ImageIcon,
   Archive,
+  Upload,
+  UploadCloud,
+  FileImage,
+  Check,
+  Link as LinkIcon,
 } from 'lucide-react';
 
 interface BroadcastNotificationsViewProps {
@@ -57,7 +62,17 @@ export function BroadcastNotificationsView({
   const [targetAudience, setTargetAudience] = useState<'all' | 'free_plan' | 'pro_plan' | 'specific_shop' | 'specific_city'>('all');
   const [targetShopId, setTargetShopId] = useState<string>(shops[0]?.id || '');
   const [targetCity, setTargetCity] = useState<string>('');
+  
+  // Image Upload / URL State
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUploadMode, setImageUploadMode] = useState<'file' | 'url'>('file');
+  const [imageFileName, setImageFileName] = useState<string>('');
+  const [imageFileSize, setImageFileSize] = useState<string>('');
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
+  const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Pop-up CTA Fields
   const [actionLabel, setActionLabel] = useState<string>('Upgrade to Pro');
   const [actionDeepLink, setActionDeepLink] = useState<string>('counter365://upgrade');
   const [isDismissible, setIsDismissible] = useState<boolean>(true);
@@ -88,7 +103,7 @@ export function BroadcastNotificationsView({
       actionDeepLink: 'counter365://upgrade',
       targetAudience: 'free_plan' as const,
       priority: 'urgent' as const,
-      imageUrl: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=600&auto=format&fit=crop&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=800&auto=format&fit=crop&q=80',
     },
     {
       label: 'Thermal Printer Auto-Reconnect Live',
@@ -123,7 +138,95 @@ export function BroadcastNotificationsView({
     setTargetAudience(preset.targetAudience);
     setPriority(preset.priority);
     setImageUrl(preset.imageUrl);
+    setImageFileName(preset.imageUrl ? 'preset-image.jpg' : '');
+    setImageFileSize('');
     onShowToast(`Loaded template: "${preset.label}"`);
+  };
+
+  // Image File Handling with Client-side Compression for Mobile Fast Loading
+  const processImageFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      onShowToast('Please select a valid image file (PNG, JPG, WEBP).');
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      onShowToast('Image size should be under 8MB.');
+      return;
+    }
+
+    setIsUploadingImage(true);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      const img = new Image();
+      img.src = dataUrl;
+      img.onload = () => {
+        // Create canvas to scale down to max 1200px wide for optimal mobile performance
+        const canvas = document.createElement('canvas');
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          setImageUrl(compressedDataUrl);
+          setImageFileName(file.name);
+          setImageFileSize(`${(file.size / 1024).toFixed(0)} KB`);
+          onShowToast(`Uploaded "${file.name}" successfully!`);
+        } else {
+          setImageUrl(dataUrl);
+          setImageFileName(file.name);
+        }
+        setIsUploadingImage(false);
+      };
+      img.onerror = () => {
+        setImageUrl(dataUrl);
+        setImageFileName(file.name);
+        setIsUploadingImage(false);
+      };
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  const removeUploadedImage = () => {
+    setImageUrl('');
+    setImageFileName('');
+    setImageFileSize('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    onShowToast('Banner image removed.');
   };
 
   // Load Real Data from Supabase
@@ -211,6 +314,8 @@ export function BroadcastNotificationsView({
         setTitle('');
         setMessage('');
         setImageUrl('');
+        setImageFileName('');
+        setImageFileSize('');
         setIsScheduled(false);
         setScheduleDateTime('');
         await loadData();
@@ -550,41 +655,153 @@ export function BroadcastNotificationsView({
               )}
             </div>
 
-            {/* In-App Pop-up Specific Controls (Image, CTA, Deep Link) */}
+            {/* In-App Pop-up Specific Controls (Image File Upload, CTA, Deep Link) */}
             {broadcastType === 'popup' && (
-              <div className="p-3.5 rounded-xl border border-orange-200/80 bg-orange-50/30 space-y-3">
+              <div className="p-4 rounded-xl border border-orange-200/80 bg-orange-50/20 space-y-3.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#EA580C] flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5" />
+                    <Layers className="w-4 h-4" />
                     <span>In-App Pop-up Modal Controls</span>
                   </span>
-                  <span className="text-[10px] text-neutral-500 font-mono">Modal Dialog Trigger</span>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-neutral-700 mb-1">
-                    Banner Graphic Image URL (Optional)
-                  </label>
-                  <div className="relative">
-                    <ImageIcon className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-2.5" />
-                    <input
-                      type="url"
-                      placeholder="https://... (or leave blank for icon-only modal)"
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-neutral-200 bg-white focus:border-[#EA580C] focus:outline-hidden"
-                    />
+                  
+                  {/* Mode switcher: Upload File vs Web URL */}
+                  <div className="flex items-center bg-white rounded-lg p-0.5 border border-orange-200">
+                    <button
+                      type="button"
+                      onClick={() => setImageUploadMode('file')}
+                      className={`px-2 py-0.5 rounded text-[10.5px] font-semibold transition-all cursor-pointer ${
+                        imageUploadMode === 'file'
+                          ? 'bg-[#EA580C] text-white shadow-2xs'
+                          : 'text-neutral-600 hover:text-neutral-900'
+                      }`}
+                    >
+                      Upload File
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageUploadMode('url')}
+                      className={`px-2 py-0.5 rounded text-[10.5px] font-semibold transition-all cursor-pointer ${
+                        imageUploadMode === 'url'
+                          ? 'bg-[#EA580C] text-white shadow-2xs'
+                          : 'text-neutral-600 hover:text-neutral-900'
+                      }`}
+                    >
+                      Image URL
+                    </button>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* File Upload Zone */}
+                {imageUploadMode === 'file' ? (
+                  <div>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileInputChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+
+                    {imageUrl ? (
+                      /* Uploaded Image Preview & Controls Card */
+                      <div className="p-3 bg-white rounded-xl border border-neutral-200 shadow-2xs flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-16 h-12 rounded-lg bg-neutral-100 overflow-hidden shrink-0 border border-neutral-200">
+                            <img
+                              src={imageUrl}
+                              alt="Uploaded Banner Preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-neutral-900 truncate">
+                              {imageFileName || 'Uploaded Banner'}
+                            </div>
+                            <div className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+                              <Check className="w-3 h-3" />
+                              <span>Ready & formatted for mobile POS</span>
+                              {imageFileSize && <span className="text-neutral-400">({imageFileSize})</span>}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 transition-colors cursor-pointer"
+                          >
+                            Replace
+                          </button>
+                          <button
+                            type="button"
+                            onClick={removeUploadedImage}
+                            className="p-1 rounded-lg hover:bg-red-50 text-red-500 transition-colors cursor-pointer"
+                            title="Remove Image"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Drag & Drop Upload Dropzone */
+                      <div
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          setIsDraggingOver(true);
+                        }}
+                        onDragLeave={() => setIsDraggingOver(false)}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`p-4 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center cursor-pointer text-center bg-white ${
+                          isDraggingOver
+                            ? 'border-[#EA580C] bg-orange-50/50'
+                            : 'border-neutral-300 hover:border-[#EA580C] hover:bg-orange-50/30'
+                        }`}
+                      >
+                        <div className="w-10 h-10 rounded-full bg-orange-50 text-[#EA580C] flex items-center justify-center mb-1.5 border border-orange-100">
+                          <UploadCloud className="w-5 h-5" />
+                        </div>
+                        <div className="text-xs font-bold text-neutral-800">
+                          Click to upload banner image or drag and drop
+                        </div>
+                        <div className="text-[11px] text-neutral-400 mt-0.5">
+                          PNG, JPG, WEBP up to 8MB • Auto-optimized for phone display
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Web Image URL Option */
+                  <div>
+                    <label className="block text-[11px] font-semibold text-neutral-700 mb-1">
+                      Banner Image URL
+                    </label>
+                    <div className="relative">
+                      <LinkIcon className="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-2.5" />
+                      <input
+                        type="url"
+                        placeholder="https://... (direct image URL)"
+                        value={imageUrl}
+                        onChange={(e) => {
+                          setImageUrl(e.target.value);
+                          setImageFileName(e.target.value ? 'web-image.jpg' : '');
+                        }}
+                        className="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-neutral-200 bg-white focus:border-[#EA580C] focus:outline-hidden"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Call to Action Button & Deep Link */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div>
                     <label className="block text-[11px] font-semibold text-neutral-700 mb-1">
                       Action Button Text (CTA)
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Upgrade to Pro"
+                      placeholder="e.g. Upgrade to Pro @ ₹499"
                       value={actionLabel}
                       onChange={(e) => setActionLabel(e.target.value)}
                       className="w-full text-xs p-2 rounded-lg border border-neutral-200 bg-white focus:border-[#EA580C] focus:outline-hidden"
@@ -593,7 +810,7 @@ export function BroadcastNotificationsView({
 
                   <div>
                     <label className="block text-[11px] font-semibold text-neutral-700 mb-1">
-                      Deep Link URI
+                      Deep Link URI (Mobile Route)
                     </label>
                     <input
                       type="text"
@@ -662,7 +879,7 @@ export function BroadcastNotificationsView({
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isUploadingImage}
                 className="w-full py-3 px-4 bg-[#EA580C] hover:bg-[#C2410C] text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
               >
                 {isSubmitting ? (
@@ -721,9 +938,9 @@ export function BroadcastNotificationsView({
             </div>
           </div>
 
-          {/* Smartphone Frame */}
-          <div className="w-[280px] sm:w-[310px] h-[540px] bg-[#181311] rounded-[36px] p-3 shadow-2xl border-4 border-neutral-800 relative flex flex-col overflow-hidden">
-            {/* Top Speaker / Dynamic Island */}
+          {/* Smartphone Frame with realistic bezel */}
+          <div className="w-[290px] sm:w-[320px] h-[560px] bg-[#181311] rounded-[40px] p-3 shadow-2xl border-4 border-neutral-800 relative flex flex-col overflow-hidden">
+            {/* Top Dynamic Island / Camera */}
             <div className="w-full flex justify-center pb-2 pt-1 z-20">
               <div className="w-24 h-4 bg-black rounded-full flex items-center justify-between px-2">
                 <span className="w-2 h-2 rounded-full bg-neutral-800" />
@@ -732,29 +949,29 @@ export function BroadcastNotificationsView({
             </div>
 
             {/* Screen Inner Canvas */}
-            <div className="w-full flex-1 bg-[#F8F3F0] rounded-[24px] overflow-hidden relative flex flex-col font-sans select-none border border-neutral-200/40">
+            <div className="w-full flex-1 bg-[#F8F3F0] rounded-[28px] overflow-hidden relative flex flex-col font-sans select-none border border-neutral-200/40">
               {/* POS App Topbar Mockup */}
-              <div className="bg-[#181311] text-white px-3 py-2 flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
+              <div className="bg-[#181311] text-white px-3.5 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-full bg-[#EA580C] flex items-center justify-center text-[10px] font-black">
                     C
                   </div>
-                  <span className="text-[11px] font-bold tracking-tight">Counter365 POS</span>
+                  <span className="text-[11.5px] font-bold tracking-tight">Counter365 POS</span>
                 </div>
-                <div className="text-[10px] font-mono text-neutral-400">₹0.00 Cart</div>
+                <div className="text-[10px] font-mono text-stone-300">₹0.00 Cart</div>
               </div>
 
               {/* In-App Top Notification Banner Mode */}
               {broadcastType === 'in_app' && (
-                <div className="m-2 p-2.5 bg-white rounded-xl shadow-md border-l-4 border-l-[#EA580C] border border-neutral-200/80 flex items-start gap-2 animate-bounce-short">
-                  <div className="w-6 h-6 rounded-md bg-orange-100 text-[#EA580C] flex items-center justify-center shrink-0">
-                    <Bell className="w-3 h-3" />
+                <div className="m-2.5 p-3 bg-white rounded-xl shadow-md border-l-4 border-l-[#EA580C] border border-neutral-200/80 flex items-start gap-2.5 animate-bounce-short z-10">
+                  <div className="w-7 h-7 rounded-lg bg-orange-100 text-[#EA580C] flex items-center justify-center shrink-0">
+                    <Bell className="w-3.5 h-3.5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[11px] font-bold text-[#101318] truncate">
+                    <div className="text-[11.5px] font-bold text-[#101318] truncate">
                       {title || 'Counter365 Notification'}
                     </div>
-                    <div className="text-[10px] text-neutral-600 line-clamp-2 mt-0.5">
+                    <div className="text-[10.5px] text-neutral-600 line-clamp-2 mt-0.5">
                       {message || 'Your announcement copy will appear here...'}
                     </div>
                   </div>
@@ -762,32 +979,32 @@ export function BroadcastNotificationsView({
               )}
 
               {/* POS Terminal Background Content Mock */}
-              <div className="flex-1 p-3 flex flex-col justify-between opacity-50 pointer-events-none">
+              <div className="flex-1 p-3 flex flex-col justify-between opacity-45 pointer-events-none">
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-white p-2 rounded-lg border border-neutral-200 shadow-2xs">
-                    <div className="text-[10px] text-neutral-400">Today Sales</div>
-                    <div className="text-xs font-bold text-neutral-800">₹4,250.00</div>
+                  <div className="bg-white p-2.5 rounded-lg border border-neutral-200 shadow-2xs">
+                    <div className="text-[10px] text-neutral-400 uppercase font-mono">Today Sales</div>
+                    <div className="text-sm font-bold text-neutral-900 mt-0.5 font-mono">₹4,250.00</div>
                   </div>
-                  <div className="bg-white p-2 rounded-lg border border-neutral-200 shadow-2xs">
-                    <div className="text-[10px] text-neutral-400">Total Bills</div>
-                    <div className="text-xs font-bold text-neutral-800">18 orders</div>
+                  <div className="bg-white p-2.5 rounded-lg border border-neutral-200 shadow-2xs">
+                    <div className="text-[10px] text-neutral-400 uppercase font-mono">Total Bills</div>
+                    <div className="text-sm font-bold text-neutral-900 mt-0.5 font-mono">18 orders</div>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="h-2 bg-neutral-200 rounded w-3/4"></div>
-                  <div className="h-2 bg-neutral-200 rounded w-1/2"></div>
-                  <div className="h-2 bg-neutral-200 rounded w-5/6"></div>
+                <div className="space-y-2">
+                  <div className="h-2.5 bg-neutral-300 rounded w-3/4"></div>
+                  <div className="h-2.5 bg-neutral-300 rounded w-1/2"></div>
+                  <div className="h-2.5 bg-neutral-300 rounded w-5/6"></div>
                 </div>
 
-                <div className="h-7 bg-[#EA580C]/30 rounded-lg flex items-center justify-center text-[10px] text-neutral-700 font-bold">
+                <div className="h-8 bg-[#EA580C]/25 border border-[#EA580C]/40 rounded-xl flex items-center justify-center text-[11px] text-neutral-800 font-bold">
                   + Add New Bill (F1)
                 </div>
               </div>
 
               {/* Push Notification Lockscreen Style Overlay */}
               {broadcastType === 'push' && (
-                <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-[2px] p-3 flex flex-col justify-start pt-6">
+                <div className="absolute inset-0 bg-neutral-900/65 backdrop-blur-[2px] p-3 flex flex-col justify-start pt-6 z-20">
                   <div className="text-center text-white/80 text-[11px] font-mono mb-3">
                     Lock Screen Notification
                   </div>
@@ -804,41 +1021,42 @@ export function BroadcastNotificationsView({
                     <div className="text-xs font-bold text-neutral-900 mt-1">
                       {title || 'Critical Update Announcement'}
                     </div>
-                    <div className="text-[11px] text-neutral-600 mt-0.5 line-clamp-3">
+                    <div className="text-[11px] text-neutral-600 mt-0.5 line-clamp-3 leading-relaxed">
                       {message || 'Type your push notification message in the composer on the left to preview...'}
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* In-App Pop-up Dialog Modal Overlay */}
+              {/* In-App Pop-up Dialog Modal: Perfectly Formatted & Visible */}
               {broadcastType === 'popup' && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center p-3 z-30">
-                  <div className="w-full bg-white rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col relative max-h-[92%] animate-scale-in">
+                <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px] flex items-center justify-center p-3 z-30">
+                  <div className="w-full bg-white rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col relative max-h-[94%]">
                     {/* Dismiss X button */}
                     {isDismissible && (
                       <button
                         type="button"
-                        className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center z-10 cursor-pointer"
+                        className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center z-20 backdrop-blur-md cursor-pointer transition-transform active:scale-95 shadow-md"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <X className="w-4 h-4" />
                       </button>
                     )}
 
-                    {/* Banner Image Preview */}
+                    {/* Banner Graphic Image: Crisp, 16:9 ratio, perfectly visible */}
                     {imageUrl ? (
-                      <div className="w-full h-28 bg-neutral-100 relative overflow-hidden">
+                      <div className="w-full h-36 bg-neutral-900 relative overflow-hidden shrink-0 border-b border-neutral-100">
                         <img
                           src={imageUrl}
-                          alt="Banner Preview"
-                          className="w-full h-full object-cover"
+                          alt="Banner Graphic"
+                          className="w-full h-full object-cover object-center"
                           onError={(e) => {
                             (e.target as any).style.display = 'none';
                           }}
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                       </div>
                     ) : (
-                      <div className="w-full h-16 bg-gradient-to-r from-[#181311] via-[#2A1E1A] to-[#EA580C] flex items-center justify-center">
+                      <div className="w-full h-20 bg-gradient-to-r from-[#181311] via-[#2A1E1A] to-[#EA580C] flex items-center justify-center shrink-0">
                         <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center border border-white/20">
                           <Sparkles className="w-5 h-5 text-[#EA580C]" />
                         </div>
@@ -846,30 +1064,30 @@ export function BroadcastNotificationsView({
                     )}
 
                     {/* Modal Content */}
-                    <div className="p-3 text-center flex flex-col items-center">
-                      <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-orange-100 text-[#EA580C] uppercase mb-1">
-                        {priority === 'urgent' ? 'Important Notice' : 'Counter365 Update'}
+                    <div className="p-3.5 text-center flex flex-col items-center">
+                      <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-100 text-[#EA580C] uppercase mb-1.5 tracking-wide">
+                        {priority === 'urgent' ? 'Important Alert' : 'Counter365 Notice'}
                       </div>
-                      <h4 className="text-xs font-bold text-neutral-900 leading-snug">
-                        {title || 'Counter365 Pop-up Title'}
+                      <h4 className="text-[13px] font-bold text-neutral-900 leading-snug">
+                        {title || 'Notice Headline'}
                       </h4>
-                      <p className="text-[10px] text-neutral-600 mt-1 line-clamp-4 leading-relaxed">
+                      <p className="text-[11px] text-neutral-600 mt-1 leading-relaxed line-clamp-4">
                         {message || 'Type your announcement message to preview it here in real-time.'}
                       </p>
 
                       {/* Primary CTA Button */}
                       <button
                         type="button"
-                        className="w-full mt-2.5 py-1.5 px-3 bg-[#EA580C] text-white text-[10.5px] font-bold rounded-lg shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="w-full mt-3 py-2 px-3 bg-[#EA580C] text-white text-[11px] font-bold rounded-xl shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <span>{actionLabel || 'Check Now'}</span>
-                        <ExternalLink className="w-2.5 h-2.5" />
+                        <ExternalLink className="w-3 h-3" />
                       </button>
 
-                      {/* Deep Link hint */}
+                      {/* Deep Link Hint */}
                       {actionDeepLink && (
-                        <div className="text-[8px] font-mono text-neutral-400 mt-1 truncate max-w-full">
-                          Target: {actionDeepLink}
+                        <div className="text-[8.5px] font-mono text-neutral-400 mt-1.5 truncate max-w-full">
+                          Deep Link: {actionDeepLink}
                         </div>
                       )}
                     </div>
