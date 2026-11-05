@@ -23,6 +23,7 @@ import { ShopStaffView } from '../components/views/ShopStaffView';
 import { PurchasesView } from '../components/views/PurchasesView';
 import { ReportsView } from '../components/views/ReportsView';
 import { SupportMessagesView } from '../components/views/SupportMessagesView';
+import { BroadcastNotificationsView } from '../components/views/BroadcastNotificationsView';
 import { AppTelemetryCombinedView } from '../components/views/AppTelemetryCombinedView';
 import { AuditTrailView } from '../components/views/AuditTrailView';
 import { SystemHealthView } from '../components/views/SystemHealthView';
@@ -466,6 +467,10 @@ function MainDashboardContent() {
       'Support Outreach',
       'Direct merchant communications, onboarding greetings & support tickets',
     ],
+    broadcasts: [
+      'Broadcasts & In-App Pop-ups',
+      'Merchant engagement, push dispatches & mobile in-app pop-up modals',
+    ],
     platform_audit: [
       'Activity Logs',
       'Tamper-proof event logs across bills, updates & admin operations',
@@ -727,6 +732,14 @@ function MainDashboardContent() {
                   profiles={profiles}
                   loading={loading}
                   onRefresh={handleManualRefresh}
+                />
+              )}
+
+              {/* 14.1 Broadcasts & In-App Pop-ups */}
+              {currentView === 'broadcasts' && (
+                <BroadcastNotificationsView
+                  shops={shops}
+                  onShowToast={showToast}
                 />
               )}
 

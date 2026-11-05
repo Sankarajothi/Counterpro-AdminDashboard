@@ -419,3 +419,55 @@ export interface SystemLogRecord {
   created_at: string;
   shop?: Shop;
 }
+
+export interface DevicePushToken {
+  id: string;
+  shop_id?: string | null;
+  profile_id?: string | null;
+  fcm_token: string;
+  platform: 'android' | 'ios' | 'web' | 'windows' | string;
+  app_version?: string | null;
+  is_active: boolean;
+  last_seen_at?: string | null;
+  created_at: string;
+  shop?: Shop;
+  profile?: Profile;
+}
+
+export interface AppBroadcast {
+  id: string;
+  title: string;
+  message: string;
+  type: 'push' | 'in_app' | 'popup';
+  priority: 'normal' | 'high' | 'urgent';
+  target_audience: 'all' | 'free_plan' | 'pro_plan' | 'specific_shop' | 'specific_city';
+  target_shop_id?: string | null;
+  target_city?: string | null;
+  image_url?: string | null;
+  action_label?: string | null;
+  action_deep_link?: string | null;
+  is_dismissible: boolean;
+  max_impressions: number;
+  status: 'draft' | 'scheduled' | 'sent' | 'archived';
+  scheduled_for?: string | null;
+  expires_at?: string | null;
+  sent_at?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+  target_shop?: Shop | null;
+  interactions_count?: {
+    received: number;
+    viewed: number;
+    clicked: number;
+    dismissed: number;
+  };
+}
+
+export interface BroadcastInteraction {
+  id: string;
+  broadcast_id: string;
+  shop_id: string;
+  status: 'received' | 'viewed' | 'clicked' | 'dismissed';
+  created_at: string;
+}

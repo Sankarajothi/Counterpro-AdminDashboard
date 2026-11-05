@@ -376,6 +376,7 @@ export function Sidebar({
             </div>
           )}
           <div className="space-y-1.5">
+            {renderNavItem('broadcasts', 'Broadcasts & Pop-ups', Radio)}
             {renderNavItem('support_messages', 'Support', MessageSquare, undefined, true)}
           </div>
         </div>

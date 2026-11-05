@@ -35,6 +35,7 @@ export type NavView =
   | 'system_health'
   | 'reports_bi'
   | 'support_messages'
+  | 'broadcasts'
   | 'subscription_plans'
   | 'salons_360'
   | 'staff_access'
