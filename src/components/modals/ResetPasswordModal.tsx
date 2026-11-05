@@ -44,7 +44,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
 
   if (!isOpen) return null;
 
-  const adminEmail = user?.email || 'stylefleet@tecstellar.com';
+  const adminEmail = user?.email || 'counter365@tecstellar.com';
 
   const handleClose = () => {
     setCurrentPassword('');

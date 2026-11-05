@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Shield, ArrowLeft, Lock, FileText, Smartphone, Database, UserCheck, Trash2, Mail } from 'lucide-react';
@@ -17,9 +17,9 @@ export default function PrivacyPolicyPage() {
       <header className="sticky top-0 z-30 bg-white border-b border-[#E2E8F0] shadow-xs">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-white p-1 border border-[#E2E8F0] shadow-xs flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-[#181311] p-1.5 border border-[#E2E8F0] shadow-xs flex items-center justify-center">
               <img
-                src="/assets/counterpro-logo.png"
+                src="/assets/counter365-dark-theme-emblem.png"
                 alt="Counter365"
                 className="w-full h-full object-contain"
               />

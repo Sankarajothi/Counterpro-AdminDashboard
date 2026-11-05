@@ -1,5 +1,5 @@
 /**
- * Product Analytics Engine Configuration for Counter365 / StyleFleet
+ * Product Analytics Engine Configuration for Counter365
  * Centralizes thresholds, scoring weights, funnel definitions, and configurable domain labels.
  */
 

@@ -32,28 +32,28 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
 }) => {
   const lastUpdated = 'September 26, 2026';
   const effectiveDate = 'September 1, 2026';
-  const contactEmail = 'Stylefleet@tecstellar.com';
+  const contactEmail = 'counter365@tecstellar.com';
 
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F3F0] text-slate-900 selection:bg-[#D4621A] selection:text-white font-sans transition-colors">
+    <div className="min-h-screen bg-[#F8F3F0] text-slate-900 selection:bg-[#EA580C] selection:text-white font-sans transition-colors">
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-40 bg-[#D4621A] text-white border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-md">
+      <header className="sticky top-0 z-40 bg-[#181311] text-white border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm border border-white/20">
+          <div className="w-10 h-10 rounded-xl bg-white/10 p-1.5 flex items-center justify-center shrink-0 shadow-sm border border-white/15">
             <img
-              src="/counterpro-logo.png"
-              alt="CounterPro Logo"
+              src="/assets/counter365-dark-theme-emblem.png"
+              alt="Counter365 Logo"
               className="w-full h-full object-contain"
             />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-sm tracking-wide text-white">STYLEFLEET</span>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white border border-white/20 uppercase">
+              <span className="font-extrabold text-sm tracking-wide text-white">COUNTER365</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-[#EA580C] border border-[#EA580C]/30 uppercase">
                 Legal
               </span>
             </div>
@@ -97,9 +97,9 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-8">
         {/* Hero Section */}
         <div className="p-6 sm:p-8 rounded-3xl border border-[#D4621A]/15 border-l-4 border-l-[#D4621A] bg-white shadow-xs space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4621A]/10 border border-[#D4621A]/20 text-[#D4621A] text-xs font-bold uppercase tracking-wider">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#D4621A]" />
-            <span>Official CounterPro Policy</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EA580C]/10 border border-[#EA580C]/20 text-[#EA580C] text-xs font-bold uppercase tracking-wider">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#EA580C]" />
+            <span>Official Counter365 Policy</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
@@ -107,20 +107,20 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl">
-            This Privacy Policy describes how <strong className="text-slate-900">CounterPro</strong> (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;), developed and operated by <strong className="text-slate-900">TECSTELLAR SOLUTIONS LLP</strong>, collects, processes, stores, and protects information when you use the CounterPro Mobile Application (Android and iOS), shop point-of-sale terminals, and the CounterPro Master Administration Portal.
+            This Privacy Policy describes how <strong className="text-slate-900">Counter365</strong> (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;), developed and operated by <strong className="text-slate-900">TECSTELLAR SOLUTIONS LLP</strong>, collects, processes, stores, and protects information when you use the Counter365 Mobile Application (Android and iOS), shop point-of-sale terminals, and the Counter365 Master Administration Portal.
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500 border-t border-[#D4621A]/15">
+          <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500 border-t border-stone-200">
             <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-[#D4621A]" />
+              <Clock className="w-3.5 h-3.5 text-[#EA580C]" />
               <span>Effective Date: <strong className="text-slate-900 font-medium">{effectiveDate}</strong></span>
             </div>
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#D4621A]" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#EA580C]" />
               <span>Last Updated: <strong className="text-slate-900 font-medium">{lastUpdated}</strong></span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Building className="w-3.5 h-3.5 text-[#D4621A]" />
+              <Building className="w-3.5 h-3.5 text-[#EA580C]" />
               <span>Operating Legal Entity: <strong className="text-slate-900 font-medium">TECSTELLAR SOLUTIONS LLP</strong></span>
             </div>
           </div>
@@ -128,18 +128,18 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
 
         {/* Quick Highlights Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="p-5 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-xl bg-[#D4621A]/10 text-[#D4621A] flex items-center justify-center border border-[#D4621A]/20">
+          <div className="p-5 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-2">
+            <div className="w-8 h-8 rounded-xl bg-[#EA580C]/10 text-[#EA580C] flex items-center justify-center border border-[#EA580C]/20">
               <Lock className="w-4 h-4" />
             </div>
             <h3 className="font-bold text-slate-900 text-sm">256-Bit SSL/TLS Encryption</h3>
             <p className="text-slate-600 leading-relaxed">
-              All transactions, appointments, and telemetry data are encrypted in transit and at rest with Supabase Row Level Security.
+              All transactions, orders, and telemetry data are encrypted in transit and at rest with Supabase Row Level Security.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-xl bg-[#D4621A]/10 text-[#D4621A] flex items-center justify-center border border-[#D4621A]/20">
+          <div className="p-5 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-2">
+            <div className="w-8 h-8 rounded-xl bg-[#EA580C]/10 text-[#EA580C] flex items-center justify-center border border-[#EA580C]/20">
               <UserX className="w-4 h-4" />
             </div>
             <h3 className="font-bold text-slate-900 text-sm">Right to Erasure</h3>
@@ -148,8 +148,8 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-xl bg-[#D4621A]/10 text-[#D4621A] flex items-center justify-center border border-[#D4621A]/20">
+          <div className="p-5 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-2">
+            <div className="w-8 h-8 rounded-xl bg-[#EA580C]/10 text-[#EA580C] flex items-center justify-center border border-[#EA580C]/20">
               <Eye className="w-4 h-4" />
             </div>
             <h3 className="font-bold text-slate-900 text-sm">Zero Data Brokering</h3>
@@ -162,26 +162,26 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
         {/* Policy Sections */}
         <div className="space-y-6 text-slate-600 text-xs sm:text-sm leading-relaxed">
           {/* Section 1 */}
-          <section className="p-6 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-3">
+          <section className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-3">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-              <span className="w-6 h-6 rounded-full bg-[#D4621A] text-white flex items-center justify-center text-xs font-mono">1</span>
+              <span className="w-6 h-6 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-mono">1</span>
               <h2>Information We Collect</h2>
             </div>
             <p>
-              When shop owners, supervisors, builders, cashiers, or clients interact with the CounterPro ecosystem, we collect information necessary to deliver point-of-sale invoicing and shop management services:
+              When shop owners, supervisors, staff, cashiers, or clients interact with the Counter365 ecosystem, we collect information necessary to deliver point-of-sale invoicing and shop management services:
             </p>
             <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
               <li>
                 <strong className="text-slate-900">Shop Business Profiles:</strong> Shop name, contact email, telephone number, business address, GSTIN/tax identifier, products catalog, and operational working hours.
               </li>
               <li>
-                <strong className="text-slate-900">User Account Credentials:</strong> Mobile phone number, full name, role assignment (Owner, Supervisor, Builder, Cashier), and authentication identifiers.
+                <strong className="text-slate-900">User Account Credentials:</strong> Mobile phone number, full name, role assignment (Owner, Supervisor, Staff, Cashier), and authentication identifiers.
               </li>
               <li>
                 <strong className="text-slate-900">Customer Records:</strong> Customer full name, contact number, order logs, item selections, and payment status.
               </li>
               <li>
-                <strong className="text-slate-900">Billing &amp; Transaction Invoices:</strong> Invoice sequence numbers, subtotal amounts, discounts applied, taxes, total billed, payment method (Cash, UPI, Card), and payment fulfillment status. <span className="text-slate-900 font-medium">CounterPro does not process or retain raw credit card numbers or banking PINs.</span>
+                <strong className="text-slate-900">Billing &amp; Transaction Invoices:</strong> Invoice sequence numbers, subtotal amounts, discounts applied, taxes, total billed, payment method (Cash, UPI, Card), and payment fulfillment status. <span className="text-slate-900 font-medium">Counter365 does not process or retain raw credit card numbers or banking PINs.</span>
               </li>
               <li>
                 <strong className="text-slate-900">Device Hardware &amp; Telemetry Data:</strong> As recorded in our telemetry system, we collect anonymous hardware identifiers, mobile platform (Android/iOS), OS build version, app build version, battery charging status, and network connection type to ensure reliable offline-first bill synchronization.
@@ -193,13 +193,13 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
           </section>
 
           {/* Section 2 */}
-          <section className="p-6 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-3">
+          <section className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-3">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-              <span className="w-6 h-6 rounded-full bg-[#D4621A] text-white flex items-center justify-center text-xs font-mono">2</span>
+              <span className="w-6 h-6 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-mono">2</span>
               <h2>How We Use Collected Information</h2>
             </div>
             <p>
-              CounterPro processes data strictly for legitimate operational, security, and contractual requirements:
+              Counter365 processes data strictly for legitimate operational, security, and contractual requirements:
             </p>
             <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
               <li>Facilitating appointment scheduling, reminders, and calendar coordination for shop teams.</li>
@@ -234,17 +234,17 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
           </section>
 
           {/* Section 4 */}
-          <section className="p-6 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-3">
+          <section className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-3">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-              <span className="w-6 h-6 rounded-full bg-[#D4621A] text-white flex items-center justify-center text-xs font-mono">4</span>
+              <span className="w-6 h-6 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-mono">4</span>
               <h2>Account Deletion &amp; Right to be Forgotten (GDPR / Indian DPDP Compliance)</h2>
             </div>
             <p>
-              CounterPro upholds your absolute right to account deletion and permanent data erasure:
+              Counter365 upholds your absolute right to account deletion and permanent data erasure:
             </p>
-            <div className="p-4 rounded-xl bg-[#F8F3F0] border border-[#D4621A]/15 space-y-2">
+            <div className="p-4 rounded-xl bg-[#F8F3F0] border border-stone-200 space-y-2">
               <div className="flex items-center gap-2 font-bold text-slate-900">
-                <UserX className="w-4 h-4 text-[#D4621A]" />
+                <UserX className="w-4 h-4 text-[#EA580C]" />
                 <span>How to Request Account Deletion</span>
               </div>
               <p className="text-slate-700 text-xs leading-relaxed">
@@ -261,7 +261,7 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
                 <div className="pt-2">
                   <button
                     onClick={onOpenDeleteAccount}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#D4621A] hover:bg-[#bf5312] text-white text-xs font-semibold cursor-pointer transition-colors shadow-xs"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs font-semibold cursor-pointer transition-colors shadow-xs"
                   >
                     <UserX className="w-3.5 h-3.5" />
                     <span>View Standalone Account Deletion Instructions &rarr;</span>
@@ -272,9 +272,9 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
           </section>
 
           {/* Section 5 */}
-          <section className="p-6 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-3">
+          <section className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-3">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-              <span className="w-6 h-6 rounded-full bg-[#D4621A] text-white flex items-center justify-center text-xs font-mono">5</span>
+              <span className="w-6 h-6 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-mono">5</span>
               <h2>Third-Party Service Providers</h2>
             </div>
             <p>
@@ -288,7 +288,7 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
                 <strong className="text-slate-900">Expo / React Native:</strong> Mobile application runtime and over-the-air update delivery.
               </li>
               <li>
-                <strong className="text-slate-900">Vercel:</strong> Web application hosting for the CounterPro administrative console.
+                <strong className="text-slate-900">Vercel:</strong> Web application hosting for the Counter365 administrative console.
               </li>
             </ul>
             <p className="text-xs text-slate-500">
@@ -297,9 +297,9 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
           </section>
 
           {/* Section 6 */}
-          <section className="p-6 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-3">
+          <section className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-3">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-              <span className="w-6 h-6 rounded-full bg-[#D4621A] text-white flex items-center justify-center text-xs font-mono">6</span>
+              <span className="w-6 h-6 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-mono">6</span>
               <h2>Children&rsquo;s Privacy Protection</h2>
             </div>
             <p>
@@ -308,18 +308,18 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
           </section>
 
           {/* Section 7 */}
-          <section className="p-6 rounded-2xl border border-[#D4621A]/15 bg-white shadow-xs space-y-3">
+          <section className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-3">
             <div className="flex items-center gap-2 text-slate-900 font-bold text-base">
-              <span className="w-6 h-6 rounded-full bg-[#D4621A] text-white flex items-center justify-center text-xs font-mono">7</span>
+              <span className="w-6 h-6 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-mono">7</span>
               <h2>Contact Us &amp; Grievance Redressal</h2>
             </div>
             <p>
               If you have any questions, concerns, or requests regarding this Privacy Policy or our data handling practices, please contact our Data Protection and Grievance Officer:
             </p>
-            <div className="p-4 rounded-xl bg-[#F8F3F0] border border-[#D4621A]/15 space-y-1.5 text-xs">
-              <div className="font-bold text-slate-900 text-sm">CounterPro Data Protection Officer</div>
+            <div className="p-4 rounded-xl bg-[#F8F3F0] border border-stone-200 space-y-1.5 text-xs">
+              <div className="font-bold text-slate-900 text-sm">Counter365 Data Protection Officer</div>
               <div className="text-slate-700">Legal Entity: <strong className="text-slate-900">TECSTELLAR SOLUTIONS LLP</strong></div>
-              <div className="flex items-center gap-1.5 text-[#D4621A] font-mono font-bold">
+              <div className="flex items-center gap-1.5 text-[#EA580C] font-mono font-bold">
                 <Mail className="w-3.5 h-3.5" />
                 <span>{contactEmail}</span>
               </div>
@@ -329,10 +329,10 @@ export const PrivacyPolicyView: React.FC<PrivacyPolicyViewProps> = ({
         </div>
 
         {/* Footer Notice */}
-        <div className="pt-6 border-t border-[#D4621A]/15 text-center text-xs text-slate-500 space-y-1">
-          <p>&copy; {new Date().getFullYear()} CounterPro. Owned &amp; Operated by <strong className="text-slate-800">TECSTELLAR SOLUTIONS LLP</strong>. All rights reserved.</p>
+        <div className="pt-6 border-t border-stone-200 text-center text-xs text-slate-500 space-y-1">
+          <p>&copy; {new Date().getFullYear()} Counter365. Owned &amp; Operated by <strong className="text-slate-800">TECSTELLAR SOLUTIONS LLP</strong>. All rights reserved.</p>
           <p className="text-[11px] text-slate-400">
-            This policy applies to the CounterPro Mobile Application, Web Dashboard, and POS Services.
+            This policy applies to the Counter365 Mobile Application, Web Dashboard, and POS Services.
           </p>
         </div>
       </main>

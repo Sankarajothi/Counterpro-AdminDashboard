@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   RotateCcw,
   MessageSquare,
@@ -137,7 +137,7 @@ export const SupportMessagesView: React.FC<SupportMessagesViewProps> = ({
 
       // Shop name
       const shopName =
-        matchedShop?.name || m.shop_name || 'STYLEFLEET SALON';
+        matchedShop?.name || m.shop_name || 'Counter365 Shop';
 
       // Latest update / answer note
       const answers = m.answers || [];

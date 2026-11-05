@@ -392,7 +392,7 @@ function MainDashboardContent() {
     );
   }
 
-  // Dynamic View Titles & Subtitles matching StyleFleet hierarchy
+  // Dynamic View Titles & Subtitles matching Counter365 hierarchy
   const viewMeta: { [key: string]: [string, string] } = {
     dashboard: [
       'Founder Dashboard',
