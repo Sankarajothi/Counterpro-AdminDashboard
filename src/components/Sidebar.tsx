@@ -142,29 +142,29 @@ export function Sidebar({
         key={id}
         onClick={() => onSelectView(id)}
         title={isCollapsed ? label : undefined}
-        className={`w-full flex items-center gap-2 px-2.5 py-1 rounded-md text-[11.5px] transition-all group relative text-left cursor-pointer ${
+        className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-all group relative text-left cursor-pointer ${
           active
             ? 'bg-[#EA580C] !text-white font-bold shadow-xs'
-            : 'text-stone-300 hover:bg-white/10 hover:!text-white font-medium'
+            : 'text-stone-300 hover:bg-white/10 hover:!text-white font-semibold'
         }`}
       >
         <Icon
-          className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+          className={`w-4 h-4 shrink-0 transition-colors ${
             active ? '!text-white' : 'text-stone-300 group-hover:!text-white'
           }`}
         />
         {!isCollapsed && (
           <div className="flex-1 flex items-center justify-between overflow-hidden">
-            <span className={`truncate ${active ? '!text-white font-bold' : 'text-stone-300 group-hover:!text-white'}`}>
+            <span className={`truncate font-semibold ${active ? '!text-white' : 'text-stone-300 group-hover:!text-white'}`}>
               {label}
             </span>
-            <div className="flex items-center gap-1 ml-1.5">
+            <div className="flex items-center gap-1.5 ml-2">
               {hasDot && (
-                <span className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-white' : 'bg-[#EA580C]'} animate-pulse`} />
+                <span className={`w-2 h-2 rounded-full ${active ? 'bg-white' : 'bg-[#EA580C]'} animate-pulse`} />
               )}
               {badge !== undefined && Number(badge) > 0 && (
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[9px] font-mono font-bold transition-colors ${
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition-colors ${
                     active
                       ? 'bg-white/25 text-white'
                       : 'bg-white/10 text-stone-200 group-hover:bg-white/20'
@@ -193,27 +193,27 @@ export function Sidebar({
         key={id}
         onClick={() => onSelectView(id)}
         title={isCollapsed ? label : undefined}
-        className={`w-full flex items-center gap-2 ${
-          isCollapsed ? 'px-2 justify-center' : 'pl-6 pr-2'
-        } py-1 rounded-md text-[11px] transition-all group relative text-left cursor-pointer ${
+        className={`w-full flex items-center gap-2.5 ${
+          isCollapsed ? 'px-3 justify-center' : 'pl-8 pr-3'
+        } py-1.5 rounded-lg text-[12px] transition-all group relative text-left cursor-pointer ${
           active
             ? 'bg-[#EA580C] !text-white font-bold shadow-xs'
-            : 'text-stone-300 hover:bg-white/10 hover:!text-white font-medium'
+            : 'text-stone-300 hover:bg-white/10 hover:!text-white font-semibold'
         }`}
       >
         <Icon
-          className={`w-3 h-3 shrink-0 ${
+          className={`w-3.5 h-3.5 shrink-0 ${
             active ? '!text-white' : 'text-stone-300 group-hover:!text-white'
           }`}
         />
         {!isCollapsed && (
           <>
-            <span className={`truncate ${active ? '!text-white font-bold' : 'text-stone-300 group-hover:!text-white'}`}>
+            <span className={`truncate font-semibold ${active ? '!text-white' : 'text-stone-300 group-hover:!text-white'}`}>
               {label}
             </span>
             {badge !== undefined && Number(badge) > 0 && (
               <span
-                className={`ml-auto px-1.5 py-0.2 rounded-full text-[8.5px] font-mono font-bold transition-colors ${
+                className={`ml-auto px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-colors ${
                   active
                     ? 'bg-white/25 text-white'
                     : 'bg-white/10 text-stone-200 group-hover:bg-white/20'
@@ -231,51 +231,51 @@ export function Sidebar({
   return (
     <aside
       className={`flex flex-col h-screen bg-[#181311] text-white select-none sticky top-0 transition-all duration-200 z-30 shrink-0 border-r border-white/10 ${
-        isCollapsed ? 'w-[56px]' : 'w-[220px]'
+        isCollapsed ? 'w-[64px]' : 'w-[256px]'
       }`}
     >
       {/* Brand Header: Seamless Counter365 Logo & Wordmark matching dark theme */}
-      <div className="px-3 py-2.5 border-b border-white/10 bg-[#181311]">
+      <div className="px-4 py-3.5 border-b border-white/10 bg-[#181311]">
         {!isCollapsed ? (
-          <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center min-w-0">
               <img
                 src="/assets/counter365-dark-theme-logo.png"
                 alt="Counter365 - A Tecstellar Product"
-                className="h-6 w-auto max-w-[155px] object-contain"
+                className="h-7.5 w-auto max-w-[180px] object-contain"
               />
             </div>
             <button
               onClick={() => setIsCollapsed(true)}
-              className="hidden lg:flex p-1 rounded-md text-stone-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+              className="hidden lg:flex p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
               title="Collapse Sidebar"
             >
-              <PanelLeftClose className="w-3.5 h-3.5" />
+              <PanelLeftClose className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <div className="w-full flex flex-col items-center gap-1.5 py-0.5">
+          <div className="w-full flex flex-col items-center gap-2 py-1">
             <button
               onClick={() => setIsCollapsed(false)}
-              className="p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
+              className="p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
               title="Expand Sidebar"
             >
               <img
                 src="/assets/counter365-dark-theme-emblem.png"
                 alt="Counter365"
-                className="w-6 h-6 object-contain"
+                className="w-7 h-7 object-contain"
               />
             </button>
           </div>
         )}
       </div>
 
-      {/* Navigation Tree without gaps and no scrollable bar */}
-      <nav className="flex-1 px-2 py-2 space-y-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      {/* Navigation Tree: Fully aligned with the sidebar height, no ugly scrollbar */}
+      <nav className="flex-1 px-3 py-3 space-y-3 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {/* Section: WORKSPACE */}
-        <div className="space-y-0.5">
+        <div className="space-y-1">
           {!isCollapsed && (
-            <div className="px-2 pb-0.5 text-[9.5px] font-bold tracking-[0.08em] text-stone-400 uppercase font-mono">
+            <div className="px-3 pb-1 text-[11px] font-bold tracking-[0.08em] text-stone-400 uppercase font-mono">
               WORKSPACE
             </div>
           )}
@@ -290,19 +290,19 @@ export function Sidebar({
           {renderNavItem('account_deletions', 'Deleted users', UserX, deletionsCount)}
 
           {/* Submenu 1: App Activity */}
-          <div className="pt-0.5">
+          <div className="pt-1">
             <button
               onClick={() => setIsAppActivityOpen(!isAppActivityOpen)}
               title={isCollapsed ? 'App Activity' : undefined}
-              className={`w-full flex items-center justify-between px-2.5 py-1 rounded-md text-[11.5px] transition-all group cursor-pointer ${
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] transition-all group cursor-pointer ${
                 isAppActivityActive
                   ? 'text-white font-bold bg-white/10'
-                  : 'text-white/85 hover:text-white hover:bg-white/10 font-medium'
+                  : 'text-white/85 hover:text-white hover:bg-white/10 font-semibold'
               }`}
             >
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <Activity
-                  className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+                  className={`w-4 h-4 shrink-0 transition-colors ${
                     isAppActivityActive ? 'text-white' : 'text-white/75 group-hover:text-white'
                   }`}
                 />
@@ -310,7 +310,7 @@ export function Sidebar({
               </div>
               {!isCollapsed && (
                 <ChevronRight
-                  className={`w-3.5 h-3.5 text-white/75 group-hover:text-white transition-transform duration-200 shrink-0 ${
+                  className={`w-4 h-4 text-white/75 group-hover:text-white transition-transform duration-200 shrink-0 ${
                     isAppActivityOpen ? 'rotate-90 text-white' : ''
                   }`}
                 />
@@ -318,7 +318,7 @@ export function Sidebar({
             </button>
 
             {(isAppActivityOpen || isCollapsed) && (
-              <div className="space-y-0.5 mt-0.5">
+              <div className="space-y-1 mt-1">
                 {renderSubmenuItem('app_telemetry', 'Touch Heatmap', MousePointer)}
                 {renderSubmenuItem('diagnostic_logs', 'App Bugs', Bug)}
               </div>
@@ -326,19 +326,19 @@ export function Sidebar({
           </div>
 
           {/* Submenu 2: Shop Analytics */}
-          <div className="pt-0.5">
+          <div className="pt-1">
             <button
               onClick={() => setIsShopAnalyticsOpen(!isShopAnalyticsOpen)}
               title={isCollapsed ? 'Shop Analytics' : undefined}
-              className={`w-full flex items-center justify-between px-2.5 py-1 rounded-md text-[11.5px] transition-all group cursor-pointer ${
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-[13px] transition-all group cursor-pointer ${
                 isShopAnalyticsActive
                   ? 'text-white font-bold bg-white/10'
-                  : 'text-white/85 hover:text-white hover:bg-white/10 font-medium'
+                  : 'text-white/85 hover:text-white hover:bg-white/10 font-semibold'
               }`}
             >
-              <div className="flex items-center gap-2 min-w-0">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <Store
-                  className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+                  className={`w-4 h-4 shrink-0 transition-colors ${
                     isShopAnalyticsActive ? 'text-white' : 'text-white/75 group-hover:text-white'
                   }`}
                 />
@@ -346,7 +346,7 @@ export function Sidebar({
               </div>
               {!isCollapsed && (
                 <ChevronRight
-                  className={`w-3.5 h-3.5 text-white/75 group-hover:text-white transition-transform duration-200 shrink-0 ${
+                  className={`w-4 h-4 text-white/75 group-hover:text-white transition-transform duration-200 shrink-0 ${
                     isShopAnalyticsOpen ? 'rotate-90 text-white' : ''
                   }`}
                 />
@@ -354,7 +354,7 @@ export function Sidebar({
             </button>
 
             {(isShopAnalyticsOpen || isCollapsed) && (
-              <div className="space-y-0.5 mt-0.5">
+              <div className="space-y-1 mt-1">
                 {renderSubmenuItem('salons_360', 'Shop Directory', Store, shopCount)}
                 {renderSubmenuItem('subscription_plans', 'Subscription & 100 Quotas', CreditCard)}
                 {SHOW_STAFF_ADMIN && renderSubmenuItem('staff_access', 'Staff Access Control', ShieldCheck, staffCount)}
@@ -369,13 +369,13 @@ export function Sidebar({
         </div>
 
         {/* Section: ENGAGEMENT */}
-        <div className="pt-1">
+        <div className="pt-2">
           {!isCollapsed && (
-            <div className="px-2 pb-0.5 text-[9.5px] font-bold tracking-[0.08em] text-stone-400 uppercase font-mono">
+            <div className="px-3 pb-1 text-[11px] font-bold tracking-[0.08em] text-stone-400 uppercase font-mono">
               ENGAGEMENT
             </div>
           )}
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {renderNavItem('broadcasts', 'Broadcasts & Pop-ups', Radio)}
             {renderNavItem('support_messages', 'Support', MessageSquare, undefined, true)}
           </div>
@@ -383,77 +383,77 @@ export function Sidebar({
       </nav>
 
       {/* Footer Area */}
-      <div className="p-2 border-t border-white/10 bg-[#120E0C]">
+      <div className="p-3 border-t border-white/10 bg-[#120E0C]">
         {!isCollapsed ? (
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between px-1 text-[9.5px]">
-              <div className="flex items-center gap-1 text-white font-bold font-mono">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#EA580C] animate-pulse" />
-                <span className="text-[9px] tracking-wide uppercase text-white/90 truncate">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1 text-[11px]">
+              <div className="flex items-center gap-1.5 text-white font-bold font-mono">
+                <span className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse" />
+                <span className="text-[10px] tracking-wide uppercase text-white/90">
                   Live Supabase (ap-south-1)
                 </span>
               </div>
               <button
                 onClick={() => setIsCollapsed(true)}
-                className="hidden lg:flex p-0.5 rounded text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className="hidden lg:flex p-1 rounded-md hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
                 title="Collapse Sidebar"
               >
-                <PanelLeftClose className="w-3 h-3" />
+                <PanelLeftClose className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {/* Quick Actions Control Bar */}
-            <div className="flex items-center justify-between gap-1 p-0.5 bg-black/20 rounded-lg border border-white/15">
+            <div className="flex items-center justify-between gap-1 p-1 bg-black/20 rounded-xl border border-white/15">
               <button
                 onClick={onOpenPrivacy || (() => onSelectView('privacy'))}
-                className="p-1 rounded text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
+                className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
                 title="Privacy Policy"
               >
-                <FileText className="w-3.5 h-3.5" />
+                <FileText className="w-4 h-4" />
               </button>
               <button
                 onClick={onOpenDeleteAccount || (() => onSelectView('account_deletions'))}
-                className="p-1 rounded text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
+                className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
                 title="Delete Account Management"
               >
-                <UserX className="w-3.5 h-3.5" />
+                <UserX className="w-4 h-4" />
               </button>
-              <div className="w-px h-3.5 bg-white/20 mx-0.5" />
+              <div className="w-px h-4 bg-white/20 mx-0.5" />
               <button
                 onClick={onLogout}
-                className="p-1 rounded text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
+                className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
                 title="Sign Out"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <LogOut className="w-4 h-4" />
               </button>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-1.5 py-1">
+          <div className="flex flex-col items-center gap-2">
             <span
-              className="w-2 h-2 rounded-full bg-[#EA580C] animate-pulse"
+              className="w-2.5 h-2.5 rounded-full bg-[#EA580C] animate-pulse"
               title="Live Connection"
             />
             <button
               onClick={onOpenPrivacy || (() => onSelectView('privacy'))}
-              className="p-1 rounded hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Privacy Policy"
             >
-              <FileText className="w-3.5 h-3.5" />
+              <FileText className="w-4 h-4" />
             </button>
             <button
               onClick={onLogout}
-              className="p-1 rounded hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
               title="Sign Out"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
             </button>
             <button
               onClick={() => setIsCollapsed(false)}
-              className="hidden lg:flex p-1 rounded hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+              className="hidden lg:flex p-1.5 rounded-md hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer mt-1"
               title="Expand Sidebar"
             >
-              <PanelLeftOpen className="w-3 h-3" />
+              <PanelLeftOpen className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
