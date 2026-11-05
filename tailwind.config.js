@@ -15,7 +15,7 @@ module.exports = {
           highlight: '#F97316',
           tint: '#FFEDD5',
           cream: '#F8F3F0',
-          dark: '#1C1917',
+          dark: '#181311',
           charcoal: '#1E293B',
         },
         primary: {

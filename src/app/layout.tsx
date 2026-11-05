@@ -4,14 +4,6 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Counter365 — Admin Console',
   description: 'Production Admin Console for Counter365 Billing & Retail System',
-  icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/icon.png', type: 'image/png' },
-    ],
-    shortcut: '/favicon.ico',
-    apple: '/icon.png',
-  },
 };
 
 export default function RootLayout({
@@ -21,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#F8F3F0] text-[#101318] antialiased selection:bg-[#FFEDD5] selection:text-[#C2410C]">
+      <body className="min-h-screen bg-[#F8F3F0] text-[#1E293B] antialiased selection:bg-[#FFEDD5] selection:text-[#C2410C]">
         {children}
       </body>
     </html>

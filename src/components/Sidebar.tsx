@@ -230,12 +230,12 @@ export function Sidebar({
 
   return (
     <aside
-      className={`flex flex-col h-screen bg-[#1C1917] text-white select-none sticky top-0 transition-all duration-200 z-30 shrink-0 border-r border-white/10 ${
+      className={`flex flex-col h-screen bg-[#181311] text-white select-none sticky top-0 transition-all duration-200 z-30 shrink-0 border-r border-white/10 ${
         isCollapsed ? 'w-[70px]' : 'w-[270px]'
       }`}
     >
       {/* Brand Header: Seamless Counter365 Logo & Wordmark matching dark theme */}
-      <div className="px-4 py-3.5 border-b border-white/10 bg-[#1C1917]">
+      <div className="px-4 py-3.5 border-b border-white/10 bg-[#181311]">
         {!isCollapsed ? (
           <div className="flex items-center justify-between gap-2.5">
             <div className="flex items-center min-w-0">
@@ -382,7 +382,7 @@ export function Sidebar({
       </nav>
 
       {/* Footer Area */}
-      <div className="p-3 border-t border-white/10 bg-[#161311]">
+      <div className="p-3 border-t border-white/10 bg-[#120E0C]">
         {!isCollapsed ? (
           <div className="space-y-2">
             <div className="flex items-center justify-between px-1 text-[11px]">
