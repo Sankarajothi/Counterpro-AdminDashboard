@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
@@ -348,7 +348,7 @@ export function ProductAnalyticsView({
               <div className="bg-white/80 p-3 rounded-lg border border-amber-200/60 text-xs space-y-1">
                 <div className="font-semibold text-gray-900 flex items-center justify-between">
                   <span>Likely to Subscribe</span>
-                  <span className="px-1.5 py-0.2 rounded bg-blue-100 text-blue-800 font-mono font-bold text-[10px]">
+                  <span className="px-1.5 py-0.2 rounded bg-[#FFEDD5] text-[#C2410C] font-mono font-bold text-[10px]">
                     High CS Priority
                   </span>
                 </div>
@@ -383,7 +383,7 @@ export function ProductAnalyticsView({
               <h3 className="text-[14px] font-bold text-[#101318] m-0">User Journey Funnel</h3>
               <p className="text-[11px] text-gray-500 m-0 mt-0.5">Strict ordered progression from onboarding to high-volume billing</p>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#F8F3F0] text-[#D4621A] border border-blue-200">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#FFEDD5] text-[#EA580C] border border-[#EA580C]/25">
               5 Steps
             </span>
           </div>
@@ -627,7 +627,7 @@ export function ProductAnalyticsView({
                           item.type === 'repeat'
                             ? 'bg-rose-50 text-rose-700 border border-rose-200'
                             : item.type === 'button'
-                            ? 'bg-[#F8F3F0] text-[#D4621A] border border-blue-200'
+                            ? 'bg-[#FFEDD5] text-[#EA580C] border border-[#EA580C]/25'
                             : 'bg-gray-100 text-gray-700 border border-gray-200'
                         }`}
                       >
@@ -715,7 +715,7 @@ export function ProductAnalyticsView({
 
           {data.scrollDepth.rows.length === 0 ? (
             <div className="py-8 px-4 text-center space-y-2 bg-gray-50/70 rounded-lg border border-dashed border-gray-200">
-              <Info className="w-5 h-5 text-blue-500 mx-auto" />
+              <Info className="w-5 h-5 text-[#EA580C] mx-auto" />
               <div className="text-gray-700 text-xs font-semibold">Scroll Tracking Inactive</div>
               <p className="text-[11px] text-gray-500 max-w-md mx-auto m-0 leading-relaxed">
                 {data.scrollDepth.notice}
@@ -920,7 +920,7 @@ export function ProductAnalyticsView({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-[16px] font-bold text-[#101318] m-0">Customer Success Opportunities</h3>
-              <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-blue-100 text-blue-800">
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#FFEDD5] text-[#C2410C]">
                 {filteredCS.length} actionable
               </span>
             </div>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { Shop } from '../../types/database';
@@ -351,8 +351,8 @@ export function BroadcastNotificationsView({
                       <span
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
                           item.status === 'delivered'
-                            ? 'bg-[#F8F3F0] text-[#D4621A] border border-[#D4621A]/25'
-                            : 'bg-[#F8F3F0] text-[#D4621A] border border-blue-200'
+                            ? 'bg-[#FFEDD5] text-[#EA580C] border border-[#EA580C]/25'
+                            : 'bg-[#FFEDD5] text-[#C2410C] border border-[#EA580C]/25'
                         }`}
                       >
                         <CheckCircle2 className="w-3 h-3" />

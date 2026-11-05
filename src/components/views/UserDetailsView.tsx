@@ -17,16 +17,16 @@ interface UserDetailsViewProps {
 
 // Generate consistent avatar color based on name/index
 const AVATAR_COLORS = [
-  'bg-[#F8F3F0] text-[#D4621A]',
-  'bg-orange-100 text-orange-700',
+  'bg-orange-100 text-[#EA580C]',
   'bg-amber-100 text-amber-700',
-  'bg-blue-100 text-[#D4621A]',
-  'bg-[#D4621A]/10 text-[#D4621A]',
-  'bg-indigo-100 text-indigo-700',
-  'bg-pink-100 text-pink-700',
-  'bg-[#D4621A]/10 text-[#D4621A]',
+  'bg-stone-100 text-stone-700',
+  'bg-orange-50 text-[#C2410C]',
+  'bg-amber-50 text-[#EA580C]',
+  'bg-emerald-100 text-emerald-800',
   'bg-rose-100 text-rose-700',
-  'bg-cyan-100 text-cyan-700',
+  'bg-orange-200/60 text-[#9A3412]',
+  'bg-stone-200/80 text-stone-800',
+  'bg-[#FFEDD5] text-[#EA580C]',
 ];
 
 export function UserDetailsView({

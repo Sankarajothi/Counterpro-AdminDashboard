@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { Shop, Bill, Profile, ShopMember, MenuItem, Expense } from '../../types/database';
@@ -200,28 +200,34 @@ export function UsageView({
             When bills are actually generated in IST — drives support staffing
           </div>
 
-          <div className="flex items-end gap-1.5 h-[155px] pt-4 border-b border-[var(--color-divider)]">
+          <div className="flex items-end gap-1.5 h-[155px] pt-4 border-b border-stone-200">
             {hourBars.map((h) => {
               const isPeak = h.count === maxHourCount && h.count > 0;
+              const ratio = maxHourCount > 0 ? h.count / maxHourCount : 0;
+              let barColor = 'bg-stone-100';
+              if (isPeak) {
+                barColor = 'bg-[#EA580C] ring-2 ring-[#F59E0B] shadow-[0_0_12px_rgba(245,158,11,0.45)]';
+              } else if (ratio > 0.66) {
+                barColor = 'bg-[#EA580C]';
+              } else if (ratio > 0.33) {
+                barColor = 'bg-[#FB923C]';
+              } else if (h.count > 0) {
+                barColor = 'bg-[#FDBA74]';
+              }
+
               return (
                 <div
                   key={h.label}
                   className="flex-1 h-full flex flex-col justify-end items-center gap-1.5 group relative"
                 >
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-[#101318] text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-20">
-                    {h.count} bills
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-8 bg-[#1E293B] text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none whitespace-nowrap z-20 font-mono">
+                    {h.count} bills {isPeak ? '• Peak Hour' : ''}
                   </div>
                   <div
                     style={{ height: `${h.pct}%` }}
-                    className={`w-full rounded-t-[3px] transition-all duration-300 ${
-                      isPeak
-                        ? 'bg-[#101318]'
-                        : h.count > 0
-                        ? 'bg-[#D4621A]'
-                        : 'bg-gray-100'
-                    }`}
+                    className={`w-full rounded-t-[3px] transition-all duration-300 ${barColor}`}
                   />
-                  <div className="text-[10px] text-black/50 font-medium">
+                  <div className="text-[10px] text-stone-500 font-medium font-mono">
                     {h.label}
                   </div>
                 </div>

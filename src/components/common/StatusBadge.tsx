@@ -8,7 +8,7 @@ interface StatusBadgeProps {
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'sm' }) => {
   if (!status) {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-white text-black border border-stone-300">
+      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-stone-50 text-stone-700 border border-stone-200">
         Unknown
       </span>
     );
@@ -16,14 +16,16 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'sm' })
 
   const normalized = status.toLowerCase().trim();
 
-  let styles = 'bg-white text-black border border-stone-300 font-bold';
+  let styles = 'bg-stone-50 text-stone-800 border-stone-200 font-semibold';
 
-  if (['active', 'completed', 'paid', 'resolved', 'processed', 'done', 'confirmed', 'live', 'pro', 'successful'].includes(normalized)) {
-    styles = 'bg-[#EA580C] text-white border border-[#EA580C] font-bold shadow-2xs';
-  } else if (['pending', 'in_progress', 'open', 'not confirmed', 'trial', 'trialing'].includes(normalized)) {
-    styles = 'bg-[#FFEDD5] text-[#C2410C] border border-[#EA580C]/30 font-bold';
+  if (['active', 'completed', 'paid', 'resolved', 'processed', 'done', 'confirmed', 'live', 'successful'].includes(normalized)) {
+    styles = 'bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold';
+  } else if (['pending', 'in_progress', 'open', 'not confirmed', 'trial', 'trialing', 'warning'].includes(normalized)) {
+    styles = 'bg-amber-50 text-amber-800 border-amber-200 font-semibold';
   } else if (['cancelled', 'closed', 'expired', 'failed', 'deleted', 'suspended', 'churned', 'refunded'].includes(normalized)) {
-    styles = 'bg-stone-800 text-white border border-stone-700 font-bold';
+    styles = 'bg-rose-50 text-rose-800 border-rose-200 font-semibold';
+  } else if (['pro', 'premium', 'subscriber', 'vip', 'broadcast', 'featured'].includes(normalized)) {
+    styles = 'bg-orange-50 text-[#EA580C] border-orange-200 font-semibold';
   }
 
   const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs';

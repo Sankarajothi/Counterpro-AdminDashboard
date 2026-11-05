@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { Shop } from '../../types/database';
@@ -125,7 +125,7 @@ export function HardwareTelemetryView({ shops, onShowToast }: HardwareTelemetryV
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs hover:border-blue-400/50 transition-all">
+        <div className="bg-white rounded-2xl p-5 border border-stone-200/80 shadow-xs hover:border-[#EA580C]/40 transition-all">
           <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
             <span>Daily Cloud Snapshots</span>
             <div className="p-2 rounded-xl bg-[#F8F3F0] text-[#D4621A]">

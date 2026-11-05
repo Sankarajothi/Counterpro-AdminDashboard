@@ -514,8 +514,8 @@ export function RevenueTrendView({
           >
             <defs>
               <linearGradient id="revenueAreaGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="#EA580C" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#EA580C" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
@@ -547,12 +547,12 @@ export function RevenueTrendView({
               <path d={areaPath} fill="url(#revenueAreaGradient)" />
             )}
 
-            {/* Blue Curved Path */}
+            {/* Brand Orange Curved Path */}
             {linePath && (
               <path
                 d={linePath}
                 fill="none"
-                stroke="#3B82F6"
+                stroke="#EA580C"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -566,7 +566,7 @@ export function RevenueTrendView({
                   cx={pt.x}
                   cy={pt.y}
                   r="3.5"
-                  fill="#3B82F6"
+                  fill="#EA580C"
                   stroke="#FFFFFF"
                   strokeWidth="2"
                   className="transition-transform group-hover:scale-150"

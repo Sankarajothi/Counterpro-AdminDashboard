@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { Shop, Subscription } from '../../types/database';
@@ -236,7 +236,7 @@ export function SupportOutreachView({
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleDirectCall}
-                    className="btn btn-secondary text-xs min-h-[34px] px-3 gap-1.5 text-[#D4621A] border-blue-200 hover:bg-[#F8F3F0]"
+                    className="btn btn-secondary text-xs min-h-[34px] px-3 gap-1.5 text-[#EA580C] border-orange-200 hover:bg-[#FFEDD5]/40"
                   >
                     <Phone className="w-3.5 h-3.5 text-[#D4621A]" />
                     <span>Call Store</span>

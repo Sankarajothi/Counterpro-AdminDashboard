@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useMemo } from 'react';
 import { Shop, Bill, Payment, Subscription, Profile, ShopMember } from '../../types/database';
@@ -67,7 +67,7 @@ const TERRITORY_HUBS: Record<string, TerritoryHub> = {
     svgX: 82,
     svgY: 22,
     badge: 'Capital Metro Hub',
-    badgeColor: 'bg-[#F8F3F0]0/10 text-blue-400 border-blue-500/30',
+    badgeColor: 'bg-[#FFEDD5] text-[#C2410C] border border-[#EA580C]/25',
     description: 'High-ticket urban retail shops driving highest platform billing volume.',
   },
   Kalugumalai: {
@@ -509,8 +509,8 @@ export function GeographyView({
                   </radialGradient>
 
                   <linearGradient id="corridorGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#D4621A" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.4" />
+                    <stop offset="0%" stopColor="#EA580C" stopOpacity="0.6" />
+                    <stop offset="100%" stopColor="#FB923C" stopOpacity="0.4" />
                   </linearGradient>
                 </defs>
 
@@ -616,7 +616,7 @@ export function GeographyView({
                         cy={hub.svgY}
                         r={isSelected ? 5.5 : 4}
                         fill="none"
-                        stroke={isSelected ? '#D4621A' : '#60A5FA'}
+                        stroke={isSelected ? '#EA580C' : '#FDBA74'}
                         strokeWidth={isSelected ? '0.8' : '0.5'}
                         className="transition-all"
                       />
@@ -626,7 +626,7 @@ export function GeographyView({
                         cx={hub.svgX}
                         cy={hub.svgY}
                         r={isSelected ? 2.5 : 2}
-                        fill={isSelected ? '#D4621A' : '#FFFFFF'}
+                        fill={isSelected ? '#EA580C' : '#FFFFFF'}
                         className="transition-colors"
                       />
 
@@ -660,11 +660,11 @@ export function GeographyView({
               {/* Map Floating Legend */}
               <div className="absolute bottom-3 left-3 bg-[#11141c]/90 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 text-[10px] space-y-1 font-mono">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#D4621A]" />
+                  <span className="w-2 h-2 rounded-full bg-[#EA580C]" />
                   <span className="text-gray-300">Selected Hub Focus</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-400" />
+                  <span className="w-2 h-2 rounded-full bg-[#FB923C]" />
                   <span className="text-gray-300">Active Shop Cluster</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -833,8 +833,8 @@ export function GeographyView({
                         <div className="text-[10px] text-gray-500 mt-0.5">Orders Processed</div>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-[#F8F3F0]/50 border border-blue-100">
-                        <div className="text-[10.5px] uppercase font-mono text-[#D4621A] font-bold">Active Shops</div>
+                      <div className="p-3 rounded-xl bg-[#F8F3F0]/50 border border-orange-100">
+                        <div className="text-[10.5px] uppercase font-mono text-[#EA580C] font-bold">Active Shops</div>
                         <div className="text-xl font-black text-gray-900 mt-0.5">
                           {cityData.shops.length}{' '}
                           <span className="text-xs font-normal text-gray-500">{cityData.shops.length === 1 ? 'Store' : 'Stores'}</span>
@@ -1081,7 +1081,7 @@ export function GeographyView({
                         <span
                           className={`p-1 rounded-md ${
                             shop.gst_enabled
-                              ? 'bg-[#F8F3F0] text-[#D4621A] border border-blue-200'
+                              ? 'bg-[#FFEDD5] text-[#EA580C] border border-[#EA580C]/25'
                               : 'bg-gray-100 text-gray-400'
                           }`}
                           title={shop.gst_enabled ? 'GST Invoicing Active' : 'GST Disabled'}
