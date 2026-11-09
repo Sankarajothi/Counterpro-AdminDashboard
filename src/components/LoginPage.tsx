@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, ShieldCheck, AlertCircle, Home } from 'lucide-react';
 
 interface LoginPageProps {
   onLoginSuccess: (user: { email: string; role: string; name: string }) => void;
@@ -49,7 +49,19 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#F3F4F6] p-4 select-none">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#F3F4F6] p-4 select-none relative">
+      {/* Home / Website Link in Corner */}
+      <a
+        href="https://counter365.tecstellar.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed top-5 left-5 sm:top-6 sm:left-6 z-50 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#EA580C]/25 shadow-xs hover:border-[#EA580C] hover:bg-[#FFEDD5]/50 text-stone-700 hover:text-[#EA580C] transition-all text-xs font-bold group cursor-pointer"
+        title="Visit Counter365 Website (counter365.tecstellar.com)"
+      >
+        <Home className="w-4 h-4 text-[#EA580C] group-hover:scale-110 transition-transform" />
+        <span className="hidden sm:inline">counter365.tecstellar.com</span>
+      </a>
+
       {/* Login Card */}
       <div className="w-full max-w-[400px] bg-white rounded-[10px] shadow-lg border border-[#E2E8F0] overflow-hidden">
         {/* Header Section */}

@@ -35,6 +35,7 @@ import {
   PanelLeftOpen,
   Sparkles,
   Globe,
+  Home,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -238,13 +239,19 @@ export function Sidebar({
       <div className="px-4 py-3.5 border-b border-white/10 bg-[#181311]">
         {!isCollapsed ? (
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center min-w-0">
+            <a
+              href="https://counter365.tecstellar.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center min-w-0 hover:opacity-90 transition-opacity cursor-pointer"
+              title="Visit Counter365 Website (counter365.tecstellar.com)"
+            >
               <img
                 src="/assets/counter365-dark-theme-logo.png"
                 alt="Counter365 - A Tecstellar Product"
                 className="h-7.5 w-auto max-w-[180px] object-contain"
               />
-            </div>
+            </a>
             <button
               onClick={() => setIsCollapsed(true)}
               className="hidden lg:flex p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
@@ -255,17 +262,19 @@ export function Sidebar({
           </div>
         ) : (
           <div className="w-full flex flex-col items-center gap-2 py-1">
-            <button
-              onClick={() => setIsCollapsed(false)}
+            <a
+              href="https://counter365.tecstellar.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-1.5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
-              title="Expand Sidebar"
+              title="Visit Counter365 Website (counter365.tecstellar.com)"
             >
               <img
                 src="/assets/counter365-dark-theme-emblem.png"
                 alt="Counter365"
                 className="w-7 h-7 object-contain"
               />
-            </button>
+            </a>
           </div>
         )}
       </div>
@@ -404,6 +413,15 @@ export function Sidebar({
 
             {/* Quick Actions Control Bar */}
             <div className="flex items-center justify-between gap-1 p-1 bg-black/20 rounded-xl border border-white/15">
+              <a
+                href="https://counter365.tecstellar.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg text-white/80 hover:text-[#EA580C] hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
+                title="Counter365 Website (counter365.tecstellar.com)"
+              >
+                <Home className="w-4 h-4" />
+              </a>
               <button
                 onClick={onOpenPrivacy || (() => onSelectView('privacy'))}
                 className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer flex-1 flex justify-center"
@@ -434,6 +452,15 @@ export function Sidebar({
               className="w-2.5 h-2.5 rounded-full bg-[#EA580C] animate-pulse"
               title="Live Connection"
             />
+            <a
+              href="https://counter365.tecstellar.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-[#EA580C] transition-colors cursor-pointer"
+              title="Counter365 Website (counter365.tecstellar.com)"
+            >
+              <Home className="w-4 h-4" />
+            </a>
             <button
               onClick={onOpenPrivacy || (() => onSelectView('privacy'))}
               className="p-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"

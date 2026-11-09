@@ -12,6 +12,7 @@ import {
   KeyRound,
   ArrowLeft,
   CheckCircle2,
+  Home,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -72,6 +73,18 @@ export const LoginView: React.FC<LoginViewProps> = ({
         backgroundColor: '#F8F3F0',
       }}
     >
+      {/* Home / Website Link in Corner */}
+      <a
+        href="https://counter365.tecstellar.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed top-5 left-5 sm:top-6 sm:left-6 z-50 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#EA580C]/25 shadow-xs hover:border-[#EA580C] hover:bg-[#FFEDD5]/50 text-stone-700 hover:text-[#EA580C] transition-all text-xs font-bold group cursor-pointer"
+        title="Visit Counter365 Website (counter365.tecstellar.com)"
+      >
+        <Home className="w-4 h-4 text-[#EA580C] group-hover:scale-110 transition-transform" />
+        <span className="hidden sm:inline">counter365.tecstellar.com</span>
+      </a>
+
       <div className="w-full max-w-[420px] relative z-10">
         {/* White Card Container */}
         <div className="bg-white rounded-[28px] border border-[#D4621A]/15 shadow-[0_20px_50px_rgba(212,98,26,0.06),0_1px_3px_rgba(0,0,0,0.04)] px-8 py-9 sm:px-10 sm:py-10">
@@ -79,7 +92,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[#D4621A] flex items-center justify-center shadow-xs">
-                <span className="font-heading font-black text-white text-base tracking-tighter">CP</span>
+                <span className="font-heading font-black text-white text-base tracking-tighter">C</span>
               </div>
               <div className="text-left">
                 <span className="text-2xl font-bold tracking-tight text-slate-900 block leading-tight">

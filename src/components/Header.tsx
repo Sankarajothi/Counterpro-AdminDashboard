@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Home } from 'lucide-react';
 
 export type ExportFormat = 'csv' | 'excel' | 'json' | 'print';
 
@@ -48,6 +49,18 @@ export function Header({
       </div>
 
       <div className="flex items-center gap-2.5 ml-auto flex-wrap">
+        {/* Visit Website (Home) */}
+        <a
+          href="https://counter365.tecstellar.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Visit Counter365 Website (counter365.tecstellar.com)"
+          className="min-h-[32px] px-3.5 rounded-lg border border-[#EA580C]/25 bg-white text-stone-700 hover:text-[#EA580C] hover:bg-[#FFEDD5] hover:border-[#EA580C] transition-all flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer group"
+        >
+          <Home className="w-4 h-4 text-[#EA580C] group-hover:scale-110 transition-transform" />
+          <span className="hidden sm:inline">Website</span>
+        </a>
+
         {/* Add user account button */}
         {onAddUserAccount && (
           <button
