@@ -55,11 +55,11 @@ export function LoginPage({ onLoginSuccess }: LoginPageProps) {
         href="https://counter365.tecstellar.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed top-5 left-5 sm:top-6 sm:left-6 z-50 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#EA580C]/25 shadow-xs hover:border-[#EA580C] hover:bg-[#FFEDD5]/50 text-stone-700 hover:text-[#EA580C] transition-all text-xs font-bold group cursor-pointer"
+        className="fixed top-5 left-5 sm:top-6 sm:left-6 z-50 min-h-[32px] px-3.5 py-1.5 rounded-lg border border-[#EA580C]/25 bg-white text-stone-700 hover:text-[#EA580C] hover:bg-[#FFEDD5] hover:border-[#EA580C] transition-all flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer group"
         title="Visit Counter365 Website (counter365.tecstellar.com)"
       >
         <Home className="w-4 h-4 text-[#EA580C] group-hover:scale-110 transition-transform" />
-        <span className="hidden sm:inline">counter365.tecstellar.com</span>
+        <span>Website</span>
       </a>
 
       {/* Login Card */}

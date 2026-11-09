@@ -78,11 +78,11 @@ export const LoginView: React.FC<LoginViewProps> = ({
         href="https://counter365.tecstellar.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed top-5 left-5 sm:top-6 sm:left-6 z-50 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-[#EA580C]/25 shadow-xs hover:border-[#EA580C] hover:bg-[#FFEDD5]/50 text-stone-700 hover:text-[#EA580C] transition-all text-xs font-bold group cursor-pointer"
+        className="fixed top-5 left-5 sm:top-6 sm:left-6 z-50 min-h-[32px] px-3.5 py-1.5 rounded-lg border border-[#EA580C]/25 bg-white text-stone-700 hover:text-[#EA580C] hover:bg-[#FFEDD5] hover:border-[#EA580C] transition-all flex items-center gap-1.5 text-xs font-bold shadow-xs cursor-pointer group"
         title="Visit Counter365 Website (counter365.tecstellar.com)"
       >
         <Home className="w-4 h-4 text-[#EA580C] group-hover:scale-110 transition-transform" />
-        <span className="hidden sm:inline">counter365.tecstellar.com</span>
+        <span>Website</span>
       </a>
 
       <div className="w-full max-w-[420px] relative z-10">
@@ -268,8 +268,19 @@ export const LoginView: React.FC<LoginViewProps> = ({
             )}
           </form>
 
-          {/* Legal / Policy Links */}
-          <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-center gap-4 text-xs font-medium text-slate-500">
+          {/* Legal / Policy & Website Links */}
+          <div className="mt-8 pt-5 border-t border-slate-100 flex items-center justify-center gap-3.5 text-xs font-medium text-slate-500 flex-wrap">
+            <a
+              href="https://counter365.tecstellar.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#EA580C] transition-colors flex items-center gap-1 font-semibold"
+              title="Visit Counter365 Website (counter365.tecstellar.com)"
+            >
+              <Home className="w-3.5 h-3.5 text-[#EA580C]" />
+              <span>Website</span>
+            </a>
+            <span className="text-slate-300">•</span>
             {onOpenPrivacyPolicy && (
               <button
                 type="button"
