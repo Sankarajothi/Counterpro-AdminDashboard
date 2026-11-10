@@ -469,7 +469,15 @@ function MainDashboardContent() {
     ],
     broadcasts: [
       'Broadcasts & In-App Pop-ups',
-      'Merchant engagement, push dispatches & mobile in-app pop-up modals',
+      'Merchant engagement, in-app banners & mobile pop-up modals',
+    ],
+    push_notifications: [
+      'Push Notifications Dispatcher',
+      'Instant mobile notifications reach and delivery ledger',
+    ],
+    scheduled_pushes: [
+      'Scheduled Push Notifications',
+      'Server-scheduled push campaigns and automated queue status',
     ],
     platform_audit: [
       'Activity Logs',
@@ -485,7 +493,7 @@ function MainDashboardContent() {
     ],
   };
 
-  const currentMeta = viewMeta[currentView] || ['Founder Dashboard', 'CounterPro 365 System'];
+  const currentMeta = viewMeta[currentView] || ['Founder Dashboard', 'Counter365 Platform'];
 
   return (
     <div className="min-h-screen flex bg-[#F8F3F0] text-[#101318]">
@@ -738,6 +746,25 @@ function MainDashboardContent() {
               {/* 14.1 Broadcasts & In-App Pop-ups */}
               {currentView === 'broadcasts' && (
                 <BroadcastNotificationsView
+                  type="broadcast"
+                  shops={shops}
+                  onShowToast={showToast}
+                />
+              )}
+
+              {/* 14.2 Push Notifications Dispatcher */}
+              {currentView === 'push_notifications' && (
+                <BroadcastNotificationsView
+                  type="push"
+                  shops={shops}
+                  onShowToast={showToast}
+                />
+              )}
+
+              {/* 14.3 Scheduled Push Notifications */}
+              {currentView === 'scheduled_pushes' && (
+                <BroadcastNotificationsView
+                  type="scheduled"
                   shops={shops}
                   onShowToast={showToast}
                 />

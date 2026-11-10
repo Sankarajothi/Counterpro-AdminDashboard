@@ -386,6 +386,8 @@ export function Sidebar({
           )}
           <div className="space-y-1">
             {renderNavItem('broadcasts', 'Broadcasts & Pop-ups', Radio)}
+            {renderNavItem('push_notifications', 'Push Notifications', Bell)}
+            {renderNavItem('scheduled_pushes', 'Scheduled Pushes', Clock)}
             {renderNavItem('support_messages', 'Support', MessageSquare, undefined, true)}
           </div>
         </div>

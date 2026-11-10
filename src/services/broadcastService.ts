@@ -147,7 +147,7 @@ export async function createBroadcast(input: CreateBroadcastInput): Promise<{ su
 
     const standardPayload = {
       title: (input.title?.trim() || ''),
-      message: JSON.stringify(metaPayload),
+      message: input.type === 'push' ? (input.message?.trim() || '') : JSON.stringify(metaPayload),
       type: input.type,
       priority: input.priority || 'normal',
       target_audience: input.target_audience,
@@ -204,7 +204,11 @@ export async function updateBroadcast(id: string, input: Partial<CreateBroadcast
 
     if (input.title !== undefined) updatePayload.title = input.title?.trim() || '';
     if (input.message !== undefined || input.placement !== undefined || input.display_type !== undefined) {
-      updatePayload.message = JSON.stringify(metaPayload);
+      if (input.type === 'push') {
+        updatePayload.message = input.message?.trim() || '';
+      } else {
+        updatePayload.message = JSON.stringify(metaPayload);
+      }
     }
     if (input.type !== undefined) updatePayload.type = input.type;
     if (input.priority !== undefined) updatePayload.priority = input.priority;
